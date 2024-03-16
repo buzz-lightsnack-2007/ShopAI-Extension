@@ -12,12 +12,12 @@ Worse, they are also often placed between these legitimate and adequately labele
 What if we could enhance the current system through a web extension that seamlessly integrates with the shopping websites? Artificial intelligence, specifically language learning models such as GPT, will play a significant role in this extension since it has become increasingly versatile. This is useful as they can increase clarity on specific ideas and suggest certain actions. With this, the LLM can create better descriptions of products initially labeled vaguely and provide analysis and ratings considering all customer- and seller-provided product information. When all results are displayed at the proper location, users can be warned if the product is fraudulent or urged to raise necessary skepticism.
 
 ## Features
-- [] Get the available data of a specific product from the e-commerce page, adblock-like. 
-- [] Generate comprehensive AI-generated information regarding the selected product.
-- [] Display the generated information within the e-commerce page.
-- [] The product information and its AI analysis are stored in the browser cache.
-- [] The product information and AI analysis are stored in the online database.
-- [] A help feature is available to instruct users on how to use the extension.
+- [ ] Get the available data of a specific product from the e-commerce page, adblock-like. 
+- [ ] Generate comprehensive AI-generated information regarding the selected product.
+- [ ] Display the generated information within the e-commerce page.
+- [ ] The product information and its AI analysis are stored in the browser cache.
+- [ ] The product information and AI analysis are stored in the online database.
+- [ ] A help feature is available to instruct users on how to use the extension.
 
 ## Contributions
 Tripped on a bug, or did a lightbulb lit? Feel free to let us know! If there are not yet opened bug reports, please create one! 
