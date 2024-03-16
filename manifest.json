@@ -3,19 +3,17 @@
       "scripts": [ "shopAI.js" ]
    },
    "browser_action": {
-      "default_icon": "gui/icons/logo_no.png",
-      "default_popup": "websites/popup.htm"
+	  "default_icon": "gui/icons/logo_no_tiny.png",
+      "default_popup": "gui/popup.htm"
    },
-   "default_locale": "en",
-   "description": "TEMPORARY DESCRIPTION PLEASE REPLACE",
+   "description": "Shop wisely with AI!",
    "icons": {
-      "128": "gui/icons/logo.png",
+      "1024": "gui/icons/logo.png",
+	  "512": "gui/icons/logo_tiny.png"
    },
    "manifest_version": 2,
-   "name": "ChromVPN",
+   "name": "ShopAI",
    "options_page": "gui/popup.htm",
    "permissions": [ "tabs", "webRequest", "webRequestBlocking", "*://*/*" ],
-   "default_locale": "en",
-   "minimum_chrome_version": 50,
    "version": "1"
 }
