@@ -1,0 +1,21 @@
+{
+   "background": {
+      "scripts": [ "shopAI.js" ]
+   },
+   "browser_action": {
+      "default_icon": "gui/icons/logo_no.png",
+      "default_popup": "websites/popup.htm"
+   },
+   "default_locale": "en",
+   "description": "TEMPORARY DESCRIPTION PLEASE REPLACE",
+   "icons": {
+      "128": "gui/icons/logo.png",
+   },
+   "manifest_version": 2,
+   "name": "ChromVPN",
+   "options_page": "gui/popup.htm",
+   "permissions": [ "tabs", "webRequest", "webRequestBlocking", "*://*/*" ],
+   "default_locale": "en",
+   "minimum_chrome_version": 50,
+   "version": "1"
+}
