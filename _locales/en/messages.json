@@ -27,5 +27,9 @@
   "GUI_error_stop": {
     "message": "The web browser can not open this page.",
     "description": "Error message when opening the HTML page directly"
+  },
+  "GUI_credits_0": {
+    "message": "Made with love.",
+    "description": "credits #0"
   }
 }

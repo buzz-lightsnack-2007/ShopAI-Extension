@@ -1,6 +1,6 @@
 {
 	"config": {
-		"message": "zh-CN"
+		"message": "zh"
 	},
 	"manifest_name": {
 		"message": "购物人类智能",
@@ -23,5 +23,13 @@
 				"description": "版本号码"
 			}
 		}
-	}
+	},
+	"GUI_error_stop": {
+		"message": "浏览器无法打开网页。",
+		"description": "禁止扩展程序外打开 HTML 文件"
+	},
+	"GUI_credits_0": {
+    "message": "亲爱的马老师…",
+    "description": "credits #0"
+  }
 }
