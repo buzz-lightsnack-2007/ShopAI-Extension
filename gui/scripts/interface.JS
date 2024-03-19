@@ -15,8 +15,11 @@ export default class interface {
         };
 
         if (Array.isArray(element_class)) {
-            // array logic
-        } else if (typeof element_class == 'string') {
+            // for of loop
+            for (const element_class_one of element_class) {
+                element_new.classList.add(element_class_one);
+            }
+        } else if ((typeof element_class).includes(`str`)) {
             element_new.classList.add(element_class);
         }
     };
