@@ -11,10 +11,14 @@
       "default_popup": "gui/popup.htm"
 	},
 
+	"background": {
+		"service_worker": "scripts/ShopAI.js",
+		"type": "module"
+	},
 	"content_scripts": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
-			"js": ["scripts/shopAI.js"]
+			"js": ["scripts/watchman.js"]
 		}
 	],
 	
