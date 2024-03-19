@@ -22,5 +22,7 @@ export default class interface {
         } else if ((typeof element_class).includes(`str`)) {
             element_new.classList.add(element_class);
         }
+
+        return (element_new);
     };
 }
