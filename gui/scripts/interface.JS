@@ -14,6 +14,10 @@ export default class interface {
             element_new.id = element_id;
         };
 
-        element_new.language.className += "class_name_to_add";
+        if (Array.isArray(element_class)) {
+            // array logic
+        } else if (typeof element_class == 'string') {
+            element_new.classList.add(element_class);
+        }
     };
 }
