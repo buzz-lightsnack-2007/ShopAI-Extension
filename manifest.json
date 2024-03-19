@@ -14,7 +14,7 @@
 	"content_scripts": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
-			"js": ["shopAI.js"]
+			"js": ["scripts/shopAI.js"]
 		}
 	],
 	
