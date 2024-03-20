@@ -31,5 +31,9 @@
 	"GUI_credits_0": {
     "message": "亲爱的马老师…",
     "description": "credits #0"
+  },
+  "GUI_alert_confirm_action_text": {
+    "message": "您认真地想运行它吗？",
+    "description": "运行危险的软件以前的问题"
   }
 }

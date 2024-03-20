@@ -35,5 +35,9 @@
   "GUI_credits_0": {
     "message": "Made with love.",
     "description": "credits #0"
+  },
+  "GUI_alert_confirm_action_text": {
+    "message": "Are you sure you would want to do this?",
+    "description": "confirm user's dangerous action"
   }
 }
