@@ -2,7 +2,6 @@
     "recommendations": [
         "xabikos.javascriptsnippets",
         "dbaeumer.vscode-eslint",
-        "msjsdiag.debugger-for-chrome",
         "solomonkinard.chrome-extension-api"
     ]
 }
