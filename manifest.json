@@ -4,21 +4,23 @@
 	"description": "__MSG_manifest_description__",
 	"version": "0",
 	
-	"permissions": [ "tabs", "activeTab", "storage"],
+	"permissions": [ "tabs", "activeTab", "storage", "unlimitedStorage"],
 	
 	"action": {
 	  "default_icon": "gui/icons/logo_no_tiny.png",
       "default_popup": "gui/popup.htm"
 	},
 
-	"background": {
-		"service_worker": "scripts/ShopAI.js",
-		"type": "module"
-	},
 	"content_scripts": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
 			"js": ["scripts/watchman.js"]
+		}
+	],
+	"web_accessible_resources": [
+		{
+			"matches": ["http://*/*", "https://*/*"],
+			"resources": ["scripts/secretariat.js", "scripts/reader.js", "gui/scripts/read.JS", "gui/scripts/alerts.js"]
 		}
 	],
 	
