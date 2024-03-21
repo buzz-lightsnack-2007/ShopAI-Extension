@@ -38,13 +38,20 @@ Be sensitive to changes and update the state.
             // TODO
         }
 
+        static standby() {
+          /* Set the program to standby utnil next load.
+          */
+
+          console.log("ShopAI doesn't work here (yet). Expecting something? Try checking your filters. If you know what you're doing, feel free to create a filter yourself.");
+        }
+
         static job() {
           /* The main action. */
           let job_task = watchman.observe();
           if (job_task) {
             watchman.act(job_task);
           } else {
-            console.log("ShopAI doesn't work here (yet). Expecting something? Try checking your filters. If you know what you're doing, feel free to create a filter yourself.");
+            watchman.standby();
           }
         }
     }
