@@ -1,34 +1,54 @@
-/* Watchman.js 
-Be sensitive to changes and update the state. 
+/* Watchman.js
+Be sensitive to changes and update the state.
 */
 
 (async () => {
-    // Import modules. 
+    // Import modules.
     let secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
     let reader = await import(chrome.runtime.getURL("scripts/reader.js"));
 
     class watchman {
         static observe(URL = window.location.href) {
-            /* Check the current URL. 
-            
-            Parameters: 
+            /* Check the current URL.
+
+            Parameters:
                 URL: the page URL; default value is the current webpage
-            Returns: (boolean) status
+            Returns: (dictionary) the filter to follow
             */
 
-            // Create the variable to determine the corresponding key. 
-            let key;
+            // Create the variable to determine the corresponding key.
+            let activity = false;
+            let filters = secretariat.rules(URL);
 
-            secretariat.rules(URL);
+            // Check if the filters exist.
+            activity = (filters);
 
-            return (key);
+            return (activity);
         };
 
-        static act() {
+        static act(filters) {
+            /* Act on the page.
+
+            Parameters:
+              filters: the filter to work with
+            Returns: the state
+            */
+
+            console.log("ShopAI works here! Click on the button in the toolbar or website to start.");
             // TODO
-        };
-    };
-    
-    watchman.observe();
-    watchman.act();
+        }
+
+        static job() {
+          /* The main action. */
+          let job_task = watchman.observe();
+          if (job_task) {
+            watchman.act(job_task);
+          } else {
+            console.log("ShopAI doesn't work here (yet). Expecting something? Try checking your filters. If you know what you're doing, feel free to create a filter yourself.");
+          }
+        }
+    }
+
+    watchman.job();
+
 })();
