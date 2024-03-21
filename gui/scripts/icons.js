@@ -1,0 +1,3 @@
+/* icons.js
+Manage icons.
+*/
