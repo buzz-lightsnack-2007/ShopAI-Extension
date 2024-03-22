@@ -22,7 +22,7 @@ export function read(prefname, cloud = false) {
 			chrome.storage.local.get(null, (database) => {pref_data = database[prefname];});
 		};
 	} else {
-		// You can get everything if you'd like. 
+		// You can get everything if you'd like.
 		if (cloud) {
 			chrome.storage.sync.get(null, (database) => {pref_data = database});
 		} else {
