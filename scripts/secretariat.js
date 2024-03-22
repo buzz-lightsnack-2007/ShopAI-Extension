@@ -33,35 +33,33 @@ export default class secretariat {
 		return(pref_data);
 	};
 
-	static rules(domain = window.location.href) {
-		/* List the matching rule for a particular domain.
+	static specifics(WHERE, domain = window.location.href) {
+		/* List the matching rule or memory for a particular domain.
 
 		Parameters:
+			WHERE: the data source
 			domain: the website to check, which --- by default --- is the current website
 		Returns: (dictionary) the rules
 		*/
 
 		let result;
 
+		let pref_data = read(WHERE);
 		// Read the filters.
-		let filters = read(`filters`);
-		if (filters) {
-				// Must only run when there stored value.
-				if (domain.trim()) {
-					// Function to loop through each object defined by their URL
-					function reference(article) {
-						/* Skim through each one and set a matching find.
+		switch (domain) {
+			case `filters`:
+				let filters = pref_data;
+				if (filters) {
+					// Must only run when there stored value.
+					if (domain.trim()) {
+						// Loop through each filter
+						(Object.keys(filters)).forEach((article) => {
+							// Set the section in focus
+							let section = filters[article];
+							let qualified = false;
 
-						Parameters:
-							section: the URL to check
-						*/
-
-						// Set the section in focus
-						let section = filters[article];
-						let qualified = false;
-
-						// Determine validity
-						if (section) {
+							// Determine validity
+							if (section) {
 								// The filter must have a matching URL
 								if (section[`URL`]) {
 									// Now it's time to test it.
@@ -71,28 +69,40 @@ export default class secretariat {
 										result = section;
 									};
 								};
+							};
+						});
+
+					} else {
+						// Get everything as instructed.
+						result = filters;
+					}
+				};
+				break;
+			default:
+				// In the default mode, the keys refer to the product itself
+				if (pref_data) {
+					(Object.keys(pref_data)).forEach((product_URL) => {
+						// Get the first matching
+						if ((domain.trim()).includes(product_URL)) {
+							// Do not modify the data
+							result = pref_data[product_URL];
 						};
-
-					};
-					// The keys
-					(Object.keys(filters)).forEach(reference);
-
-				} else {
-					// Get everything as instructed.
-					result = filters;
-				}
+					});
+				};
+				break;
 		};
 
 		// Return the result.
 		return(result);
 	}
 
-	static amend(website, rules) {
+	static amend(WHERE, website, datas) {
 		/* Update the rules.
 
 		Parameters:
+			WHERE: the data set to update
 			website: RegEx pattern of the website or the domain
-			rules: the rules in JSON
+			datas: the data in JSON
 		Returns: (boolean) the update status
 		*/
 
@@ -147,8 +157,8 @@ export function read(prefname) {
 	return(secretariat.read(prefname));
 };
 
-export function rules(domain = window.location.href) {
-	return(secretariat.rules(domain));
+export function specifics(WHERE, domain = window.location.href) {
+	return(secretariat.specifics(WHERE, domain));
 }
 
 export function amend(website, rules) {

@@ -18,7 +18,7 @@ Be sensitive to changes and update the state.
 
             // Create the variable to determine the corresponding key.
             let activity = false;
-            let filters = secretariat.rules(URL);
+            let filters = secretariat.specifics(`filters`, URL);
 
             // Check if the filters exist.
             activity = (filters);
