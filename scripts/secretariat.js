@@ -14,25 +14,27 @@ export function read(prefname, cloud = false) {
 	// Initialize the selected pref data.
 	let pref_data;
 
-	function pref_data_set(database) {
-		pref_data = database[prefname];
+	if (prefname) {
+		// Retrieve the data.
+		if (cloud) {
+			chrome.storage.sync.get(null, (database) => {pref_data = database[prefname]});
+		} else {
+			chrome.storage.local.get(null, (database) => {pref_data = database[prefname];});
+		};
+	} else {
+		// You can get everything if you'd like. 
+		if (cloud) {
+			chrome.storage.sync.get(null, (database) => {pref_data = database});
+		} else {
+			chrome.storage.local.get(null, (database) => {pref_data = database;});
+		};
 	};
 
-	// Retrieve the data.
-	if (cloud) {
-		chrome.storage.sync.get(prefname, (items) => {
-			pref_data_set(items);
-			});
-	} else {
-		chrome.storage.local.get(prefname, (items) => {
-			pref_data_set(items);
-			});
-	}
 
 	return(pref_data);
 }
 
-export function specifics(WHERE, domain = window.location.href) {
+export function specifics(WHERE, domain) {
 	/* List the matching rule or memory for a particular domain.
 
 	Parameters:
@@ -80,13 +82,18 @@ export function specifics(WHERE, domain = window.location.href) {
 		default:
 			// In the default mode, the keys refer to the product itself
 			if (pref_data) {
-				(Object.keys(pref_data)).forEach((product_URL) => {
-					// Get the first matching
-					if ((domain.trim()).includes(product_URL)) {
-						// Do not modify the data
-						result = pref_data[product_URL];
-					};
-				});
+				if (domain) {
+					// Extract a data only when a website URL is specified.
+					(Object.keys(pref_data)).forEach((product_URL) => {
+						// Get the first matching
+						if ((domain.trim()).includes(product_URL)) {
+							// Do not modify the data
+							result = pref_data[product_URL];
+						};
+					});
+				} else {
+					result = pref_data;
+				}
 			};
 			break;
 	};
@@ -95,35 +102,47 @@ export function specifics(WHERE, domain = window.location.href) {
 	return(result);
 }
 
-export function write(prefname, data) {
+export function write(PREFERENCE, SUBPREFERENCE, DATA, CLOUD = false) {
 	/* Write the data on the selected prefname.
 
 	Parameters:
-		prefname: the preference name
-		data: the new data to be written
+		PREFERENCE: the preference name
+		DATA: the new data to be written
+		SUBPREFERENCE: the intermediate data
+		CLOUD: store in the cloud, which isn't recommended
 	*/
 
+	let DATA_INJECTED = DATA;
 
+	if (SUBPREFERENCE) {
+		// Collect the existing preferenc's data.
+		let DATA_ALL = read(PREFERENCE);
+
+		// handle empty collected data.
+		if (!DATA_ALL) {DATA_ALL = {};};
+
+		// Add the subpreference.
+		DATA_ALL[SUBPREFERENCE] = DATA;
+		DATA_INJECTED = DATA_ALL;
+
+	} else {
+		DATA_INJECTED = DATA;
+	};
+
+	if (CLOUD) {
+		chrome.storage.sync.set({[`${PREFERENCE}`]: DATA_INJECTED});
+	} else {
+		chrome.storage.local.set({[`${PREFERENCE}`]: DATA_INJECTED});
+	};
 }
 
-export function amend(WHERE, SITE, DATA) {
-	/* Update the rules.
-
-	Parameters:
-		WHERE: the data set to update
-		SITE: RegEx pattern of the website or the domain
-		DATA: the data in JSON
-	Returns: (boolean) the update status
-	*/
-
-
-}
-
-export function forget(domain) {
+export function forget(preference, subpreference, CLOUD = false) {
 	/* Dangerous: Resets all data or a domain's data.
 
 	Parameters:
-		domain: the external source of the filter
+		prefernece: the preference name to delete
+		subpreference: the subpreference name to delete
+		CLOUD: the storage of the data
 	Returns: the user's confirmation
 	*/
 
@@ -137,8 +156,24 @@ export function forget(domain) {
 		let forget_action = alerts.confirm_action();
 
 		if (forget_action) {
-			if (domain) {
+			if (preference) {
+				if (subpreference) {
+					// Get the data.
+					data = read(preference, CLOUD);
 
+					// Should only run when existent
+					if (data[subpreference]) {
+						delete data[subpreference];
+						write(preference, subpreference, data, CLOUD);
+					}
+				} else {
+					// Remove that particular data.
+					chrome.storage.local.get(null, (data) => {
+						delete data[preference];
+
+						chrome.storage.local.set(data, (result) => {});
+					});
+				};
 			} else {
 					// Clear the data storage.
 					chrome.storage.local.clear();
@@ -148,4 +183,4 @@ export function forget(domain) {
 	})();
 
 	return (forget_action);
-};
+}
