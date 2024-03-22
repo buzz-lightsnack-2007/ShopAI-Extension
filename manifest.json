@@ -3,12 +3,16 @@
 	"name": "__MSG_manifest_name__",
 	"description": "__MSG_manifest_description__",
 	"version": "0",
-	
+
 	"permissions": [ "tabs", "activeTab", "storage", "unlimitedStorage"],
-	
+
 	"action": {
 	  "default_icon": "gui/icons/logo_no_tiny.png",
       "default_popup": "gui/popup.htm"
+	},
+
+	"background": {
+		"service_worker": "scripts/shopAI.js"
 	},
 
 	"content_scripts": [
@@ -23,13 +27,13 @@
 			"resources": ["scripts/secretariat.js", "scripts/reader.js", "gui/scripts/read.JS", "gui/scripts/alerts.js"]
 		}
 	],
-	
+
 	"icons": {
 		"1024": "gui/icons/logo.png",
 		"512": "gui/icons/logo_tiny.png"
 	},
-	
+
 	"options_page": "gui/popup.htm",
-	
+
 	"default_locale": "en"
 }
