@@ -19,7 +19,7 @@
   },
   "GUI_welcome_version": {
     "message": "You’ve got version $manifest_version$.",
-    "description": "Version number of welcome message",
+    "description": "Version number in welcome message",
     "placeholders": {
       "manifest_version": {
         "content": "$1",
@@ -27,10 +27,15 @@
       }
     }
   },
-  "GUI_error_stop": {
-    "message": "The web browser can not open this page.",
-    "description": "Error message when opening the HTML page directly"
-
+  "GUI_status_version": {
+    "message": "V$manifest_version$",
+    "description": "Version number in status bars",
+    "placeholders": {
+      "manifest_version": {
+        "content": "$1",
+        "description": "The manifest version"
+      }
+    }
   },
   "GUI_credits_0": {
     "message": "Made with love.",

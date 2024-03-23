@@ -24,10 +24,16 @@
 			}
 		}
 	},
-	"GUI_error_stop": {
-		"message": "浏览器无法打开网页。",
-		"description": "禁止扩展程序外打开 HTML 文件"
-	},
+	"GUI_status_version": {
+    "message": "$manifest_version$ 版本",
+    "description": "statusbar 上的版本",
+    "placeholders": {
+      "manifest_version": {
+        "content": "$1",
+        "description": "版本"
+      }
+    }
+  },
 	"GUI_credits_0": {
     "message": "亲爱的马老师…",
     "description": "credits #0"
