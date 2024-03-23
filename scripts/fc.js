@@ -8,9 +8,8 @@ let config = chrome.runtime.getURL('config/config.json');
 
 export default class fc {
 
+	/* Start the out of the box experience. */
 	static hello() {
-		/* Start the out of the box experience.
-		*/
 
 		// the OOBE must be in the config.
 		fetch(config)
@@ -29,11 +28,8 @@ export default class fc {
 			});
 	};
 
+	/* Initialize the configuration. */
 	static setup() {
-		/* Initialize the configuration.
-
-		Returns: the initialization result
-		*/
 
 		// the OOBE must be in the config.
 		fetch(config)
@@ -58,8 +54,8 @@ export default class fc {
 		});
 	}
 
+	/* main function */
 	static run() {
-		/* main function */
 
 		fc.trigger();
 	}

@@ -2,14 +2,13 @@
 Manage the local cache.
 */
 
-export function read(prefname, cloud = 0) {
-	/* Read all storeed data in the browser cache.
+/* Read all storeed data in the browser cache.
 
-	Parameters:
-		prefname: (string) the preference name
-		cloud: (bool) determine cloud reading, which is otherwise set to automatic (0)
-	Returns: (Object) the preferences
-	*/
+@param {string} prefname the preference name
+@param {int} cloud determine cloud reading, which is otherwise set to automatic (0)
+@return {dictionary} the preferences
+*/
+export function read(prefname, cloud = 0) {
 
 	// Initialize the selected pref data.
 	let pref_data;
@@ -38,14 +37,13 @@ export function read(prefname, cloud = 0) {
 	return(pref_data);
 }
 
-export function specifics(WHERE, domain) {
-	/* List the matching rule or memory for a particular domain.
+/* List the matching rule or memory for a particular domain.
 
-	Parameters:
-		WHERE: the data source
-		domain: the website to check, which --- by default --- is the current website
-	Returns: (dictionary) the rules
-	*/
+@param {string} WHERE the data source
+@param {string} the data to check
+@return {dictionary} the rules
+*/
+export function specifics(WHERE, domain) {
 
 	let result;
 
@@ -106,15 +104,14 @@ export function specifics(WHERE, domain) {
 	return(result);
 }
 
-export function write(PREFERENCE, SUBPREFERENCE, DATA, CLOUD = 0) {
-	/* Write the data on the selected prefname.
+/* Write the data on the selected prefname.
 
-	Parameters:
-		PREFERENCE: the preference name
-		DATA: the new data to be written
-		SUBPREFERENCE: the intermediate data
-		CLOUD: store in the cloud; otherwise set to automatic
-	*/
+@param {string} PREFERENCE the preference name
+@param {string} SUBPREFERENCE the subpreference
+@param {object} DATA the new data to be written
+@param {int} CLOUD store in the cloud; otherwise set to automatic
+*/
+export function write(PREFERENCE, SUBPREFERENCE, DATA, CLOUD = 0) {
 
 	let DATA_INJECTED = DATA;
 
@@ -141,15 +138,14 @@ export function write(PREFERENCE, SUBPREFERENCE, DATA, CLOUD = 0) {
 	};
 }
 
-export function forget(preference, subpreference, CLOUD = 0) {
-	/* Dangerous: Resets all data or a domain's data.
+/* Dangerous: Resets all data or a domain's data.
 
-	Parameters:
-		prefernece: the preference name to delete
-		subpreference: the subpreference name to delete
-		CLOUD: the storage of the data
-	Returns: the user's confirmation
-	*/
+@param {string} preference the preference name to delete
+@param {string} subpreference the subpreference name to delete
+@param {int} CLOUD the storage of the data
+@return {boolean} the user's confirmation
+*/
+export function forget(preference, subpreference, CLOUD = 0) {
 
 	let forget_action = false;
 
@@ -199,12 +195,11 @@ export function forget(preference, subpreference, CLOUD = 0) {
 	return (forget_action);
 }
 
-export function init(data) {
-	/* Initialize the storage.
+/* Initialize the storage.
 
-	Parameters:
-		data: (dictionary) this build's managed data
-	*/
+@param {dictionary} data this build's managed data
+*/
+export function init(data) {
 
 	let PREFERENCES_ALL = {};
 	PREFERENCES_ALL[`build`] = data;
