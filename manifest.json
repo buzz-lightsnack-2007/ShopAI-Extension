@@ -12,7 +12,7 @@
 	},
 
 	"background": {
-		"service_worker": "scripts/shopAI.js"
+		"service_worker": "scripts/shopAI.js", "type": "module"
 	},
 
 	"content_scripts": [
@@ -24,7 +24,7 @@
 	"web_accessible_resources": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
-			"resources": ["scripts/secretariat.js", "scripts/reader.js", "gui/scripts/read.JS", "gui/scripts/alerts.js"]
+			"resources": ["scripts/*.js", "gui/scripts/*.js", "config/*.json"]
 		}
 	],
 
