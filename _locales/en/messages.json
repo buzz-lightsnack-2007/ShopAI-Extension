@@ -3,11 +3,9 @@
     "message": "en"
   },
   "manifest_name": {
-
     "message": "ShopAI",
     "description": "Extension name"
   },
-
   "manifest_description": {
     "message": "Shop wisely with AI!",
     "description": "Extension description"
@@ -15,7 +13,6 @@
   "GUI_welcome_headline": {
     "message": "Welcome to ShopAI!",
     "description": "Welcome message"
-
   },
   "GUI_welcome_version": {
     "message": "You’ve got version $manifest_version$.",
@@ -44,5 +41,9 @@
   "GUI_alert_confirm_action_text": {
     "message": "Are you sure you would want to do this?",
     "description": "confirm user's dangerous action"
+  },
+  "GUI_title_preferences": {
+    "message": "ShopAI Settings",
+    "description": "Welcome message"
   }
 }

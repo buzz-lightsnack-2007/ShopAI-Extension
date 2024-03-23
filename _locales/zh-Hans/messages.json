@@ -41,5 +41,9 @@
   "GUI_alert_confirm_action_text": {
     "message": "您认真地想运行它吗？",
     "description": "运行危险的软件以前的问题"
+  },
+	"GUI_title_preferences": {
+    "message": "购物人类智能设置",
+    "description": "设置网页的题目"
   }
 }
