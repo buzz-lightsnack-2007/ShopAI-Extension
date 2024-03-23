@@ -1,8 +1,5 @@
 .DS_Store
 /bin
 interface.external.css
-<<<<<<< HEAD
 jquery.js
-=======
-jquery.css
->>>>>>> 8599ec1841a6f4c5cb99420496684d21f1126c1e
+/config/config.json
