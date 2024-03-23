@@ -3,7 +3,6 @@
 */
 
 // Import modules.
-import compat from "./compat.js";
 import texts from "./read.JS";
 
 // Call the main function.
