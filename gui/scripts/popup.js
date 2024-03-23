@@ -4,12 +4,11 @@
 
 // Import modules.
 import compat from "./compat.js";
-import UI from "./interface.JS";
 import texts from "./read.JS";
 
 // Call the main function.
 function main() {
-  
+
 }
 
 if (compat.restrict()) {
