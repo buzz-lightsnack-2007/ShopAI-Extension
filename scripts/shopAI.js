@@ -2,4 +2,6 @@
 Shop wisely with AI!
 */
 
-importScripts('fc.js');
+import fc from './fc.js';
+
+fc.run();

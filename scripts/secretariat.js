@@ -214,6 +214,10 @@ export function init(data) {
 		PREFERENCES_ALL[`managed`] = DATA_MANAGED;
 	});
 
+	chrome.storage.local.get(null, function(DATA_LOCAL){
+		PREFERENCES_ALL[`local`] = DATA_LOCAL;
+	});
+
 	chrome.storage.sync.get(null, function(DATA_SYNC){
 		PREFERENCES_ALL[`sync`] = DATA_SYNC;
 	});
@@ -245,7 +249,8 @@ export function init(data) {
 
 			PREFERENCE[`existing`] = (
 				((PREFERENCES_ALL[`sync`]) ? (PREFERENCES_ALL[`sync`]).hasOwnProperty(PREFERENCE[`name`]) : false) ||
-					((PREFERENCES_ALL[`managed`]) ? (PREFERENCES_ALL[`managed`]).hasOwnProperty(PREFERENCE[`name`]) : false)
+					((PREFERENCES_ALL[`managed`]) ? (PREFERENCES_ALL[`managed`]).hasOwnProperty(PREFERENCE[`name`]) : false) ||
+					((PREFERENCES_ALL[`local`]) ? (PREFERENCES_ALL[`local`]).hasOwnProperty(PREFERENCE[`local`]) : false)
 			);
 
 			if (!PREFERENCE[`existing`]) {
