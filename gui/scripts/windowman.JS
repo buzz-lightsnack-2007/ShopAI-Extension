@@ -1,12 +1,19 @@
 /* windowman
 Window management */
 
-let UI = {'library': chrome.runtime.getURL('gui/styles/interface.external.css')};
+import texts from "./read.JS";
 
 export default class windowman {
-	/* Initialize the window frame. */
+     /* Initialize the window frame. */
 	static prepare() {
-		$(`head`).append(`<link rel="stylesheet" type="text/css" href="${UI.library}">`);
+          try {
+               let UI = {'library': chrome.runtime.getURL('gui/styles/interface.external.css'), 'script': chrome.runtime.getURL('gui/scripts/external/interface.external.js')};
+               
+               $(`head`).append(`<link rel="stylesheet" type="text/css" href="${UI.library}">`);
+               $(`head`).append(`<script type="module" src="${UI.script}"></script>`);
+          } catch(error) {
+               console.error(texts.localized(`error_fileNotFound`, [error]));
+          };
 	}
 
 	/*
@@ -42,44 +49,46 @@ export default class windowman {
 	@return {string} the element ID
 	*/
 	inject(element_ID, element_name, parent_element_name, element_type = `div`, element_class = [], element_content = ``, element_properties = {}) {
-		// If no element ID is provided, create a random ID as well. 
+          let element_injection = {};
+		
+          // If no element ID is provided, create a random ID as well. 
 		if (!element_ID) {
 			element_ID = (Math.floor((Math.random())**(-3))).toString();
-		};
+               element_injection[`ID`] = (((parent_element_name) ? parent_element_name[`ID`] : this[`ID`]).concat(`_`)).concat(element_ID);
+		} else {
+               element_injection[`ID`] = element_ID;
+          };
 		
 		// Prepare for injection. 
-		let element_injection = {};
-		
-		element_injection[`ID`] = (((parent_element_name) ? this[parent_element_name][`ID`] : this[`ID`]).concat(`_`)).concat(element_ID);
 		element_injection[`type`] = element_type;
 		if (element_properties) {element_injection[`properties`] = element_properties};
-		if (element_class) {element_injection[`class`] = element_properties;}
+		if (element_class) {element_injection[`class`] = element_class;}
 		
 		// Add it to this window's properties. 
 		if (parent_element_name) {
-			this[parent_element_name][element_name] = element_injection;
+			parent_element_name[element_name] = element_injection;
 		} else {
 			this[element_name] = element_injection;
 		}
 		
 		// Inject the element. 
-		$(`#`.concat(((parent_element_name) ? this[parent_element_name] : this)[ID]) ).append(`<${element_inject['type']} id=${element_inject['ID']}> </${element_inject['type']}>`)
+		$(`#`.concat(((parent_element_name) ? parent_element_name : this)[`ID`]) ).append(`<${element_injection['type']} id=${element_injection['ID']}> </${element_injection['type']}>`)
 		
 		// Now add the classes. 
 		if (element_injection[`class`]) {
 			(element_injection[`class`]).forEach((class_name) => {
-				$(`#`.concat(((parent_element_name) ? this[parent_element_name][element_name] : this[element_name])[ID])).addClass(class_name);
+				$(`#`.concat(((parent_element_name) ? parent_element_name[element_name] : this[element_name])[`ID`])).addClass(class_name);
 			});
 		};
 		
 		if (element_injection[`properties`]) {
 			(Object.keys(element_injection[`properties`])).forEach((property_name) => {
-				$(`#`.concat(((parent_element_name) ? this[parent_element_name][element_name] : this[element_name])[ID]).attr(property_name, element_injection[`properties`][property_name]));
+				$(`#`.concat(((parent_element_name) ? parent_element_name[element_name] : this[element_name])[`ID`])).attr(property_name, element_injection[`properties`][property_name]);
 			});
 		}
 		
 		// Add the content. 
-		update(((parent_element_name) ? this[parent_element_name][element_name] : this[element_name]), element_content); 
+		$(`#`.concat(element_injection[`ID`])).html(element_content);
 		
 		// Return the content. 
 		return(element_injection[`ID`]);
@@ -87,7 +96,7 @@ export default class windowman {
 	
 	
 	/* The following are reserved keywords in colloquial names: 
-		ID, properties, type
+		ID, properties, type, operation
 	*/
 
 	/*
@@ -155,7 +164,7 @@ export default class windowman {
 					$(`#${element_data.titlebar.ID}`).append(`<side id="${element_data.titlebar.controls.ID}"></side>`);
 					$(`#${element_data.titlebar.controls.ID}`).addClass(`title-bar-controls`);
 
-					// Get the close
+					// Set the possible
 					(Object.keys(window_buttons)).forEach((btn_label) => {
 						if (window_buttons[btn_label]) {
 							$(`#${element_data.titlebar.controls.ID}`).append(`<button id="${element_data.titlebar.controls[btn_label].ID}"></button>`);
@@ -183,5 +192,27 @@ export default class windowman {
 		titlebar();
 		content();
 	}
+	
+	/* 
+	Close the window or an element. 
 
+	@param {bool} floating the window is not the tab itself
+	*/
+	terminate(floating = true) {
+		let state_close = true; 
+		if ((this[`operation`]) ? this[`operation`][`Close`]: false) {
+			// Should run before closing the window. 
+			state_close = this[`operation`][`Close`]();
+		};
+
+		if (state_close) {
+			$(`#${this.ID}`).remove();
+	
+			if (!floating) {
+				window.close();
+			};
+		}
+	}
+	
+	
 }
