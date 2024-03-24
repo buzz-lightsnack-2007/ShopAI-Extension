@@ -143,7 +143,7 @@ export default class windowman {
 
 		function frame() {
 			$(element_target).append(`<section id="${element_data.ID}"></section>`);
-			$(`#${element_data.ID}`).addClass(`window active`);
+			$(`#${element_data.ID}`).addClass(`window glass active`);
 		}
 
 		function titlebar() {
