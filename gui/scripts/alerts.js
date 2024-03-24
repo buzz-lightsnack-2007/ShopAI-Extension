@@ -10,7 +10,7 @@ export function confirm_action() {
         let reader = await import(chrome.runtime.getURL("gui/scripts/read.JS"));
 
         // Get the user response. 
-        user_response = confirm(reader.read("localized", `GUI_alert_confirm_action_text`));
+        user_response = confirm(reader.read(`GUI_alert_confirm_action_text`));
 
     })();
     // Return the user response. 
