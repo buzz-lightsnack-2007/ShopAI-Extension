@@ -13,7 +13,7 @@ function start() {
 
 function populate(element) {
 	/* Populate the strings on the page. */
-	element.update('title', texts.localized(`GUI_title_prefs`));
+	element.update(element[`titlebar`][`title`], texts.localized(`GUI_title_prefs`));
 }
 
 function main() {
