@@ -1,0 +1,114 @@
+{
+  "general": {
+    "type": "tab",
+    "content": {
+      "appearance": {
+        "type": "group",
+        "content": {
+          "showApplicable": {
+            "type": "tickbox",
+            "preference": ["preferences", "appearance", "showApplicable"]
+          },
+          "injectPage": {
+            "type": "tickbox",
+            "preference": ["preferences", "appearance", "injectPage"]
+          }
+        }
+      },
+      "behavior": {
+        "type": "group",
+        "content": {
+          "autoRun": {
+            "type": "tickbox",
+            "description": "autoRunDisclaimer",
+            "preference": ["preferences", "behavior", "autoRun"]
+          }
+        }
+      }
+    }
+  },
+  "filters": {
+    "type": "tab",
+    "content": {
+      "filters": {
+          "type": "filter",
+          "search criteria": {
+              "search": {
+                  "type": "search",
+                  "directory": ["filters"],
+                  "criteria": [".", "URL"]
+              },
+              "add": {
+                  "type": "button",
+                  "action": "add"
+              }
+          },
+          "result selection": {
+              "foundItems": {
+                  "type": "select"
+              }
+          },
+          "result detail": {
+              "rulesViewer": {
+                  "type": "textbox",
+                  "result": ["filters", "."]
+              },
+              "preferences": {
+                  "type": "footer",
+                  "content": {
+                      "enable": {
+                          "type": "tickbox",
+                          "preference": ["filter preferences", ".", "enabled"]
+                      },
+                      "remove": {
+                          "type": "button",
+                          "action": "remove"
+                      },
+                      "save": {
+                          "type": "button",
+                          "action": "save"
+                      }
+                  }
+              }
+          }
+      }
+    }
+  },
+  "storage": {
+    "type": "tab",
+    "content": {
+      "storage_management": {
+        "type": "group",
+        "content": {
+            "description": {
+              "type": "label"
+            },
+            "delete": {
+                "type": "button",
+                "action": "remove"
+            }
+        }
+      }
+    }
+  },
+  "about": {
+    "type": "tab",
+    "content": {
+      "app_logo": {
+          "type": "image"
+      },
+      "manifest_name": {
+          "type": "label"
+      },
+      "extension_version": {
+          "type": "label"
+      },
+      "extension_description": {
+          "type": "label"
+      },
+      "extension_help": {
+          "type": "label"
+      }
+    }
+  }
+}
