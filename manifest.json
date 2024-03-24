@@ -33,7 +33,7 @@
 		"512": "gui/icons/logo_tiny.png"
 	},
 
-	"options_page": "gui/popup.htm",
+	"options_page": "gui/settings.htm",
 
 	"default_locale": "en"
 }
