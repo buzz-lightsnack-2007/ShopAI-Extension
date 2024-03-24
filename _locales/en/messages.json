@@ -45,5 +45,30 @@
   "GUI_title_preferences": {
     "message": "ShopAI Settings",
     "description": "Welcome message"
+  },
+  "term_preferences": {
+    "message": "Settings"
+  },
+  "term_about": {
+    "message": "About"
+  }, 
+  "term_filters": {
+    "message": "Filters"
+  },
+  "term_apply": {
+    "message": "Apply"
+  },
+  "term_cancel": {
+    "message": "Cancel"
+  },
+  "error_fileNotFound": {
+    "message": "This build is broken, as a file could not be found. The error is as follows: $error_msg$",
+    "description": "The error message when a file couldn't be found",
+    "placeholders": {
+      "error_msg": {
+        "content": "$1",
+        "description": "The error message"
+      }
+    }
   }
 }
