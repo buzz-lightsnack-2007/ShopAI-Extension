@@ -3,5 +3,68 @@
 	<script type="module" src="scripts/settings.js"></script>
 </head>
 <body>
-	
+	<main class="window-body has-space">
+		<menu role="tablist" aria-label="Window with Tabs">
+  		<button role="tab" aria-controls="settings"></button>
+  		<button role="tab" aria-controls="filters"></button>
+  		<button role="tab" aria-controls="storage"></button>
+			<button role="tab" aria-controls="about"></button>
+		</menu>
+		<section class="view_main">
+			<section role="tabpanel" id="settings">
+				<fieldset id="settings_general">
+					<legend></legend>
+					<form class="field-row">
+						<input type="checkbox" id="settings_general_showApplicable" data-store="settings,general,showApplicable">
+	      		<label for="settings_general_showApplicable"></label>
+					</form>
+					<form class="field-row">
+						<input type="checkbox" id="settings_general_injectToPage" data-store="settings,general,injectToPage">
+		      	<label for="settings_general_injectToPage"></label>
+					</form>
+				</fieldset>
+				<fieldset id="settings_behavior">
+					<legend></legend>
+					<form class="field-row">
+						<input type="checkbox" id="settings_behavior_autoRun" data-store="settings,behavior,autoRun">
+		      	<label for="settings_behavior_autoRun"></label>
+					</form>
+				</fielset>
+			</section>
+			<section role="tabpanel" id="filters">
+				<fieldset id="filters">
+					<legend></legend>
+					<label data-name="settings_filters_description"></label>
+					<div class="field-row action-buttons">
+						<button id="settings_filters_clear" data-action="filters,clear"></button>
+						<button id="settings_filters_open" data-action="open,filters"></button>
+					</div>
+				</fieldset>
+			</section>
+			<section role="tabpanel" id="storage">
+				<fieldset id="storage">
+					<legend></legend>
+					<label data-name="settings_storage_description"></label>
+					<div class="field-row action-buttons">
+						<button id="settings_filters_clear" data-action="storage,clear"></button>
+					</div>
+				</fieldset>
+			</section>
+		</section>
+		<section role="tabpanel" id="about">
+			<img id="about_app_logo" />
+			<h1 data-text="manifest_name"></h1>
+			<p data-text="extension_version"></p>
+			<p data-text="extension_description"></p>
+			<div class="field-row action-buttons">
+				<button data-action="open,help"></button>
+			</div>
+		</section>
+	</section>
+		<footer class="field-row action-buttons">
+			<button class="default" id="apply">Apply</button>
+      <button id="cancel">Cancel</button>
+		</footer>
+	</main>
+	</div>
 </body></html>
