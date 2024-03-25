@@ -1,14 +1,14 @@
 {
 	"manifest_version": 3,
-	"name": "__MSG_manifest_name__",
-	"description": "__MSG_manifest_description__",
+	"name": "__MSG_extension_name__",
+	"description": "__MSG_extension_description__",
 	"version": "0",
 
 	"permissions": [ "tabs", "activeTab", "storage", "unlimitedStorage"],
 
 	"action": {
 	  "default_icon": "gui/icons/logo_no_tiny.png",
-      "default_popup": "gui/popup.htm"
+      "default_popup": "gui/pages/open/popup.htm"
 	},
 
 	"background": {
@@ -33,7 +33,7 @@
 		"512": "gui/icons/logo_tiny.png"
 	},
 
-	"options_page": "gui/settings.htm",
+	"options_page": "gui/pages/open/settings.htm",
 
 	"default_locale": "en"
 }

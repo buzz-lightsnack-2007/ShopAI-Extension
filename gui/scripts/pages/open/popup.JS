@@ -1,7 +1,7 @@
-import {windowman} from './windowman.JS';
+import {windowman} from '../../windowman.JS';
 
 function redirect() {
-  new windowman(`gui/popup.htm`);
+  new windowman(`gui/pages/settings.htm`);
 
   window.close();
 }

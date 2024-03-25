@@ -1,0 +1,70 @@
+<html><head>
+	<script type="module" src="../scripts/external/jquery.js"></script>
+	<script type="module" src="../scripts/settings.js"></script>
+</head>
+<body>
+	<main class="window-body has-space">
+		<menu role="tablist">
+  		<button role="tab" aria-controls="settings" data-text="general"></button>
+  		<button role="tab" aria-controls="filters" data-text="filters"></button>
+  		<button role="tab" aria-controls="storage" data-text="storage"></button>
+			<button role="tab" aria-controls="about" data-text="about"></button>
+		</menu>
+		<section class="view_main">
+			<section role="tabpanel" id="settings">
+				<fieldset>
+					<legend data-text="general"></legend>
+					<form class="field-row">
+						<input type="checkbox" id="settings_general_showApplicable" data-store="settings,general,showApplicable">
+	      		<label for="settings_general_showApplicable" data-text="settings_general_showApplicable"></label>
+					</form>
+					<form class="field-row">
+						<input type="checkbox" id="settings_general_injectToPage" data-store="settings,general,injectToPage">
+		      	<label for="settings_general_injectToPage" data-text="settings_general_injectToPage"></label>
+					</form>
+				</fieldset>
+				<fieldset>
+					<legend data-text="behavior"></legend>
+					<form class="field-row">
+						<input type="checkbox" id="settings_behavior_autoRun" data-store="settings,behavior,autoRun">
+		      	<label for="settings_behavior_autoRun" data-text="settings_behavior_autoRun"></label>
+					</form>
+				</fielset>
+			</section>
+			<section role="tabpanel" id="filters">
+				<fieldset>
+					<legend data-text="filters"></legend>
+					<label data-text="settings_filters_description"></label>
+					<div class="field-row action-buttons">
+						<button data-action="filters,update" data-text="settings_filters_update"></button>
+						<button data-action="open,filters" data-text="settings_filters_open"></button>
+					</div>
+				</fieldset>
+			</section>
+			<section role="tabpanel" id="storage">
+				<fieldset>
+					<legend data-text="storage"></legend>
+					<label data-text="settings_storage_description"></label>
+					<div class="field-row action-buttons">
+						<button data-text="settings_storage_clear" data-action="storage,clear"></button>
+					</div>
+				</fieldset>
+			</section>
+		</section>
+		<section role="tabpanel" id="about">
+			<img data-image="about_app_logo" />
+			<p data-text="extension_name"></p>
+			<p data-text="GUI_status_version"></p>
+			<p data-text="extension_description"></p>
+			<div class="field-row action-buttons">
+				<button data-text="help" data-action="open,help"></button>
+			</div>
+		</section>
+	</section>
+		<footer class="field-row action-buttons">
+			<button class="default" data-text="apply" data-action="action,discard"></button>
+      <button data-text="cancel" data-action="action,discard"></button>
+		</footer>
+	</main>
+	</div>
+</body></html>
