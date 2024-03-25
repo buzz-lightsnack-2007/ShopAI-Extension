@@ -1,12 +1,9 @@
 {
-  "config": {
-    "message": "en"
-  },
-  "manifest_name": {
+  "extension_name": {
     "message": "ShopAI",
     "description": "Extension name"
   },
-  "manifest_description": {
+  "extension_description": {
     "message": "Shop wisely with AI!",
     "description": "Extension description"
   },
@@ -51,7 +48,7 @@
   },
   "term_about": {
     "message": "About"
-  }, 
+  },
   "term_filters": {
     "message": "Filters"
   },
@@ -60,6 +57,18 @@
   },
   "term_cancel": {
     "message": "Cancel"
+  },
+  "term_general": {
+    "message": "General"
+  },
+  "term_storage": {
+    "message": "Storage"
+  },
+  "term_help": {
+    "message": "Help"
+  },
+  "term_behavior": {
+    "message": "Behaviour"
   },
   "error_fileNotFound": {
     "message": "This build is broken, as a file could not be found. The error is as follows: $error_msg$",
@@ -70,5 +79,30 @@
         "description": "The error message"
       }
     }
+  },
+
+  "settings_general_showApplicable": {
+    "message": "Show product's ratings in this extension's icon"
+  },
+  "settings_general_injectToPage": {
+    "message": "Inject a quick access button"
+  },
+  "settings_behavior_autoRun": {
+    "message": "Automatically run this extension on a supported page"
+  },
+  "settings_filters_description": {
+    "message": "Filters help determine the contents of the website before summarizing it."
+  },
+  "settings_storage_description": {
+    "message": "To speed up browsing, ShopAI stores information of the products you have previously visited. This information will be updated whenever the product's information has been changed. "
+  },
+  "settings_storage_clear": {
+    "message": "Empty"
+  },
+  "settings_filters_update": {
+    "message": "Update"
+  },
+  "settings_filters_open": {
+    "message": "Edit"
   }
 }

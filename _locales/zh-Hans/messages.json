@@ -1,12 +1,9 @@
 {
-	"config": {
-		"message": "zh"
-	},
-	"manifest_name": {
-		"message": "购物人类智能",
+	"extension_name": {
+		"message": "购物+人类智能",
 		"description": "扩展程序名字"
 	},
-	"manifest_description": {
+	"extension_description": {
 		"message": "用人类智能榜您谨慎地买东西！",
 		"description": "扩展程序的简介"
 	},
@@ -39,7 +36,7 @@
     "description": "credits #0"
   },
   "GUI_alert_confirm_action_text": {
-    "message": "您认真地想运行它吗？",
+    "message": "您认真地想运行它吗?",
     "description": "运行危险的软件以前的问题"
   },
 	"GUI_title_preferences": {
@@ -61,14 +58,53 @@
    "term_cancel": {
 	"message": "取消"
    },
-   "error_fileNotFound": {
-	"message": "找不到一个文件！错误是： $error_msg$",
-	"description": "找不到文件错误的信息",
-	"placeholders": {
-	  "error_msg": {
-	    "content": "$1",
-	    "description": "错误信息"
-	  }
+   "term_general": {
+     "message": "常规"
+   },
+   "term_storage": {
+     "message": "存储"
+   },
+	 "term_help": {
+     "message": "帮助"
+   },
+	 "term_behavior": {
+		 "message": "性能"
+	 },
+
+
+  "error_fileNotFound": {
+			"message": "找不到一个文件！错误是： $error_msg$",
+			"description": "找不到文件错误的信息",
+			"placeholders": {
+			  "error_msg": {
+			    "content": "$1",
+			    "description": "错误信息"
+			  }
+			}
+   },
+
+	"settings_general_showApplicable": {
+		"message": "在此扩展程序图标中显示产品评分"
+	},
+	"settings_general_injectToPage": {
+		"message": "注入一个快速访问按钮"
+	},
+	"settings_behavior_autoRun": {
+		"message": "自动在支持页面运行此扩展"
+	},
+	"settings_filters_description": {
+		"message": "过滤器帮助确定网站内容之前的摘要。"
+	},
+	"settings_storage_description": {
+		"message": "为了加快浏览速度，《购物+人类智能》存储您以往访问过的产品信息。当产品信息发生变化时，此信息将被更新。"
+	},
+	"settings_storage_clear": {
+		"message": "清空"
+	},
+	"settings_filters_update": {
+		"message": "更新"
+	},
+	"settings_filters_open": {
+		"message": "编辑"
 	}
-   }
 }
