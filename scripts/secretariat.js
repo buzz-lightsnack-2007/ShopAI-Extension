@@ -153,105 +153,76 @@ export async function read(DATA_NAME, CLOUD = 0, PARAMETER_TEST = null) {
 	return(DATA_RETURNED[`value`]);
 }
 
-/* List the matching rule or memory for a particular domain.
-
-@param {string} WHERE the data source
-@param {string} the data to check
-@return {dictionary} the rules
-*/
-export function specifics(WHERE, domain) {
-
-	let result;
-
-	let pref_data = read(WHERE);
-	// Read the filters.
-	switch (domain) {
-		case `filters`:
-			let filters = pref_data;
-			if (filters) {
-				// Must only run when there stored value.
-				if (domain.trim()) {
-					// Loop through each filter
-					(Object.keys(filters)).forEach((article) => {
-						// Set the section in focus
-						let section = filters[article];
-						let qualified = false;
-
-						// Determine validity
-						if (section) {
-							// The filter must have a matching URL
-							if (section[`URL`]) {
-								// Now it's time to test it.
-								qualified = (new RegExp(section[`URL`])).test(domain);
-								if (qualified && section[`filters`]) {
-									// Read that out.
-									result = section;
-								};
-							};
-						};
-					});
-
-				} else {
-					// Get everything as instructed.
-					result = filters;
-				}
-			};
-			break;
-		default:
-			// In the default mode, the keys refer to the product itself
-			if (pref_data) {
-				if (domain) {
-					// Extract a data only when a website URL is specified.
-					(Object.keys(pref_data)).forEach((product_URL) => {
-						// Get the first matching
-						if ((domain.trim()).includes(product_URL)) {
-							// Do not modify the data
-							result = pref_data[product_URL];
-						};
-					});
-				} else {
-					result = pref_data;
-				}
-			};
-			break;
-	};
-
-	// Return the result.
-	return(result);
-}
-
 /* Write the data on the selected prefname.
 
-@param {string} PREFERENCE the preference name
-@param {string} SUBPREFERENCE the subpreference
+@param {string} PATH the preference name
 @param {object} DATA the new data to be written
 @param {int} CLOUD store in the cloud; otherwise set to automatic
 */
-export function write(PREFERENCE, SUBPREFERENCE, DATA, CLOUD = 0) {
-	let DATA_INJECTED = DATA;
+export function write(PATH, DATA, CLOUD = -1) {
+	let DATA_INJECTED = {};
 
-	if (SUBPREFERENCE) {
-		// Collect the existing preferenc's data.
-		let DATA_ALL = read(PREFERENCE);
+	/* Forcibly write the data to chrome database
+
+	@param {object} DATA the data
+	@param {number} CLOUD the storage
+	*/
+	function write_database(DATA, CLOUD = 0) {
+		// If CLOUD is set to 0, it should automatically determine where the previous source of data was taken from.
+
+		if (CLOUD > 0) {
+			chrome.storage.sync.set(DATA);
+		} else if (CLOUD < 0) {
+			chrome.storage.local.set(DATA);
+		};
+	};
+
+	/* Appropriately nest and merge the data.
+
+	@param {object} EXISTING the original data
+	@param {object} PATH the subpath
+	@param {object} VALUE the value
+	@return {object} the updated data
+	*/
+	function nest(EXISTING, SUBPATH, VALUE) {
+		let DATABASE = EXISTING;
+
+		// Get the current path.
+		let PATH = {};
+		PATH[`current`] = String(SUBPATH.shift()).trim();
+		PATH[`target`] = SUBPATH;
+
+		if (PATH[`target`].length > 0) {
+			if (DATABASE[PATH[`current`]] == null) {DATABASE[PATH[`current`]] = {}};
+			DATABASE[PATH[`current`]] = nest(DATABASE[PATH[`current`]], PATH[`target`], VALUE);
+		} else {
+			DATABASE[PATH[`current`]] = VALUE;
+		};
+		// Return the value.
+		return (DATABASE);
+	};
+
+	(read(null, CLOUD)).then((DATA_ALL) => {
 
 		// handle empty collected data.
-		if (!DATA_ALL) {DATA_ALL = {};};
+		if (!DATA_ALL) {DATA_ALL = {};}
 
-		// Add the subpreference.
-		DATA_ALL[SUBPREFERENCE] = DATA;
-		DATA_INJECTED = DATA_ALL;
+		let DATA_NAME = PATH;
 
-	} else {
-		DATA_INJECTED = DATA;
-	};
+		// Convert the entered prefname to an array if it is not one.
+		if (!(typeof SUBPATH).includes(`object`)) {
+			// Split what is not an object.
+			DATA_NAME = (String(PATH).trim()).split(",");
+		}
 
-	// If CLOUD is set to 0, it should automatically determine where the previous source of data was taken from.
-	if ((CLOUD == 1) || (CLOUD == 0 && read(PREFERENCE, 1))) {
-		chrome.storage.sync.set({[`${PREFERENCE}`]: DATA_INJECTED});
-	} else {
-		chrome.storage.local.set({[`${PREFERENCE}`]: DATA_INJECTED});
-	};
+		// Merge!
+		DATA_INJECTED = nest(DATA_ALL, DATA_NAME, DATA);
+
+		// Write!
+		write_database(DATA_INJECTED, CLOUD);
+	});
 }
+
 
 /* Dangerous: Resets all data or a domain's data.
 
@@ -280,7 +251,7 @@ export function forget(preference, subpreference, CLOUD = 0) {
 					// Should only run when existent
 					if (data[subpreference]) {
 						delete data[subpreference];
-						write(preference, subpreference, data, CLOUD);
+						write([preference, subpreference], data, CLOUD);
 					}
 				} else {
 					// Remove that particular data.
@@ -345,7 +316,7 @@ export function init(data) {
 			if (!PREFERENCE[`existing`]) {
 				// Do not allow synchronized data to interfere with managed data.
 				forget(PREFERENCE[`name`]);
-				write(PREFERENCE[`name`], null, PREFERENCES_ALL[`managed`][PREFERENCE[`name`]]);
+				write(PREFERENCE[`name`], PREFERENCES_ALL[`managed`][PREFERENCE[`name`]]);
 			}
 
 		});
@@ -363,7 +334,7 @@ export function init(data) {
 			);
 
 			if (!PREFERENCE[`existing`]) {
-				write(PREFERENCE[`name`], null, PREFERENCES_ALL[`build`][PREFERENCE[`name`]], -1);
+				write(PREFERENCE[`name`], PREFERENCES_ALL[`build`][PREFERENCE[`name`]], -1);
 			}
 
 		});
