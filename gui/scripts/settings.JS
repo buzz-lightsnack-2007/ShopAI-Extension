@@ -6,7 +6,6 @@
 import texts from './read.JS';
 import {windowman} from './windowman.JS';
 let secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
-// let secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
 
 // Import configuration file.
 // const config = chrome.runtime.getURL('gui/layouts/settings.json');
@@ -149,25 +148,37 @@ function say() {
 		Arrange the interface.
 		*/
 		function arrange() {
-			let last_opened = secretariat.read(`last`);
-			if (!last_opened) {last_opened = 'settings'};
+			async function click() {
+				let last_opened = (await Promise.all([secretariat.read([`view`, window.location.href], 1)]))[0];
+				if (!last_opened) {last_opened = 'settings'};
+
+				document.querySelector(`[role="tab"][for="${last_opened}"]`).click();
+			}
+
+
 
 			// click!
-			document.querySelector(`menu button[role="tab"][aria-controls="${last_opened}"]`).click();
-
+			// document.querySelector(`menu button[role="tab"][aria-controls="${last_opened}"]`).click();
+			click();
 		}
 
+		/*
+		Define the mapping of each button.
+		*/
 		function events() {
-			
+			windowman.events();
 		};
 
 		function main() {
 			let tab = start();
 			say();
+			events();
 
-			document.addEventListener('DOMContentLoaded', function() {
-					arrange();
-			});
+			arrange();
+
+
+			/*arrange();
+			events();*/
 		}
 
 		main();
