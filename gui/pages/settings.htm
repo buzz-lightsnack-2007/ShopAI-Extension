@@ -1,16 +1,17 @@
 <html><head>
 	<script type="module" src="../scripts/external/jquery.js"></script>
 	<script type="module" src="../scripts/settings.js"></script>
+	<title data-text="term_preferences"></title>
 </head>
 <body>
 	<main class="window-body has-space">
-		<menu role="tablist">
-  		<button role="tab" aria-controls="settings" data-text="general"></button>
-  		<button role="tab" aria-controls="filters" data-text="filters"></button>
-  		<button role="tab" aria-controls="storage" data-text="storage"></button>
-			<button role="tab" aria-controls="about" data-text="about"></button>
+		<menu role="tablist" for="settings_content">
+  		<button role="tab" for="settings" data-text="general"></button>
+  		<button role="tab" for="filters" data-text="filters"></button>
+  		<button role="tab" for="storage" data-text="storage"></button>
+			<button role="tab" for="about" data-text="about"></button>
 		</menu>
-		<section class="view_main">
+		<section class="view_main" id="settings_content">
 			<section role="tabpanel" id="settings">
 				<fieldset>
 					<legend data-text="general"></legend>
@@ -37,7 +38,7 @@
 					<label data-text="settings_filters_description"></label>
 					<div class="field-row action-buttons">
 						<button data-action="filters,update" data-text="settings_filters_update"></button>
-						<button data-action="open,filters" data-text="settings_filters_open"></button>
+						<button data-action="open,settings,filters" data-text="settings_filters_open"></button>
 					</div>
 				</fieldset>
 			</section>
@@ -50,17 +51,16 @@
 					</div>
 				</fieldset>
 			</section>
+			<section role="tabpanel" id="about">
+				<img data-image="about_app_logo" />
+				<p data-text="extension_name"></p>
+				<p data-text="GUI_status_version"></p>
+				<p data-text="extension_description"></p>
+				<div class="field-row action-buttons">
+					<button data-text="help" data-action="open,help"></button>
+				</div>
+			</section>
 		</section>
-		<section role="tabpanel" id="about">
-			<img data-image="about_app_logo" />
-			<p data-text="extension_name"></p>
-			<p data-text="GUI_status_version"></p>
-			<p data-text="extension_description"></p>
-			<div class="field-row action-buttons">
-				<button data-text="help" data-action="open,help"></button>
-			</div>
-		</section>
-	</section>
 	</main>
 	</div>
 </body></html>
