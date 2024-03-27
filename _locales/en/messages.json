@@ -70,16 +70,6 @@
   "term_behavior": {
     "message": "Behaviour"
   },
-  "error_fileNotFound": {
-    "message": "This build is broken, as a file could not be found. The error is as follows: $error_msg$",
-    "description": "The error message when a file couldn't be found",
-    "placeholders": {
-      "error_msg": {
-        "content": "$1",
-        "description": "The error message"
-      }
-    }
-  },
 
   "settings_general_showApplicable": {
     "message": "Show product's ratings in this extension's icon"
@@ -104,5 +94,30 @@
   },
   "settings_filters_open": {
     "message": "Edit"
+  },
+
+  "error_msg": {
+    "message": "$ERROR_CODE$: $ERROR_MSG$",
+    "description": "The error message template",
+    "placeholders": {
+      "ERROR_CODE": {
+        "content": "$1",
+        "description": "The error code"
+      },
+      "ERROR_MSG": {
+        "content": "$2",
+        "description": "The error message"
+      }
+    }
+  },
+  "error_msg_GUI": {
+    "message": "Unfortunately, an exception of type $ERROR_CODE$ has occured. Click OK to terminate the script.",
+    "description": "The error message template for a full graphical UI",
+    "placeholders": {
+      "ERROR_CODE": {
+        "content": "$1",
+        "description": "The error code"
+      }
+    }
   }
 }

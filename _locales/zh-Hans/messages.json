@@ -71,18 +71,6 @@
 		 "message": "性能"
 	 },
 
-
-  "error_fileNotFound": {
-			"message": "找不到一个文件！错误是： $error_msg$",
-			"description": "找不到文件错误的信息",
-			"placeholders": {
-			  "error_msg": {
-			    "content": "$1",
-			    "description": "错误信息"
-			  }
-			}
-   },
-
 	"settings_general_showApplicable": {
 		"message": "在此扩展程序图标中显示产品评分"
 	},
