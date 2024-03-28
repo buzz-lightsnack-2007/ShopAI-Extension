@@ -13,13 +13,13 @@ export default class logging {
   static error(ERROR_CODE, ERROR_MESSAGE, critical = true) {
     (async () => {
       // Import the templating.
-      const texts = await import(chrome.runtime.getURL("gui/scripts/read.JS"));
+      const texts = await import(chrome.runtime.getURL("gui/scripts/read.js"));
 
       // Display the error message.
       console.error(texts.read(`error_msg`, [ERROR_CODE, ERROR_MESSAGE]));
       if (critical) {
-        alert(texts.read(`error_msg_GUI`, [String(ERROR_CODE)]))
-      };
+        alert(texts.read(`error_msg_GUI`, [String(ERROR_CODE)]));
+      }
     })();
   }
 }
