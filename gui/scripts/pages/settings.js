@@ -24,7 +24,7 @@ function say() {
 		Arrange the interface.
 		*/
 function arrange() {
-  async function click() {
+  async function openLast() {
     let last_opened = (
       await Promise.all([secretariat.read([`view`, window.location.href], 1)])
     )[0];
@@ -35,9 +35,7 @@ function arrange() {
     document.querySelector(`[role="tab"][for="${last_opened}"]`).click();
   }
 
-  // click!
-  // document.querySelector(`menu button[role="tab"][aria-controls="${last_opened}"]`).click();
-  click();
+  openLast();
 }
 
 /*
