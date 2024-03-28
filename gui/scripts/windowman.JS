@@ -38,8 +38,8 @@ class windowman {
     this.window = chrome.windows.create({
       url: chrome.runtime.getURL(URL),
       type: "popup",
-      width: width ? width : 400,
-      height: height ? height : 600,
+      width: width ? parseInt(width) : 400,
+      height: height ? parseInt(height) : 600,
     });
   }
 
@@ -139,20 +139,16 @@ class windowman {
                 secretariat.write(UI_item[`source`], UI_item[`value`]);
               };
               break;
-            case `range`:
-            /*// Ensure that it is a positive floating-point number.
-							value = (!value) ? 0 : Math.abs(parseFloat(value));
-							if (value > 100) {value = value / 100};
-
-							// Set the attribute of the progress bar.
-							input_element.setAttribute(`value`, value);
-							input_element.setAttribute(`max`, 1);*/
             default:
               element[`event`] = function () {
                 secretariat.write(
                   data[`source`][`root`],
                   data[`source`][`target`],
-                  this.value,
+                  element[`type`].includes(`num`)
+                    ? parseFloat(this.value) % 1 != 0
+                      ? parseFloat(this.value)
+                      : parseInt(this.value)
+                    : this.value,
                 );
               };
               break;
@@ -243,8 +239,77 @@ class windowman {
       changeUI();
     }
 
+    /* Map buttons to their corresponding action buttons. */
+    function actions() {
+      function links() {
+        let buttons = document.querySelectorAll("button[href]");
+
+        if (buttons) {
+          buttons.forEach((button) => {
+            let event = function () {
+              // Get the data from the button.
+              let file = {};
+              file[`target`] = this.getAttribute(`href`);
+
+              // Check if the file exists to only open it when it is the case.
+              function testUrl(URL) {
+                // Code from https://stackoverflow.com/questions/3646914/how-do-i-check-if-file-exists-in-jquery-or-pure-javascript
+                const HTTP = new XMLHttpRequest();
+                try {
+                  HTTP.open(`HEAD`, URL, false);
+                  HTTP.send();
+                  return HTTP.status != 404;
+                } catch (error) {
+                  return false;
+                }
+              }
+
+              if (!file[`target`].includes(`://`)) {
+                // Get the current path.
+                file[`path`] = window.location.pathname.split(`/`);
+                file[`path`] =
+                  file[`path`].slice(0, file[`path`].length - 1).join(`/`) +
+                  `/`;
+                file[`location`] = file[`path`].concat(file[`target`]);
+              } else {
+                file[`location`] = file[`target`];
+              }
+
+              let open_combinations = [``, `.htm`, `.html`];
+              for (
+                let open_combination = 0;
+                open_combination < open_combinations.length;
+                open_combination++
+              ) {
+                if (
+                  testUrl(
+                    file[`location`] + open_combinations[open_combination],
+                  )
+                ) {
+                  new windowman(
+                    file[`location`] + open_combinations[open_combination],
+                    this.getAttribute(`tab-height`)
+                      ? this.getAttribute(`tab-height`)
+                      : null,
+                    this.getAttribute(`tab-width`)
+                      ? this.getAttribute(`tab-width`)
+                      : null,
+                  );
+                  break;
+                }
+              }
+            };
+            button.addEventListener("click", event);
+          });
+        }
+      }
+
+      links();
+    }
+
     storage();
     functionality();
+    actions();
   }
 }
 
