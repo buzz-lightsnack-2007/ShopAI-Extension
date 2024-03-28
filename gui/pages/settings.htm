@@ -45,7 +45,8 @@
                     <label data-text="settings_filters_description"></label>
                     <div class="field-row action-buttons">
                         <button data-action="filters,update" data-text="settings_filters_update"></button>
-                        <button data-action="open,settings,filters" data-text="settings_filters_open"></button>
+                        <button href="settings/filters" tab-height="607.5" tab-width="1080"
+                            data-text="settings_filters_open"></button>
                     </div>
                 </fieldset>
             </section>
@@ -59,13 +60,16 @@
                 </fieldset>
             </section>
             <section role="tabpanel" id="about">
-                <img data-image="about_app_logo" />
-                <p data-text="extension_name"></p>
-                <p data-text="GUI_status_version"></p>
-                <p data-text="extension_description"></p>
-                <div class="field-row action-buttons">
-                    <button data-text="help" data-action="open,help"></button>
-                </div>
+                <fieldset>
+                    <legend data-text="about"></legend>
+                    <img data-image="about_app_logo" />
+                    <p data-text="extension_name"></p>
+                    <p data-text="GUI_status_version"></p>
+                    <p data-text="extension_description"></p>
+                    <div class="field-row action-buttons">
+                        <button data-text="help" href="help" tab-height="607.5" tab-width="1080"></button>
+                    </div>
+                </fieldset>
             </section>
         </section>
     </main>
