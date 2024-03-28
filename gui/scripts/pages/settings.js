@@ -45,6 +45,13 @@ function arrange() {
 		*/
 function events() {
   windowman.events();
+
+  document
+    .querySelector(`[data-action="filters,update"]`)
+    .addEventListener(`click`, async () => {
+      let filters = await import(chrome.runtime.getURL(`scripts/filters.js`));
+      filters.update();
+    });
 }
 
 function main() {
