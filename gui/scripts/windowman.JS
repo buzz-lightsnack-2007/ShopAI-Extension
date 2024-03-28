@@ -98,7 +98,7 @@ class windowman {
                 input_element.setAttribute(`max`, 1);
                 break;
               default:
-                input_element.value = value;
+                input_element.value = value ? value : ``;
                 break;
             }
           });
@@ -141,15 +141,14 @@ class windowman {
               break;
             default:
               element[`event`] = function () {
-                secretariat.write(
-                  data[`source`][`root`],
-                  data[`source`][`target`],
-                  element[`type`].includes(`num`)
-                    ? parseFloat(this.value) % 1 != 0
-                      ? parseFloat(this.value)
-                      : parseInt(this.value)
-                    : this.value,
-                );
+                let UI_item = {};
+                UI_item[`source`] = this.getAttribute(`data-store`);
+                UI_item[`value`] = element[`type`].includes(`num`)
+                  ? parseFloat(this.value) % 1 != 0
+                    ? parseFloat(this.value)
+                    : parseInt(this.value)
+                  : this.value;
+                secretariat.write(UI_item[`source`], UI_item[`value`]);
               };
               break;
           }
