@@ -13,8 +13,8 @@ export default class texts {
   @return {string} the message
   */
 
-  static localized (message_name, autofill = false, params = []) {
-    if (params) {
+  static localized(message_name, autofill = false, params = []) {
+    if (params && (params ? params.length > 0 : false)) {
       message = chrome.i18n.getMessage(message_name, params);
     } else {
       message = chrome.i18n.getMessage(message_name);
@@ -25,17 +25,14 @@ export default class texts {
       message = message_name;
     }
 
-    return(message);
+    return message;
   }
 }
 
-
-export function read(message_name, params) {
-
+export function read(message_name, autofill, params) {
   let message;
 
-  message = texts.localized(message_name, params);
+  message = texts.localized(message_name, autofill, params);
 
-  return (message);
-
+  return message;
 }
