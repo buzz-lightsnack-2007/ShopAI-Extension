@@ -14,11 +14,13 @@ function arrange() {
     let last_opened = (
       await Promise.all([secretariat.read([`view`, window.location.href], 1)])
     )[0];
-    if (!last_opened) {
-      last_opened = "settings";
+    if (!last_opened || typeof last_opened !== `number`) {
+      last_opened = 0;
     }
 
-    document.querySelector(`[role="tab"][for="${last_opened}"]`).click();
+    if (document.querySelector(`[role="tab"][tab="${last_opened}"]`)) {
+      document.querySelector(`[role="tab"][tab="${last_opened}"]`).click();
+    }
   }
 
   openLast();
@@ -30,24 +32,28 @@ function arrange() {
 function events() {
   windowman.events();
 
-  document
-    .querySelector(`[data-action="filters,update"]`)
-    .addEventListener(`click`, async () => {
-      let filters = await import(chrome.runtime.getURL(`scripts/filters.js`));
-      filters.update();
-    });
-  document
-    .querySelector(`[data-action="storage,clear"]`)
-    .addEventListener(`click`, async () => {
-      let storage = await import(
-        chrome.runtime.getURL(`scripts/secretariat.js`)
-      );
-      storage.forget(`sites`);
-    });
+  if (document.querySelector(`[data-action="filters,update"]`)) {
+    document
+      .querySelector(`[data-action="filters,update"]`)
+      .addEventListener(`click`, async () => {
+        let filters = await import(chrome.runtime.getURL(`scripts/filters.js`));
+        filters.update();
+      });
+  }
+  if (document.querySelector(`[data-action="storage,clear"]`)) {
+    document
+      .querySelector(`[data-action="storage,clear"]`)
+      .addEventListener(`click`, async () => {
+        let storage = await import(
+          chrome.runtime.getURL(`scripts/secretariat.js`)
+        );
+        storage.forget(`sites`);
+      });
+  }
 }
 
 function main() {
-  let tab = windowman.prepare();
+  windowman.prepare();
   windowman.fill();
   events();
   arrange();
