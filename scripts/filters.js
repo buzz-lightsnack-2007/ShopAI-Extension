@@ -67,7 +67,6 @@ export async function update(URL) {
       let filter_URL = filters.dequeue();
 
       // Inform the user of download state.
-      console.log(filter_URL);
       console.log(
         texts.read(`settings_filters_update_status`, null, [filter_URL]),
       );
