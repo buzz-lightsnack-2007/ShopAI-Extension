@@ -61,7 +61,11 @@ class windowman {
           );
         }
 
-        text_element.innerText = text_inserted;
+        if (text_element.tagName.toLowerCase().includes(`input`)) {
+          text_element.setAttribute(`placholder`, text_inserted);
+        } else {
+          text_element.innerText = text_inserted;
+        }
       });
     }
 
@@ -216,7 +220,7 @@ class windowman {
                       // Write the data.
                       secretariat.write(
                         [`view`, window.location.href],
-                        this.getAttribute(`for`),
+                        parseInt(this.getAttribute(`tab`)),
                         1,
                       );
                     })();
