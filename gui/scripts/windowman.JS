@@ -307,9 +307,45 @@ class windowman {
       links();
     }
 
+    /*
+    Update the interface based on the storage data changes.
+    */
+    async function updates() {
+      // Import the module.
+      const secretariat = await import(
+        chrome.runtime.getURL("scripts/secretariat.js")
+      );
+
+      // Get the storage data.
+      let storage_data = await secretariat.read();
+
+      async function update_interface() {
+        let input_elements = document.querySelectorAll("[data-enable]");
+
+        if (input_elements) {
+          input_elements.forEach((input_element) => {
+            (async () => {
+              input_element.disabled =
+                (await secretariat.read(
+                  input_element.getAttribute("data-enable"),
+                )) == null;
+            })();
+          });
+        }
+      }
+
+      // Update the input elements.
+      secretariat.observe((what) => {
+        update_interface();
+      });
+
+      update_interface();
+    }
+
     storage();
     functionality();
     actions();
+    updates();
   }
 }
 
