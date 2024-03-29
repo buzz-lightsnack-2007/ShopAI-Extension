@@ -1,27 +1,27 @@
 {
-	"extension_name": {
-		"message": "购物+人类智能",
-		"description": "扩展程序名字"
-	},
-	"extension_description": {
-		"message": "用人类智能榜您谨慎地买东西！",
-		"description": "扩展程序的简介"
-	},
-	"GUI_welcome_headline": {
-		"message": "欢迎使用购物人类智能！",
-		"description": "欢迎信息"
-	},
-	"GUI_welcome_version": {
-		"message": "本浏览器有 $manifest_version$ 版本的。",
-		"description": "版本简介",
-		"placeholders": {
-			"manifest_version": {
-				"content": "$1",
-				"description": "版本号码"
-			}
-		}
-	},
-	"GUI_status_version": {
+  "extension_name": {
+    "message": "购物+人类智能",
+    "description": "扩展程序名字"
+  },
+  "extension_description": {
+    "message": "用人类智能榜您谨慎地买东西！",
+    "description": "扩展程序的简介"
+  },
+  "GUI_welcome_headline": {
+    "message": "欢迎使用《购物+人类智能》！",
+    "description": "欢迎信息"
+  },
+  "GUI_welcome_version": {
+    "message": "本浏览器有 $manifest_version$ 版本的。",
+    "description": "版本简介",
+    "placeholders": {
+      "manifest_version": {
+        "content": "$1",
+        "description": "版本号码"
+      }
+    }
+  },
+  "GUI_status_version": {
     "message": "$manifest_version$ 版本",
     "description": "statusbar 上的版本",
     "placeholders": {
@@ -31,7 +31,7 @@
       }
     }
   },
-	"GUI_credits_0": {
+  "GUI_credits_0": {
     "message": "亲爱的马老师…",
     "description": "credits #0"
   },
@@ -39,60 +39,120 @@
     "message": "您认真地想运行它吗?",
     "description": "运行危险的软件以前的问题"
   },
-	"GUI_title_preferences": {
+  "GUI_title_preferences": {
     "message": "购物人类智能设置",
     "description": "设置网页的题目"
   },
   "term_preferences": {
-	"message": "设置"
-   },
-   "term_about": {
-	"message": "关于"
-   },
-   "term_filters": {
-	"message": "过滤器"
-   },
-   "term_apply": {
-	"message": "应用"
-   },
-   "term_cancel": {
-	"message": "取消"
-   },
-   "term_general": {
-     "message": "常规"
-   },
-   "term_storage": {
-     "message": "存储"
-   },
-	 "term_help": {
-     "message": "帮助"
-   },
-	 "term_behavior": {
-		 "message": "性能"
-	 },
+    "message": "设置"
+  },
+  "term_about": {
+    "message": "关于"
+  },
+  "term_filters": {
+    "message": "过滤器"
+  },
+  "term_apply": {
+    "message": "应用"
+  },
+  "term_cancel": {
+    "message": "取消"
+  },
+  "term_general": {
+    "message": "常规"
+  },
+  "term_storage": {
+    "message": "存储"
+  },
+  "term_help": {
+    "message": "帮助"
+  },
+  "term_behavior": {
+    "message": "性能"
+  },
+  "term_API_Key": {
+    "message": "API 密钥"
+  },
 
-	"settings_general_showApplicable": {
-		"message": "在此扩展程序图标中显示产品评分"
-	},
-	"settings_general_injectToPage": {
-		"message": "注入一个快速访问按钮"
-	},
-	"settings_behavior_autoRun": {
-		"message": "自动在支持页面运行此扩展"
-	},
-	"settings_filters_description": {
-		"message": "过滤器帮助确定网站内容之前的摘要。"
-	},
-	"settings_storage_description": {
-		"message": "为了加快浏览速度，《购物+人类智能》存储您以往访问过的产品信息。当产品信息发生变化时，此信息将被更新。"
-	},
-	"settings_storage_clear": {
-		"message": "清空"
-	},
-	"settings_filters_update": {
-		"message": "更新"
-	},
-	"settings_filters_open": {
-		"message": "编辑"
-	}
+  "settings_general_showApplicable": {
+    "message": "在此扩展程序图标中显示产品评分"
+  },
+  "settings_general_injectToPage": {
+    "message": "注入一个快速访问按钮"
+  },
+  "settings_behavior_autoRun": {
+    "message": "自动在支持页面运行此扩展"
+  },
+  "settings_filters_description": {
+    "message": "过滤器帮助确定网站内容之前的摘要。"
+  },
+  "settings_storage_description": {
+    "message": "为了加快浏览速度，《购物+人类智能》存储您以往访问过的产品信息。当产品信息发生变化时，此信息将被更新。"
+  },
+  "settings_analysis_description": {
+    "message": "为了提高购物体验，我们会收集您的购物行为数据。"
+  },
+  "settings_storage_clear": {
+    "message": "清空"
+  },
+  "settings_filters_update": {
+    "message": "更新"
+  },
+  "settings_filters_update_status": {
+    "message": "正在下载 $filter_url$ 的滤器…",
+    "placeholders": {
+      "filter_url": {
+        "content": "$1"
+      }
+    }
+  },
+  "settings_filters_update_status_complete": {
+    "message": "更新过 $filter_url$ 的滤器…",
+    "placeholders": {
+      "filter_url": {
+        "content": "$1"
+      }
+    }
+  },
+  "settings_filters_update_status_failure": {
+    "message": "更新 $filter_url$ 的滤器失败：$error_msg$",
+    "placeholders": {
+      "error_msg": {
+        "content": "$1"
+      },
+      "filter_url": {
+        "content": "$2"
+      }
+    }
+  },
+  "settings_filters_update_stop": {
+    "message": "无法更新因为没有滤器。"
+  },
+  "settings_filters_open": {
+    "message": "编辑"
+  },
+  "error_msg": {
+    "message": "错误 $error_code$: $error_msg$",
+    "description": "错误信息模板",
+    "placeholders": {
+      "error_code": {
+        "content": "$1",
+        "description": "错误代码"
+      },
+      "error_msg": {
+        "content": "$2",
+        "description": "错误信息"
+      }
+    }
+  },
+  "error_msg_GUI": {
+    "message": "太不巧了，出现了 $error_code$ 样子的错误。请选择“好”停止此扩展程序。",
+    "description": "错误信息模板",
+    "placeholders": {
+      "error_code": {
+        "content": "$1",
+        "description": "错误代码"
+      }
+    }
+  }
 }

@@ -70,6 +70,12 @@
   "term_behavior": {
     "message": "Behaviour"
   },
+  "term_analysis": {
+    "message": "Analysis"
+  },
+  "term_API_Key": {
+    "message": "API Key"
+  },
 
   "settings_general_showApplicable": {
     "message": "Show product's ratings in this extension's icon"
@@ -86,35 +92,68 @@
   "settings_storage_description": {
     "message": "To speed up browsing, ShopAI stores information of the products you have previously visited. This information will be updated whenever the product's information has been changed. "
   },
+  "settings_analysis_description": {
+    "message": "ShopAI is powered by Google Gemini Pro to summarize the contents of the website and to provide a rating for the products. An API key by Google is required to use this feature. Usage of this feature is subject to Google's Terms and Conditions."
+  },
   "settings_storage_clear": {
     "message": "Empty"
   },
   "settings_filters_update": {
     "message": "Update"
   },
+  "settings_filters_update_status": {
+    "message": "Updating the filter at $filter_url$…",
+    "placeholders": {
+      "filter_url": {
+        "content": "$1"
+      }
+    }
+  },
+  "settings_filters_update_status_complete": {
+    "message": "Updated the filter at $filter_url$.",
+    "placeholders": {
+      "filter_url": {
+        "content": "$1"
+      }
+    }
+  },
+  "settings_filters_update_status_failure": {
+    "message": "Can not update the filter at $filter_url$ due to error $error_message$.",
+    "placeholders": {
+      "error_message": {
+        "content": "$1"
+      },
+      "filter_url": {
+        "content": "$2"
+      }
+    }
+  },
+  "settings_filters_update_stop": {
+    "message": "No filters were updated as none were available."
+  },
   "settings_filters_open": {
     "message": "Edit"
   },
 
   "error_msg": {
-    "message": "$ERROR_CODE$: $ERROR_MSG$",
+    "message": "$error_code$: $error_msg$",
     "description": "The error message template",
     "placeholders": {
-      "ERROR_CODE": {
+      "error_code": {
         "content": "$1",
         "description": "The error code"
       },
-      "ERROR_MSG": {
+      "error_msg": {
         "content": "$2",
         "description": "The error message"
       }
     }
   },
   "error_msg_GUI": {
-    "message": "Unfortunately, an exception of type $ERROR_CODE$ has occured. Click OK to terminate the script.",
+    "message": "Unfortunately, an exception of type $error_code$ has occured. Click OK to terminate the script.",
     "description": "The error message template for a full graphical UI",
     "placeholders": {
-      "ERROR_CODE": {
+      "error_code": {
         "content": "$1",
         "description": "The error code"
       }
