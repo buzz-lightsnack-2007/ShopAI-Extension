@@ -36,13 +36,21 @@ function events() {
       let filters = await import(chrome.runtime.getURL(`scripts/filters.js`));
       filters.update();
     });
+  document
+    .querySelector(`[data-action="storage,clear"]`)
+    .addEventListener(`click`, async () => {
+      let storage = await import(
+        chrome.runtime.getURL(`scripts/secretariat.js`)
+      );
+      storage.forget(`sites`);
+    });
 }
 
 function main() {
   let tab = windowman.prepare();
   windowman.fill();
-  arrange();
   events();
+  arrange();
 }
 
 main();
