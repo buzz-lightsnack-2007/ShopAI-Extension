@@ -7,6 +7,10 @@
     "message": "Shop wisely with AI!",
     "description": "Extension description"
   },
+  "extension_version": {
+    "message": "The Story Begins",
+    "description": "Extension version name (not number)"
+  },
   "GUI_welcome_headline": {
     "message": "Welcome to ShopAI!",
     "description": "Welcome message"

@@ -7,6 +7,10 @@
     "message": "用人类智能榜您谨慎地买东西！",
     "description": "扩展程序的简介"
   },
+  "extension_version": {
+    "message": "嗨",
+    "description": "扩展程序的版本名字"
+  },
   "GUI_welcome_headline": {
     "message": "欢迎使用《购物+人类智能》！",
     "description": "欢迎信息"
