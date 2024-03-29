@@ -324,12 +324,17 @@ class windowman {
 
         if (input_elements) {
           input_elements.forEach((input_element) => {
-            (async () => {
-              input_element.disabled =
-                (await secretariat.read(
-                  input_element.getAttribute("data-enable"),
-                )) == null;
-            })();
+            if (input_element.getAttribute("data-enable")) {
+              (async () => {
+                input_element.disabled =
+                  (await secretariat.read(
+                    input_element.getAttribute("data-enable"),
+                  )) == null ||
+                  (await secretariat.read(
+                    input_element.getAttribute("data-enable"),
+                  ));
+              })();
+            }
           });
         }
       }
