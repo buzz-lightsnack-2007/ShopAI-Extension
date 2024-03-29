@@ -50,8 +50,9 @@ class windowman {
       text_elements.forEach((text_element) => {
         let text_inserted = texts.localized(
           text_element.getAttribute(`data-text`),
+          false,
           text_element.hasAttribute(`data-text-parameter`)
-            ? eval(text_element.getAttribute(`data-text-parameter`))
+            ? text_element.getAttribute(`data-text-parameter`).split(",")
             : null,
         );
         if (!text_inserted) {
