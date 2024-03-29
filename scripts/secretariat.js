@@ -382,3 +382,14 @@ export function init(data) {
     });
   }
 }
+
+/*
+Run a script when the browser storage has been changed.
+
+@param {object} reaction the function to run
+*/
+export async function observe(reaction) {
+  chrome.storage.onChanged.addListener((changes, namespace) => {
+    reaction(changes, namespace);
+  });
+}
