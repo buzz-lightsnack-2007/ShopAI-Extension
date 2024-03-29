@@ -14,12 +14,12 @@ export async function select(URL = window.location.href) {}
 @return {boolean} the state
 */
 export async function update(URL) {
-  console.log("Updating…");
   // Import the updater.
   const secretariat = await import(
     chrome.runtime.getURL("scripts/secretariat.js")
   );
   const net = await import(chrome.runtime.getURL("scripts/net.js"));
+  const texts = await import(chrome.runtime.getURL("gui/scripts/read.js"));
 
   // Apparently, JS doesn't have a native queueing system, but it might best work here.
   class Queue {
@@ -43,13 +43,6 @@ export async function update(URL) {
   // Create a queue of the filters.
   let filters = new Queue();
 
-  async function download(URL) {
-    let filter = await fetch(URL);
-
-    // Return the filter.
-    return filter;
-  }
-
   if (URL) {
     // Check if the URL is in a valid protocol
     if (URL.includes(`://`)) {
@@ -69,11 +62,43 @@ export async function update(URL) {
     }
   }
 
-  while (!filters.isEmpty()) {
-    let filter_URL = filters.dequeue();
-    let filter = await net.download(filter_URL);
+  if (!filters.isEmpty()) {
+    while (!filters.isEmpty()) {
+      let filter_URL = filters.dequeue();
 
-    // Write the filter to storage.
-    secretariat.write(["filters", filter_URL], filter, -1);
+      // Inform the user of download state.
+      console.log(filter_URL);
+      console.log(
+        texts.read(`settings_filters_update_status`, null, [filter_URL]),
+      );
+
+      // Create promise of downloading.
+      let filter_download = net.download(filter_URL);
+      filter_download
+        .then((result) => {
+          // Only work when the filter is valid.
+          if (result) {
+            // Write the filter to storage.
+            secretariat.write(["filters", filter_URL], result, -1);
+            console.log(
+              texts.read(`settings_filters_update_status_complete`, null, [
+                filter_URL,
+              ]),
+            );
+          }
+        })
+        .catch((error) => {
+          // Inform the user of the download failure.
+          console.log(
+            texts.read(`settings_filters_update_status_failure`, null, [
+              error,
+              filter_URL,
+            ]),
+          );
+        });
+    }
+  } else {
+    // Inform the user of the download being unnecessary.
+    console.log(texts.read(`settings_filters_update_stop`));
   }
 }
