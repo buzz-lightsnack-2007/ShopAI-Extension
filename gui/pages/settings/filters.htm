@@ -1,0 +1,33 @@
+<html>
+
+<head>
+    <script type="module" src="../../scripts/external/jquery.js"></script>
+    <script type="module" src="../../scripts/pages/settings.js"></script>
+
+    <title data-text="filters"></title>
+</head>
+
+<body>
+    <main class="window-body has-space">
+        <main id="settings_filters_content" style="display: flex;">
+            <side>
+                <top class="field-row">
+                    <input type="search" data-text="settings_filters_search_prompt">
+                    <button data-action="action,submit" data-text="search"></button>
+                    <button data-action="action,add" data-text="add"></button>
+                </top>
+                <section>
+                    <select multiple style="width: 100%;">
+                    </select>
+                </section>
+                <footer class="field-row action-buttons">
+                    <button data-action="filters,update" data-text="settings_filters_update">
+                </footer>
+            </side>
+            <fieldset style="flex: 1 1 auto;" style="height: 100vh">
+            </fieldset>
+        </main>
+    </main>
+</body>
+
+</html>
