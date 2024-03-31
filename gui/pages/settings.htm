@@ -1,92 +1,193 @@
 <html>
+    <head>
+        <script src="../scripts/pages/settings.js"></script>
+        <script src="../styles/external/materialize/js/materialize.js"></script>
 
-<head>
-    <script type="module" src="../scripts/external/jquery.js"></script>
-    <script type="module" src="../scripts/pages/settings.js"></script>
+        <title for="term_preferences"></title>
+    </head>
 
-    <title data-text="term_preferences"></title>
-</head>
-
-<body>
-    <main class="window-body has-space">
-        <menu role="tablist" for="settings_content">
-            <button role="tab" for="settings" data-text="general" tab="0"></button>
-            <button role="tab" for="filters" data-text="filters" tab="1"></button>
-            <button role="tab" for="storage" data-text="storage" tab="2"></button>
-            <button role="tab" for="about" data-text="about" tab="3"></button>
-        </menu>
-        <section class="view_main" id="settings_content">
-            <section role="tabpanel" id="settings">
-                <fieldset>
-                    <legend data-text="general"></legend>
-                    <form class="field-row">
-                        <input type="checkbox" id="settings_general_showApplicable"
-                            data-store="settings,general,showApplicable">
-                        <label for="settings_general_showApplicable"
-                            data-text="settings_general_showApplicable"></label>
-                    </form>
-                    <form class="field-row">
-                        <input type="checkbox" id="settings_general_injectToPage"
-                            data-store="settings,general,injectToPage">
-                        <label for="settings_general_injectToPage" data-text="settings_general_injectToPage"></label>
-                    </form>
-                </fieldset>
-                <fieldset>
-                    <legend data-text="behavior"></legend>
-                    <form class="field-row">
-                        <input type="checkbox" id="settings_behavior_autoRun" data-store="settings,behavior,autoRun">
-                        <label for="settings_behavior_autoRun" data-text="settings_behavior_autoRun"></label>
-                    </form>
-                    </fielset>
-            </section>
-            <section role="tabpanel" id="filters">
-                <fieldset>
-                    <legend data-text="filters"></legend>
-                    <label data-text="settings_filters_description"></label>
-                    <div class="field-row action-buttons">
-                        <button data-action="filters,update" data-text="settings_filters_update"
-                            data-enable="filters"></button>
-                        <button href="settings/filters" tab-height="607.5" tab-width="1080"
-                            data-text="settings_filters_open"></button>
-                    </div>
-                </fieldset>
-                <fieldset>
-                    <legend data-text="analysis"></legend>
-                    <p data-text="settings_analysis_description"></p>
-                    <div class="field-row">
-                        <label for="settings_analysis_api" data-text="API_Key"></label>
-                        <input type="password" id="settings_analysis_api" data-store="settings,analysis,api,key" />
-                    </div>
-                    <div class="field-row action-buttons">
-                        <button data-text="help" href="help" tab-height="607.5" tab-width="1080"></button>
-                    </div>
-                </fieldset>
-            </section>
-            <section role="tabpanel" id="storage">
-                <fieldset>
-                    <legend data-text="storage"></legend>
-                    <label data-text="settings_storage_description"></label>
-                    <div class="field-row action-buttons">
-                        <button data-text="settings_storage_clear" data-enable="sites"
-                            data-action="storage,clear"></button>
-                    </div>
-                </fieldset>
-            </section>
-            <section role="tabpanel" id="about">
-                <fieldset>
-                    <legend data-text="about"></legend>
-                    <img src="../icons/logo.png" height=128 style="float:left" />
-                    <h2 data-text="extension_name"></h2>
-                    <p data-text="extension_version" style="font-style: italic;"></p>
-                    <p data-text="extension_description"></p>
-                    <div class="field-row action-buttons">
-                        <button data-text="help" href="help" tab-height="607.5" tab-width="1080"></button>
-                    </div>
-                </fieldset>
-            </section>
-        </section>
-    </main>
-    </div>
-</body>
-
+    <body>
+        <main class="container">
+            <ul class="collapsible" data-collapsible="accordion">
+                <li>
+                    <header
+                        class="collapsible-header waves-effect flow-text"
+                        accesskey="1"
+                        for="general"
+                        data-icon="cog"
+                    ></header>
+                    <section class="collapsible-body">
+                        <section class="input-group">
+                            <legend for="general" class="flow-text"></legend>
+                            <ul class="input-field">
+                                <li>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            data-store="settings,general,showApplicable"
+                                            class="filled-in"
+                                        />
+                                        <span
+                                            for="settings_general_showApplicable"
+                                        ></span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            data-store="settings,general,injectToPage"
+                                            class="filled-in"
+                                        />
+                                        <span
+                                            for="settings_general_injectToPage"
+                                        ></span>
+                                    </label>
+                                </li>
+                            </ul>
+                        </section>
+                        <section class="input-group">
+                            <legend for="behavior" class="flow-text"></legend>
+                            <ul class="input-field">
+                                <li>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            data-store="settings,behavior,autoRun"
+                                            class="filled-in"
+                                        />
+                                        <span
+                                            for="settings_behavior_autoRun"
+                                        ></span>
+                                    </label>
+                                </li>
+                            </ul>
+                        </section>
+                    </section>
+                </li>
+                <li>
+                    <header
+                        class="collapsible-header waves-effect flow-text"
+                        for="filters"
+                        accesskey="2"
+                        data-icon="filter"
+                    ></header>
+                    <section class="collapsible-body">
+                        <section class="input-group row">
+                            <label class="input-description">
+                                <legend
+                                    for="filters"
+                                    class="flow-text"
+                                ></legend>
+                                <label
+                                    for="settings_filters_description"
+                                ></label>
+                            </label>
+                            <side class="input-field">
+                                <button
+                                    data-action="filters,update"
+                                    title-for="settings_filters_update"
+                                    data-enable="filters"
+                                    data-icon="refresh"
+                                    class="btn waves-effect"
+                                ></button>
+                                <button
+                                    href="settings/filters.htm"
+                                    tab-height="607.5"
+                                    tab-width="1080"
+                                    data-icon="pencil"
+                                    title-for="settings_filters_open"
+                                    class="btn waves-effect"
+                                ></button>
+                            </side>
+                        </section>
+                        <section class="input-group">
+                            <label class="input-description">
+                                <legend
+                                    for="analysis"
+                                    class="flow-text"
+                                ></legend>
+                                <label
+                                    for="settings_analysis_description"
+                                ></label>
+                            </label>
+                            <div class="input-field">
+                                <input
+                                    type="password"
+                                    data-store="settings,analysis,api,key"
+                                />
+                                <label for="API_Key"></label>
+                            </div>
+                        </section>
+                    </section>
+                </li>
+                <li>
+                    <header
+                        class="collapsible-header waves-effect flow-text"
+                        for="storage"
+                        accesskey="3"
+                        data-icon="database"
+                    ></header>
+                    <section class="collapsible-body">
+                        <section class="input-group">
+                            <label
+                                for="settings_storage_description"
+                                class="input-description"
+                            ></label>
+                            <div class="input-field">
+                                <button
+                                    title-for="settings_storage_clear"
+                                    data-icon="delete"
+                                    data-enable="sites"
+                                    data-action="storage,clear"
+                                    class="btn waves-effect"
+                                ></button>
+                            </div>
+                        </section>
+                    </section>
+                </li>
+                <li>
+                    <header
+                        class="collapsible-header waves-effect flow-text"
+                        for="about"
+                        accesskey="4"
+                        data-icon="information"
+                    ></header>
+                    <section class="collapsible-body">
+                        <div class="row">
+                            <side class="s3">
+                                <img
+                                    src="../icons/logo.png"
+                                    alt="Logo"
+                                    class="responsive-img"
+                                />
+                            </side>
+                            <article class="s9">
+                                <p
+                                    class="flow-text"
+                                    style="font-weight: bold"
+                                    for="extension_name"
+                                ></p>
+                                <p
+                                    for="extension_version"
+                                    style="font-style: italic"
+                                ></p>
+                                <p for="extension_description"></p>
+                            </article>
+                        </div>
+                    </section>
+                </li>
+            </ul>
+        </main>
+        <side class="fixed-action-btn">
+            <button
+                href="help"
+                tab-height="607.5"
+                tab-width="1080"
+                class="btn-floating btn-large waves-effect"
+                title-for="help"
+                data-icon="help"
+            ></button>
+        </side>
+    </body>
 </html>
