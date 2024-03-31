@@ -1,6 +1,5 @@
 .DS_Store
 /bin
-interface.external.css
-interface.external.js
-jquery.js
+/gui/styles/external/materialize/
+/gui/styles/external/mdi/
 /config/config.json
