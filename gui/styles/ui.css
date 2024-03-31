@@ -1,19 +1,88 @@
-/*
-ShopAI's GUI appearance
-*/
-
-.window-body {
-    display: flex;
-    flex-direction: column;
+:root {
+    --primary-color: rgba(255, 134, 57, 1);
+    --primary-color-raised-focus-solid: rgba(221, 106, 59, 1);
+    --primary-color-raised-hover-solid: rgba(252, 162, 133, 1);
 }
 
-.window-body .view_main {
-    flex-grow: 1;
-    min-width: 0;
+body:has(main.container) {
+    background: linear-gradient(
+        25deg,
+        rgba(221, 106, 59, 1) 0%,
+        rgba(255, 134, 57, 1) 62%,
+        rgba(252, 162, 133, 1) 100%
+    );
 }
 
-.window-body .action-buttons {
+main.container {
+    background-color: white;
+}
+
+.btn,
+.btn-floating {
+    background-color: var(--primary-color);
+}
+
+.btn:hover,
+.btn-floating:hover {
+    background-color: var(--primary-color-raised-hover-solid);
+}
+
+.btn:focus,
+.btn-floating:focus {
+    background-color: var(--primary-color-raised-focus-solid);
+}
+
+ul.sidenav-fixed + * {
+    padding-left: 300px;
+}
+
+@media only screen and (max-width: 992px) {
+    ul.sidenav-fixed + * {
+        padding-left: 0;
+    }
+}
+
+.collapsible > li > header {
+    font-weight: bold;
+}
+
+.dual {
+    height: 100%;
     display: flex;
-    align-items: end;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+form ul > li:has(input[type="checkbox"]),
+ul.input-field > li {
+    list-style-type: none;
+}
+
+form ul:has(li input[type="checkbox"]),
+ul.input-field {
+    padding-left: 0;
+}
+
+.input-group {
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+}
+
+.input-group:not(:has(input)) {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.input-group side:not(:has(input)) {
+    display: flex;
+    flex-direction: row;
     justify-content: end;
+    align-items: center;
+}
+
+.field-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
