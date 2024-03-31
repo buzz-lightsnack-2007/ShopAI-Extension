@@ -7,8 +7,10 @@ Be sensitive to changes and update the state.
   let secretariat = await import(
     chrome.runtime.getURL("scripts/secretariat.js")
   );
-  let filters = await import(chrome.runtime.getURL("scripts/filters.js"));
-  let reader = await import(chrome.runtime.getURL("scripts/reader.js"));
+  let filters = (await import(chrome.runtime.getURL("scripts/filters.js")))[
+    `filters`
+  ];
+  // let reader = await import(chrome.runtime.getURL("scripts/reader.js"));
 
   class watchman {
     /* Check the current URL.

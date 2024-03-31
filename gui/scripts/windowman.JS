@@ -1,76 +1,144 @@
 /* windowman
-Window management */
+Window and window content management */
 
 import texts from "./read.js";
 
 class windowman {
-  /* Initialize the window frame. */
-  static prepare() {
-    try {
-      let UI = {
-        library: [
-          chrome.runtime.getURL("gui/styles/interface.external.css"),
-          chrome.runtime.getURL("gui/styles/ui.css"),
-        ],
-        script: chrome.runtime.getURL(
-          "gui/scripts/external/interface.external.js",
-        ),
-      };
-
-      UI.library.forEach((source) => {
-        $(`head`).append(
-          `<link rel="stylesheet" type="text/css" href="${source}">`,
-        );
-      });
-
-      $(`head`).append(`<script type="module" src="${UI.script}"></script>`);
-    } catch (error) {
-      console.error(texts.localized(`error_fileNotFound`, [error]));
-    }
-
-    // Prevent scaling, similar to a real window.
-    $(`head`).append(
-      `<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />`,
-    );
-  }
-
-  constructor(URL, height, width) {
+  static new(URL, height, width) {
     this.window = chrome.windows.create({
       url: chrome.runtime.getURL(URL),
       type: "popup",
-      width: width ? parseInt(width) : 400,
+      width: width ? parseInt(width) : 600,
       height: height ? parseInt(height) : 600,
     });
   }
 
-  static fill() {
-    function text() {
-      let text_elements = document.querySelectorAll("[data-text]");
+  // Prepare the window with its metadata.
+  constructor() {
+    function headers() {
+      let UI = {
+        library: [
+          chrome.runtime.getURL(
+            "gui/styles/external/mdi/materialdesignicons.min.css",
+          ),
+          chrome.runtime.getURL(
+            "gui/styles/external/materialize/css/materialize.css",
+          ),
+          chrome.runtime.getURL("gui/styles/ui.css"),
+        ],
+      };
 
-      text_elements.forEach((text_element) => {
-        let text_inserted = texts.localized(
-          text_element.getAttribute(`data-text`),
-          false,
-          text_element.hasAttribute(`data-text-parameter`)
-            ? text_element.getAttribute(`data-text-parameter`).split(",")
-            : null,
-        );
-        if (!text_inserted) {
-          text_inserted = texts.localized(
-            `term_`.concat(text_element.getAttribute(`data-text`)),
-          );
-        }
-
-        if (text_element.tagName.toLowerCase().includes(`input`)) {
-          text_element.setAttribute(`placholder`, text_inserted);
-        } else {
-          text_element.innerText = text_inserted;
-        }
+      UI.library.forEach((source) => {
+        let metadata_element = document.createElement(`link`);
+        metadata_element.setAttribute(`rel`, `stylesheet`);
+        metadata_element.setAttribute(`type`, `text/css`);
+        metadata_element.setAttribute(`href`, source);
+        document.querySelector(`head`).appendChild(metadata_element);
       });
     }
 
-    function storage() {
-      (async () => {
+    // Get the window.
+    this[`metadata`] = chrome.windows.getCurrent();
+
+    /*
+    window_metadata[`id`] = window.id;
+    window_metadata[`focused`] = window.focused;
+    window_metadata[`state`] = window.state;
+    window_metadata[`type`] = window.type;
+    window_metadata[`incognito`] = window.incognito;
+    window_metadata[`alwaysOnTop`] = window.alwaysOnTop;
+    window_metadata[`sessionId`] = window.sessionId;
+    window_metadata[`tabs`] = window.tabs;*/
+
+    /* Fill in data and events.  */
+    function appearance() {
+      function icons() {
+        let target_elements = document.querySelectorAll(`[data-icon]`);
+
+        target_elements.forEach((element) => {
+          // Get the content before removing it.
+          let element_data = {};
+
+          // Swap the placement of the existing content.
+          function swap() {
+            element_data[`content`] = element.innerHTML;
+            element.innerHTML = ``;
+
+            let element_text = document.createElement(`span`);
+            element_text.innerHTML = element_data[`content`];
+
+            element.appendChild(element_text);
+          }
+
+          // Add the icon.
+          function iconify() {
+            // Get the icon.
+            element_data[`icon`] = element.getAttribute(`data-icon`);
+
+            // Get the icon.
+            let icon_element = document.createElement(`i`);
+            icon_element.className = `mdi mdi-`.concat(element_data[`icon`]);
+            element.prepend(icon_element);
+          }
+
+          swap();
+          iconify();
+        });
+      }
+
+      function text() {
+        let text_elements = {};
+        text_elements[`content`] = document.querySelectorAll("[for]");
+        text_elements[`alt`] = document.querySelectorAll("[alt-for]");
+        text_elements[`title`] = document.querySelectorAll("[title-for]");
+
+        text_elements[`content`].forEach((text_element) => {
+          let text_inserted = texts.localized(
+            text_element.getAttribute(`for`),
+            false,
+            text_element.hasAttribute(`for-parameter`)
+              ? text_element.getAttribute(`for-parameter`).split(",")
+              : null,
+          );
+          if (!text_inserted) {
+            text_inserted = texts.localized(
+              `term_`.concat(text_element.getAttribute(`for`)),
+            );
+          }
+
+          if (text_element.tagName.toLowerCase().includes(`input`)) {
+            text_element.setAttribute(`placholder`, text_inserted);
+          } else {
+            text_element.innerText = text_inserted;
+          }
+        });
+
+        delete text_elements[`content`];
+        Object.keys(text_elements).forEach((key) => {
+          if (text_elements[key]) {
+            text_elements[key].forEach((text_element) => {
+              let text_inserted = texts.localized(
+                text_element.getAttribute(key.concat(`-for`)),
+                false,
+                text_element.hasAttribute(key.concat(`for-parameter`))
+                  ? text_element
+                      .getAttribute(key.concat(`for-parameter`))
+                      .split(",")
+                  : null,
+              );
+              if (!text_inserted) {
+                text_inserted = texts.localized(
+                  `term_`.concat(text_element.getAttribute(key.concat(`-for`))),
+                );
+              }
+
+              text_element.setAttribute(key, text_inserted);
+            });
+          }
+        });
+      }
+
+      async function storage() {
         // Import the module.
         const secretariat = await import(
           chrome.runtime.getURL("scripts/secretariat.js")
@@ -108,18 +176,17 @@ class windowman {
             }
           });
         });
-      })();
+      }
+
+      text();
+      icons();
+      storage();
     }
 
-    text();
-    storage();
-  }
-
-  /* Add click events. */
-  static events() {
-    /* Add events related to storage. */
-    function storage() {
-      (async () => {
+    // Adds events to the window.
+    function events() {
+      /* Add events related to storage. */
+      async function storage() {
         // Import the module.
         const secretariat = await import(
           chrome.runtime.getURL("scripts/secretariat.js")
@@ -160,201 +227,97 @@ class windowman {
 
           input_element.addEventListener("change", element[`event`]);
         });
-      })();
-    }
+      }
 
-    /* Make it feel more like a native window. */
-    function functionality() {
-      /* Adjust the interface based on events. */
-      function changeUI() {
-        function tabs() {
-          let menus = document.querySelectorAll("menu[role=tablist]");
+      /* Map buttons to their corresponding action buttons. */
+      function actions() {
+        function links() {
+          let buttons = document.querySelectorAll("button[href]");
 
-          if (menus) {
-            menus.forEach((menu) => {
-              let buttons = menu.querySelectorAll("button, a");
+          if (buttons) {
+            buttons.forEach((button) => {
+              let event = function () {
+                // Get the data from the button.
+                let target = {};
+                target[`source`] = this.getAttribute(`href`);
 
-              if (buttons) {
-                buttons.forEach((button) => {
-                  let event = function () {
-                    // Prevent selection.
-                    let MENU = this.parentElement;
-                    let BUTTONS = MENU.querySelectorAll("button, a");
+                // Get the correct path.
+                target[`path`] = (
+                  !target[`source`].includes(`://`)
+                    ? window.location.pathname
+                        .split(`/`)
+                        .slice(0, -1)
+                        .join(`/`)
+                        .concat(`/`)
+                    : ``
+                ).concat(target[`source`]);
 
-                    BUTTONS.forEach((BUTTON) => {
-                      BUTTON.setAttribute(
-                        `aria-selected`,
-                        String(
-                          BUTTON.getAttribute(`for`) ==
-                            this.getAttribute(`for`),
-                        ),
-                      );
-                    });
+                windowman.new(
+                  target[`path`],
+                  this.getAttribute(`tab-height`)
+                    ? this.getAttribute(`tab-height`)
+                    : null,
+                  this.getAttribute(`tab-width`)
+                    ? this.getAttribute(`tab-width`)
+                    : null,
+                );
+              };
+              button.addEventListener("click", event);
+            });
+          }
+        }
 
-                    let CONTAINER = document.getElementById(
-                      MENU.getAttribute(`for`),
-                    );
-                    let SECTIONS = CONTAINER.querySelectorAll(
-                      `#${CONTAINER.id} > section`,
-                    );
+        links();
+      }
 
-                    SECTIONS.forEach((SECTION) => {
-                      // SECTION.setAttribute(`hidden`, true);
+      /*
+      Update the interface based on the storage data changes.
+      */
+      async function updates() {
+        // Import the module.
+        const secretariat = await import(
+          chrome.runtime.getURL("scripts/secretariat.js")
+        );
 
-                      if (!this.getAttribute(`for`).includes(SECTION.id)) {
-                        SECTION.setAttribute(
-                          `hidden`,
-                          this.getAttribute(`for`).includes(SECTION.id),
-                        );
-                      } else {
-                        SECTION.removeAttribute(`hidden`);
-                      }
-                    });
+        // Get the storage data.
+        let storage_data = await secretariat.read();
 
-                    // Save.
-                    (async () => {
-                      const secretariat = await import(
-                        chrome.runtime.getURL("scripts/secretariat.js")
-                      );
+        async function update_interface() {
+          let input_elements = document.querySelectorAll("[data-enable]");
 
-                      // Write the data.
-                      secretariat.write(
-                        [`view`, window.location.href],
-                        parseInt(this.getAttribute(`tab`)),
-                        1,
-                      );
-                    })();
-                  };
-
-                  button.addEventListener("click", event);
-                });
+          if (input_elements) {
+            input_elements.forEach((input_element) => {
+              if (input_element.getAttribute("data-enable")) {
+                (async () => {
+                  input_element.disabled =
+                    (await secretariat.read(
+                      input_element.getAttribute("data-enable"),
+                    )) == null ||
+                    (await secretariat.read(
+                      input_element.getAttribute("data-enable"),
+                    ));
+                })();
               }
             });
           }
         }
 
-        tabs();
-      }
+        // Update the input elements.
+        secretariat.observe((what) => {
+          update_interface();
+        });
 
-      document.addEventListener("contextmenu", (event) =>
-        event.preventDefault(),
-      );
-
-      changeUI();
-    }
-
-    /* Map buttons to their corresponding action buttons. */
-    function actions() {
-      function links() {
-        let buttons = document.querySelectorAll("button[href]");
-
-        if (buttons) {
-          buttons.forEach((button) => {
-            let event = function () {
-              // Get the data from the button.
-              let file = {};
-              file[`target`] = this.getAttribute(`href`);
-
-              // Check if the file exists to only open it when it is the case.
-              function testUrl(URL) {
-                // Code from https://stackoverflow.com/questions/3646914/how-do-i-check-if-file-exists-in-jquery-or-pure-javascript
-                const HTTP = new XMLHttpRequest();
-                try {
-                  HTTP.open(`HEAD`, URL, false);
-                  HTTP.send();
-                  return HTTP.status != 404;
-                } catch (error) {
-                  return false;
-                }
-              }
-
-              if (!file[`target`].includes(`://`)) {
-                // Get the current path.
-                file[`path`] = window.location.pathname.split(`/`);
-                file[`path`] =
-                  file[`path`].slice(0, file[`path`].length - 1).join(`/`) +
-                  `/`;
-                file[`location`] = file[`path`].concat(file[`target`]);
-              } else {
-                file[`location`] = file[`target`];
-              }
-
-              let open_combinations = [``, `.htm`, `.html`];
-              for (
-                let open_combination = 0;
-                open_combination < open_combinations.length;
-                open_combination++
-              ) {
-                if (
-                  testUrl(
-                    file[`location`] + open_combinations[open_combination],
-                  )
-                ) {
-                  new windowman(
-                    file[`location`] + open_combinations[open_combination],
-                    this.getAttribute(`tab-height`)
-                      ? this.getAttribute(`tab-height`)
-                      : null,
-                    this.getAttribute(`tab-width`)
-                      ? this.getAttribute(`tab-width`)
-                      : null,
-                  );
-                  break;
-                }
-              }
-            };
-            button.addEventListener("click", event);
-          });
-        }
-      }
-
-      links();
-    }
-
-    /*
-    Update the interface based on the storage data changes.
-    */
-    async function updates() {
-      // Import the module.
-      const secretariat = await import(
-        chrome.runtime.getURL("scripts/secretariat.js")
-      );
-
-      // Get the storage data.
-      let storage_data = await secretariat.read();
-
-      async function update_interface() {
-        let input_elements = document.querySelectorAll("[data-enable]");
-
-        if (input_elements) {
-          input_elements.forEach((input_element) => {
-            if (input_element.getAttribute("data-enable")) {
-              (async () => {
-                input_element.disabled =
-                  (await secretariat.read(
-                    input_element.getAttribute("data-enable"),
-                  )) == null ||
-                  (await secretariat.read(
-                    input_element.getAttribute("data-enable"),
-                  ));
-              })();
-            }
-          });
-        }
-      }
-
-      // Update the input elements.
-      secretariat.observe((what) => {
         update_interface();
-      });
+      }
 
-      update_interface();
+      storage();
+      actions();
+      updates();
     }
 
-    storage();
-    functionality();
-    actions();
-    updates();
+    headers();
+    appearance();
+    events();
   }
 }
 

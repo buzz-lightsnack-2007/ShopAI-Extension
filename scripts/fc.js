@@ -2,7 +2,7 @@
 This does not stand for "FamiCom" but instead on Finalization and Completion. This script provides installation run scripts.
 */
 
-import { read, write, init } from "./secretariat.js";
+import { init } from "./secretariat.js";
 
 let config = chrome.runtime.getURL("config/config.json");
 

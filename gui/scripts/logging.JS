@@ -13,7 +13,9 @@ export default class logging {
   static error(ERROR_CODE, ERROR_MESSAGE, critical = true) {
     (async () => {
       // Import the templating.
-      const texts = await import(chrome.runtime.getURL("gui/scripts/read.js"));
+      const texts = (
+        await import(chrome.runtime.getURL("gui/scripts/read.js"))
+      )[`texts`];
 
       // Display the error message.
       console.error(texts.read(`error_msg`, [ERROR_CODE, ERROR_MESSAGE]));

@@ -27,11 +27,11 @@ export async function read(DATA_NAME, CLOUD = 0, PARAMETER_TEST = null) {
   }
 
   /*
-		Find the data now.
+      Get all dataset.
 
-		@param {number} SOURCE the data source
-	*/
-  function read_database(SOURCE = -1) {
+      @param {number} SOURCE the data source
+  */
+  async function read_database(SOURCE = -1) {
     let data = {};
     let data_returned;
 
@@ -75,10 +75,10 @@ export async function read(DATA_NAME, CLOUD = 0, PARAMETER_TEST = null) {
 
   /* Recursively find through each data, returning either that value or null when the object is not found.
 
-	@param {dictionary} DATA_ALL the data
-	@param {object} DATA_PATH the path of the data
-	@return {object} the data
-	*/
+  @param {dictionary} DATA_ALL the data
+  @param {object} DATA_PATH the path of the data
+  @return {object} the data
+  */
   function find_data(DATA_ALL, DATA_PATH, PARAMETER_TEST) {
     // Pull the data out.
     let DATA_PATH_SELECTED = String(DATA_PATH.shift()).trim();
@@ -185,9 +185,9 @@ export function write(PATH, DATA, CLOUD = -1) {
 
   /* Forcibly write the data to chrome database
 
-	@param {object} DATA the data
-	@param {number} CLOUD the storage
-	*/
+  @param {object} DATA the data
+  @param {number} CLOUD the storage
+  */
   function write_database(DATA, CLOUD = 0) {
     // If CLOUD is set to 0, it should automatically determine where the previous source of data was taken from.
 
@@ -200,11 +200,11 @@ export function write(PATH, DATA, CLOUD = -1) {
 
   /* Appropriately nest and merge the data.
 
-	@param {object} EXISTING the original data
-	@param {object} PATH the subpath
-	@param {object} VALUE the value
-	@return {object} the updated data
-	*/
+  @param {object} EXISTING the original data
+  @param {object} PATH the subpath
+  @param {object} VALUE the value
+  @return {object} the updated data
+  */
   function nest(EXISTING, SUBPATH, VALUE) {
     let DATABASE = EXISTING;
 
@@ -263,7 +263,9 @@ export function forget(preference, subpreference, CLOUD = 0) {
 
   (async () => {
     // Import alerts module.
-    let alerts = await import(chrome.runtime.getURL(`gui/scripts/alerts.js`));
+    let alerts = (await import(chrome.runtime.getURL(`gui/scripts/alerts.js`)))[
+      `alerts`
+    ];
 
     // Confirm the action.
     let forget_action = alerts.confirm_action();
@@ -388,7 +390,7 @@ Run a script when the browser storage has been changed.
 
 @param {object} reaction the function to run
 */
-export async function observe(reaction) {
+export function observe(reaction) {
   chrome.storage.onChanged.addListener((changes, namespace) => {
     reaction(changes, namespace);
   });
