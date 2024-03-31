@@ -1,33 +1,36 @@
 <html>
 
 <head>
-    <script type="module" src="../../scripts/external/jquery.js"></script>
+    <script src="../../styles/external/materialize/js/materialize.js"></script>
     <script type="module" src="../../scripts/pages/settings.js"></script>
 
-    <title data-text="filters"></title>
+    <title for="filters"></title>
 </head>
 
 <body>
-    <main class="window-body has-space">
-        <main id="settings_filters_content" style="display: flex;">
-            <side>
-                <top class="field-row">
-                    <input type="search" data-text="settings_filters_search_prompt">
-                    <button data-action="action,submit" data-text="search"></button>
-                    <button data-action="action,add" data-text="add"></button>
-                </top>
-                <section>
-                    <select multiple style="width: 100%;">
-                    </select>
-                </section>
-                <footer class="field-row action-buttons">
-                    <button data-action="filters,update" data-text="settings_filters_update">
-                </footer>
-            </side>
-            <fieldset style="flex: 1 1 auto;" style="height: 100vh">
-            </fieldset>
-        </main>
+    <main class="dual">
+        <side class="m3 container">
+            <top class="search-wrapper field-row">
+                <input type="search" for="settings_filters_search_prompt">
+                <button class="btn waves-effect" data-action="action,submit" for="search"></button>
+                <button data-action="action,add" for="add"></button>
+            </top>
+            <div class="collection" data-results="filters" data-results-filters="url">
+            </div>
+        </side>
+        <section class="m9">
+            <nav class="nav-wrapper">
+                <ul class="right">
+                    <li><a class="waves-effect" data-icon="trash-can"></a></li>
+                    <li><a class="waves-effect">Update</a></li>
+                </ul>
+            </nav>
+        </section>
     </main>
+    <side class="fixed-action-btn">
+        <button data-action="filters,update" class="btn-floating btn-large waves-effect"
+            title-for="settings_filters_update" data-icon="refresh" accesskey="r">
+    </side>
 </body>
 
 </html>
