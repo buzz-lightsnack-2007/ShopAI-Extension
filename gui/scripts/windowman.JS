@@ -78,6 +78,25 @@ class windowman {
 
 		/* Fill in data and events.  */
 		function appearance() {
+			// Add missing classes to all elements. 
+			function elements() {
+				// Add buttons elements. 
+				function buttons() {
+					document.querySelectorAll(`button`).forEach((button) => {
+						if (!button.classList.contains(`btn`)) {
+							button.classList.add(`btn`);
+						}
+						if (!button.classList.contains(`waves-effect`)) {
+							button.classList.add(`waves-effect`);
+						}
+					})
+
+					
+				}
+				buttons();
+			}
+
+
 			function icons() {
 				let target_elements = document.querySelectorAll(`[data-icon]`);
 
@@ -204,6 +223,7 @@ class windowman {
 				});
 			}
 
+			elements();
 			text();
 			icons();
 			storage();
