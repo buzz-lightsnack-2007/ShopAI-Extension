@@ -1,5 +1,4 @@
 .DS_Store
 /bin
-/gui/styles/external/materialize/
-/gui/styles/external/mdi/
+/gui/styles/external/
 /config/config.json
