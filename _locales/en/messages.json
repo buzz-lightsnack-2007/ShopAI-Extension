@@ -162,5 +162,15 @@
         "description": "The error code"
       }
     }
+  },
+  "error_msg_fileNotFound": {
+    "message": "Could not find the file $file_path$.",
+    "description": "The error message template for a file not found exception",
+    "placeholders": {
+      "file_path": {
+        "content": "$1",
+        "description": "The file path"
+      }
+    }
   }
 }
