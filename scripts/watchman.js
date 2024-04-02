@@ -7,7 +7,7 @@ Be sensitive to changes and update the state.
   let secretariat = await import(
     chrome.runtime.getURL("scripts/secretariat.js")
   );
-  let filters = (await import(chrome.runtime.getURL("scripts/filters.js"))).default;
+  let filters = new ((await import(chrome.runtime.getURL("scripts/filters.js"))).default);
   // let reader = await import(chrome.runtime.getURL("scripts/reader.js"));
 
   class watchman {
@@ -34,15 +34,15 @@ Be sensitive to changes and update the state.
       console.log(
         "ShopAI works here! Click on the button in the toolbar or website to start.",
       );
+      secretariat.write("state", true);
       // TODO
     }
 
     /* Set the program to standby utnil next load.
      */
     static standby() {
-      console.log(
-        "ShopAI doesn't work here (yet). Expecting something? Try checking your filters. If you know what you're doing, feel free to create a filter yourself.",
-      );
+      // Set the icon to indicate that it's not active. 
+      secretariat.write("state", false);
     }
 
     static async job() {
