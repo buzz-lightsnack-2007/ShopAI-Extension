@@ -6,7 +6,7 @@ import texts from "./read.js";
 // MAKE SURE TO TURN THIS OFF DURING BUILD.
 let DEBUG = false;
 
-class windowman {
+export default class windowman {
 	static new(URL, height, width) {
 		this.window = chrome.windows.create({
 			url: chrome.runtime.getURL(URL),
