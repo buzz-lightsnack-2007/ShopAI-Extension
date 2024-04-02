@@ -7,9 +7,7 @@ Be sensitive to changes and update the state.
   let secretariat = await import(
     chrome.runtime.getURL("scripts/secretariat.js")
   );
-  let filters = (await import(chrome.runtime.getURL("scripts/filters.js")))[
-    `filters`
-  ];
+  let filters = (await import(chrome.runtime.getURL("scripts/filters.js"))).default;
   // let reader = await import(chrome.runtime.getURL("scripts/reader.js"));
 
   class watchman {
@@ -18,13 +16,11 @@ Be sensitive to changes and update the state.
       @param {string} URL the page URL; default value is the current webpage
       @return {dictionary} the filter to follow
       */
-    static observe(URL = window.location.href) {
+    static async observe(URL = window.location.href) {
       // Create the variable to determine the corresponding key.
       let activity = false;
-      // let filters = secretariat.specifics(`filters`, URL);
-
-      // Check if the filters exist.
-      activity = filters;
+      
+      activity = await filters.select(URL);
 
       return activity;
     }
@@ -49,14 +45,15 @@ Be sensitive to changes and update the state.
       );
     }
 
-    static job() {
+    static async job() {
       /* The main action. */
-      let job_task = watchman.observe();
-      if (job_task) {
-        watchman.act(job_task);
-      } else {
-        watchman.standby();
-      }
+      (watchman.observe()).then((job_task) => {
+        if (job_task && Object.keys(job_task).length !== 0) {
+          watchman.act(job_task);
+        } else {
+          watchman.standby();
+        }
+      });
     }
   }
 
