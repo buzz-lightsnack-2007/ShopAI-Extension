@@ -133,7 +133,7 @@
     }
   },
   "settings_filters_search_prompt": {
-    "message": "Search URL or source"
+    "message": "Search"
   },
   "settings_filters_update_stop": {
     "message": "No filters were updated as none were available."
@@ -149,7 +149,7 @@
   },
 
   "error_msg": {
-    "message": "$error_code$: $error_msg$",
+    "message": "$error_code$: $error_msg$ \n$error_trace$",
     "description": "The error message template",
     "placeholders": {
       "error_code": {
@@ -159,6 +159,10 @@
       "error_msg": {
         "content": "$2",
         "description": "The error message"
+      }, 
+	  "error_trace": {
+        "content": "$3",
+        "description": "The error trace"
       }
     }
   },
