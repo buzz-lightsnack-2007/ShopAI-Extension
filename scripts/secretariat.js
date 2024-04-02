@@ -77,63 +77,57 @@ export async function read(DATA_NAME, CLOUD = 0, PARAMETER_TEST = null) {
 
 	@param {dictionary} DATA_ALL the data
 	@param {object} DATA_PATH the path of the data
+	@param {object} PARAMETER_TEST what among the value to test
 	@return {object} the data
 	*/
 	function find_data(DATA_ALL, DATA_PATH, PARAMETER_TEST) {
-		// Pull the data out.
-		let DATA_PATH_SELECTED = String(DATA_PATH.shift()).trim();
 		let DATA_SELECTED = DATA_ALL;
 
-		// Only run when the data is valid.
-		if (DATA_ALL) {
-			if (DATA_SELECTED) {
-				// Get the selected data.
-				DATA_SELECTED = DATA_ALL[DATA_PATH_SELECTED];
+		// Pull the data out.
+		if (DATA_ALL && DATA_PATH && (DATA_PATH != null) ? DATA_PATH.length > 0 : false) {
+			let DATA_PATH_SELECTED = String(DATA_PATH.shift()).trim();
+			
+			// Get the selected data.
+			DATA_SELECTED = DATA_ALL[DATA_PATH_SELECTED];
 
-				if (DATA_PATH.length > 0) {
-					// Recursively run to make use of the existing data.
-					DATA_SELECTED = find_data(DATA_SELECTED, DATA_PATH, PARAMETER_TEST);
+			// must run if there is actually a parameter to test
+			if (DATA_PATH.length > 0 || (((PARAMETER_TEST != null) ? PARAMETER_TEST.length > 0 : false) ? PARAMETER_TEST[`field`] : false)) {
+				// Recursively run to make use of the existing data.
+				DATA_SELECTED = find_data(DATA_SELECTED, DATA_PATH, PARAMETER_TEST);
+			}
+		} else if ((PARAMETER_TEST) ? (!!PARAMETER_TEST[`field`] && !!PARAMETER_TEST[`test value`]) : false) {
+			let QUALIFIED = false;
+			let DATA_SELECTED_KEYS = Object.keys(DATA_SELECTED);
+
+			// Perform a sequential search.
+			for (
+				let DATA_SELECTED_KEY_INDEX = 0;
+				(DATA_SELECTED_KEY_INDEX < DATA_SELECTED_KEYS.length) && !QUALIFIED;
+				DATA_SELECTED_KEY_INDEX++
+			) {
+				PARAMETER_TEST[`value`] =
+					DATA_SELECTED[DATA_SELECTED_KEYS[DATA_SELECTED_KEY_INDEX]][
+						PARAMETER_TEST[`field`]
+					];
+				if (PARAMETER_TEST[`value`]) {
+					QUALIFIED =
+						new RegExp(String(PARAMETER_TEST[`value`])).test(
+							PARAMETER_TEST[`test value`],
+						) ||
+						PARAMETER_TEST[`test value`].includes(PARAMETER_TEST[`value`]);
 				}
-			} else if (PARAMETER_TEST && DATA_SELECTED) {
-				let QUALIFIED = false;
-
-				// The expected keys are "field" and "test value"
-				DATA_SELECTED_KEYS = Object.keys(DATA_SELECTED);
-				if (PARAMETER_TEST[`field`] && PARAMETER_TEST[`test value`]) {
-					// Perform a sequential search.
-					for (
-						let DATA_SELECTED_KEY_INDEX = 0;
-						DATA_SELECTED_KEY_INDEX < DATA_SELECTED_KEYS.length || !QUALIFIED;
-						DATA_SELECTED_KEY_INDEX++
-					) {
-						PARAMETER_TEST[`value`] =
-							DATA_SELECTED[DATA_SELECTED_KEYS[DATA_SELECTED_KEY_INDEX]][
-								PARAMETER_TEST[`field`]
-							];
-						if (PARAMETER_TEST[`value`]) {
-							QUALIFIED =
-								new RegExp(String(PARAMETER_TEST[`value`])).test(
-									PARAMETER_TEST[`test value`],
-								) ||
-								PARAMETER_TEST[`test value`].includes(PARAMETER_TEST[`value`]);
-						}
-
-						if (QUALIFIED) {
-							DATA_SELECTED =
-								DATA_SELECTED[DATA_SELECTED_KEYS[DATA_SELECTED_KEY_INDEX]];
-							break;
-						}
-					}
-
-					if (!QUALIFIED) {
-						DATA_SELECTED = null;
-					}
-				} else {
-					// It is not valid, so do not return anything.
-					DATA_SELECTED = null;
+	
+				if (QUALIFIED) {
+					DATA_SELECTED =
+						DATA_SELECTED[DATA_SELECTED_KEYS[DATA_SELECTED_KEY_INDEX]];
+					break;
 				}
 			}
-		}
+	
+			if (!QUALIFIED) {
+				DATA_SELECTED = null;
+			}
+		} else {return (null);}
 
 		// Now return the data.
 		return DATA_SELECTED;
