@@ -4,7 +4,14 @@ Manage filters.
 
 export default class filters {
 	constructor() {
-		this.all = {};
+		this.all = (async() => {
+			// Import the updater.
+			const secretariat = await import(
+				chrome.runtime.getURL("scripts/secretariat.js")
+			);
+
+			return ((await Promise.all([secretariat.read([`filters`], -1)]))[0])
+		})
 	}
 
 	/* Select the most appropriate filter based on a URL.
