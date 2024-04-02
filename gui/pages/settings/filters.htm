@@ -2,34 +2,45 @@
 
 <head>
     <script src="../../styles/external/materialize/js/materialize.js"></script>
-    <script type="module" src="../../scripts/pages/settings.js"></script>
+    <script src="../../scripts/pages/settings.js"></script>
 
     <title for="filters"></title>
 </head>
 
 <body>
     <main class="dual">
-        <side class="m3 container">
-            <top class="search-wrapper field-row">
-                <input type="search" for="settings_filters_search_prompt">
-                <button class="btn waves-effect" data-action="action,submit" for="search"></button>
-                <button data-action="action,add" for="add"></button>
-            </top>
-            <div class="collection" data-results="filters" data-results-filters="url">
+        <side class="side">
+			<nav class="nav-wrapper">
+				<div class="input-field">
+					<input type="search" data-result="filters" for="settings_filters_search_prompt"></input>
+				</div>
+            </nav>
+            <div class="collection" data-results-target="filters" data-results-filters="url">
             </div>
         </side>
-        <section class="m9">
+        <section>
             <nav class="nav-wrapper">
+                <ul class="left">
+                    <li><a class="waves-effect" data-icon="menu" id="menu_trigger"></a></li>
+                </ul>
                 <ul class="right">
-                    <li><a class="waves-effect" data-icon="trash-can"></a></li>
-                    <li><a class="waves-effect">Update</a></li>
+                    <li><a class="waves-effect" data-icon="trash-can" data-action="filters,delete,one"></a></li>
+                    <li><a class="waves-effect" data-icon="sync" data-action="filters,update,one"></a></li>
                 </ul>
             </nav>
+			<section>
+				<article class="">
+					<h1 data-result-content="name" class="flow-text"></h1>
+					<p id="author" data-result-content="author"></p>
+					<p data-result-content="description"></p>
+			</section>
         </section>
     </main>
     <side class="fixed-action-btn">
-        <button data-action="filters,update" class="btn-floating btn-large waves-effect"
-            title-for="settings_filters_update" data-icon="refresh" accesskey="r">
+		<button class="btn-floating btn-large" data-icon="plus" accesskey="+" data-action="filters,add,one"></button>
+		<ul>
+			<li><button data-action="filters,update" class="btn-floating waves-effect" title-for="settings_filters_update" data-icon="refresh" accesskey="r"></button></li>
+		</ul>
     </side>
 </body>
 
