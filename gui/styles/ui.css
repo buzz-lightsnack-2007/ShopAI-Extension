@@ -1,35 +1,86 @@
 :root {
-    --primary-color: rgba(255, 134, 57, 1);
-    --primary-color-raised-focus-solid: rgba(221, 106, 59, 1);
-    --primary-color-raised-hover-solid: rgba(252, 162, 133, 1);
+    --font-color-main: rgba(0, 0, 0) !important;
+    --font-color-medium: rgba(25, 25, 25) !important;
+    --font-color-disabled: rgba(63, 63, 63) !important;
+
+    --error-color: #CF6679 !important;
+
+    --primary-color: rgba(255, 134, 57) !important;
+    --primary-color-dark: rgba(221, 106, 59) !important;
+    --primary-color-numeric: 255, 134, 57 !important;
+    --primary-color-raised-hover-solid: rgba(252, 162, 133) !important;
+    --primary-color-raised-focus-solid: rgba(221, 106, 59) !important;
+
+    --secondary-color: rgba(221, 106, 59, 1) !important;
+    --secondary-color-hover-solid: rgba(252, 162, 133) !important;
+    --secondary-color-focus-solid: rgba(221, 106, 59) !important;
 }
 
-body:has(main.container) {
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #000 !important;
+        --surface-color: #000000 !important;
+
+        --font-color-main: rgba(255, 255, 255) !important;
+        --font-color-medium: rgba(255, 255, 255) !important;
+        --font-color-disabled: rgba(255, 255, 255) !important;
+
+        --font-on-primary-color-main: rgba(255, 255, 255) !important;
+        --font-on-primary-color-dark-main: rgba(255, 255, 255) !important;
+        --font-on-primary-color-dark-medium: rgba(255, 255, 255) !important;
+        --font-on-primary-color-medium: rgba(0, 0, 0, 0.56) !important;
+        --font-on-primary-color-disabled: rgba(0, 0, 0, 0.38) !important;
+
+        --hover-color: rgba(255, 255, 255, 0.04) !important;
+        --focus-color: rgba(255, 255, 255, 0.12) !important;
+        --focus-color-solid: #424242 !important;
+
+        --background-color-disabled: rgba(255, 255, 255, 0.12) !important;
+        --background-color-level-4dp: rgba(255, 255, 255, 0.09) !important;
+        --background-color-level-16dp-solid: #262626 !important;
+        --background-color-card: var(--surface-color) !important;
+        --background-color-slight-emphasis: rgba(255, 255, 255, 0.05) !important;
+
+        --separator-color: #424242 !important;
+        --error-color: #CF6679 !important;
+
+        --slider-track-color: rgba(255, 255, 255, 0.26) !important;
+        --switch-thumb-off-color: #bababa !important;
+
+        --primary-color: rgba(255, 134, 57) !important;
+        --primary-color-dark: rgba(221, 106, 59) !important;
+        --primary-color-numeric: 255, 134, 57 !important;
+        --primary-color-raised-hover-solid: rgba(252, 162, 133) !important;
+        --primary-color-raised-focus-solid: rgba(221, 106, 59) !important;
+
+        --secondary-color: rgba(221, 106, 59) !important;
+        --secondary-color-hover-solid: rgba(252, 162, 133) !important;
+        --secondary-color-focus-solid: rgba(221, 106, 59) !important;
+        --font-on-secondary-container-color: rgba(255, 255, 255) !important;
+
+        --secondary-container-color: rgba(221, 106, 59) !important;
+
+        --md_sys_color_on-surface: 230, 225, 229 !important;
+    }
+}
+
+body {
+    color: var(--font-color-main);
+    background-color: var(--background-color);
+
+}
+
+body:has(main.container), .background {
     background: linear-gradient(
         25deg,
-        rgba(221, 106, 59, 1) 0%,
-        rgba(255, 134, 57, 1) 62%,
-        rgba(252, 162, 133, 1) 100%
+        var(--primary-color-dark) 0%,
+        var(--primary-color) 62%,
+        var(--primary-color-raised-hover-solid) 100%
     );
 }
 
 main.container {
-    background-color: white;
-}
-
-.btn,
-.btn-floating {
-    background-color: var(--primary-color);
-}
-
-.btn:hover,
-.btn-floating:hover {
-    background-color: var(--primary-color-raised-hover-solid);
-}
-
-.btn:focus,
-.btn-floating:focus {
-    background-color: var(--primary-color-raised-focus-solid);
+    background-color: var(--background-color);
 }
 
 ul.sidenav-fixed + * {
@@ -44,13 +95,6 @@ ul.sidenav-fixed + * {
 
 .collapsible > li > header {
     font-weight: bold;
-}
-
-.dual {
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
 }
 
 form ul > li:has(input[type="checkbox"]),
@@ -85,4 +129,45 @@ ul.input-field {
     display: flex;
     flex-direction: row;
     align-items: center;
+}
+
+.dual > * {
+    transition: .1s ease-in-out;
+}
+
+.dual > * > *:not(nav) {
+    margin: 1em;
+}
+
+.dual .nav-wrapper > .input-field {
+    padding: .5em 1em .5em 1em;
+}
+
+nav .input-field label {
+    left: auto !important;
+}
+
+@media screen and (min-width: 500px) {
+    .dual {
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .dual .side {
+        width: 37%;
+    }
+
+    .dual > *:not(.side) {
+        flex-grow: 1;
+    }
+}
+
+@media screen and (min-width: 1000px) {
+    .dual .side {
+        width: 25%;
+    }
+
+
 }
