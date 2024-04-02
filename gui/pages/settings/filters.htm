@@ -9,26 +9,33 @@
 
 <body>
     <main class="dual">
+		<ul id="slide-out" class="sidenav sidenav-fixed" name="control">
+			<li>
+				<li for="extension_name" class="flow-text"></li>
+			</li>
+			<li>
+				<div class="input-field">
+					<input type="search" data-result="filters" data-results-filters="name,url" placeholder=" "></input>
+					<label for="settings_filters_search_prompt"></label>
+				</div>
+			</li>
+			<div data-results-target="filters">
+			</div>
+		</ul>
+	<!--
         <side class="side sidebar">
-            <nav class="nav-wrapper">
-                <ul class="left">
-                    <li for="extension_name" class="flow-text"></li>
-                </ul>
-                <ul class="hide-on-med-and-up right">
-                    <li><a data-icon="chevron-left" data-action="ui,close,navbar"></a></li>
-                </ul>
-            </nav>
+            
             <div class="input-field outlined">
                 <input type="search" data-result="filters" placeholder=" "></input>
                 <label for="settings_filters_search_prompt"></label>
             </div>
-            <div class="collection" data-results-target="filters" data-results-filters="url">
+            <div class="collection" data-results-target="filters" >
             </div>
-        </side>
+        </side>-->
         <section>
             <nav class="nav-wrapper">
                 <ul class="left">
-                    <li><a class="hide-on-med-and-up" data-icon="menu" data-action="ui,open,navbar"></a></li>
+                    <li><a class="hide-on-med-and-up" data-icon="menu" works-sidebar="control"></a></li>
                 </ul>
                 <ul class="right">
                     <li><a data-icon="trash-can" data-action="filters,delete,one"></a></li>

@@ -7,493 +7,466 @@ import texts from "./read.js";
 let DEBUG = false;
 
 export default class windowman {
-  static new(URL, height, width) {
-    this.window = chrome.windows.create({
-      url: chrome.runtime.getURL(URL),
-      type: "popup",
-      width: width ? parseInt(width) : 600,
-      height: height ? parseInt(height) : 600,
-    });
-  }
-
-  // Prepare the window with its metadata.
-  constructor() {
-	function headers() {
-		let LOAD_STATE = true;
-		let UI = {
-			CSS: [
-				chrome.runtime.getURL("gui/styles/external/fonts/materialdesignicons.min.css"),
-				chrome.runtime.getURL("gui/styles/external/materialize/css/materialize.css"),
-				chrome.runtime.getURL("gui/styles/ui.css"),
-			]
-		};
-
-		for (let index = 0; index < UI[`CSS`].length; index++) {
-			const source = UI.CSS[index];
-
-			try {
-				(async () => {
-					// Import source reading for later. 
-					const reader = (await import(chrome.runtime.getURL(`/gui/scripts/read.js`))).default;
-					
-					const net = await import(chrome.runtime.getURL(`/scripts/net.js`));
-
-					let resource = false;
-					try {
-					resource = await net.download(source, `text`, true);
-					} catch (err) {}
-
-					if (resource) {
-						let metadata_element = document.createElement(`link`);
-						metadata_element.setAttribute(`rel`, `stylesheet`);
-						metadata_element.setAttribute(`type`, `text/css`);
-						metadata_element.setAttribute(`href`, source);
-						document.querySelector(`head`).appendChild(metadata_element);
-					} else {
-						throw new ReferenceError(reader.localized(`error_msg_fileNotFound`));
-					}
-					
-				})();
-			} catch(err) {
-				(async() => {
-					const alerts = (await import(chrome.runtime.getURL(`/gui/scripts/alerts.js`))).default;
-					
-					// Raise an alert. 
-					alerts.error(err.name, err.message, err.stack, true, [source]);
-
-					// Stop loading the page when an error has occured; it's not going to work!
-					if (!DEBUG) {
-						window.close();
-					}
-				})();
-				
-				// Stop loading immediately during the error. 
-				break;
-			};
-		}
+	static new(URL, height, width) {
+		this.window = chrome.windows.create({
+			url: chrome.runtime.getURL(URL),
+			type: "popup",
+			width: width ? parseInt(width) : 600,
+			height: height ? parseInt(height) : 600,
+		});
 	}
 
-    // Get the window.
-    this[`metadata`] = chrome.windows.getCurrent();
+	// Prepare the window with its metadata.
+	constructor() {
+		function headers() {
+			let LOAD_STATE = true;
+			let UI = {
+				CSS: [
+					chrome.runtime.getURL("gui/styles/external/fonts/materialdesignicons.min.css"),
+					chrome.runtime.getURL("gui/styles/external/materialize/css/materialize.css"),
+					chrome.runtime.getURL("gui/styles/ui.css"),
+				]
+			};
 
-    /*
-    window_metadata[`id`] = window.id;
-    window_metadata[`focused`] = window.focused;
-    window_metadata[`state`] = window.state;
-    window_metadata[`type`] = window.type;
-    window_metadata[`incognito`] = window.incognito;
-    window_metadata[`alwaysOnTop`] = window.alwaysOnTop;
-    window_metadata[`sessionId`] = window.sessionId;
-    window_metadata[`tabs`] = window.tabs;*/
+			for (let index = 0; index < UI[`CSS`].length; index++) {
+				const source = UI.CSS[index];
 
-    /* Fill in data and events.  */
-    function appearance() {
-      // Add missing classes to all elements.
-      function elements() {
-        // Add buttons elements.
-        function buttons() {
-          document.querySelectorAll(`button`).forEach((button) => {
-            if (!button.classList.contains(`btn`)) {
-              button.classList.add(`btn`);
-            }
-          });
+				try {
+					(async () => {
+						// Import source reading for later. 
+						const reader = (await import(chrome.runtime.getURL(`/gui/scripts/read.js`))).default;
+						
+						const net = await import(chrome.runtime.getURL(`/scripts/net.js`));
 
-          []
-            .concat(
-              document.querySelectorAll(`a`)
-                ? document.querySelectorAll(`a`)
-                : [],
-              document.querySelectorAll(`button`)
-                ? document.querySelectorAll(`button`)
-                : [],
-              document.querySelectorAll(
-                `input:not([type="checkbox"]):not([type="radio"]):not([type="range"])`,
-              )
-                ? document.querySelectorAll(
-                    `input:not([type="checkbox"]):not([type="radio"]):not([type="range"])`,
-                  )
-                : [],
-            )
-            .forEach((ELEMENT_TYPE) => {
-              ELEMENT_TYPE.forEach((button) => {
-                if (
-                  button.classList
-                    ? !button.classList.contains(`waves-effect`)
-                    : true
-                ) {
-                  button.classList.add(`waves-effect`);
-                }
-              });
-            });
-        }
-        buttons();
-      }
+						let resource = false;
+						try {
+						resource = await net.download(source, `text`, true);
+						} catch (err) {}
 
-      function icons() {
-        let target_elements = document.querySelectorAll(`[data-icon]`);
+						if (resource) {
+							let metadata_element = document.createElement(`link`);
+							metadata_element.setAttribute(`rel`, `stylesheet`);
+							metadata_element.setAttribute(`type`, `text/css`);
+							metadata_element.setAttribute(`href`, source);
+							document.querySelector(`head`).appendChild(metadata_element);
+						} else {
+							throw new ReferenceError(reader.localized(`error_msg_fileNotFound`));
+						}
+						
+					})();
+				} catch(err) {
+					(async() => {
+						const alerts = (await import(chrome.runtime.getURL(`/gui/scripts/alerts.js`))).default;
+						
+						// Raise an alert. 
+						alerts.error(err.name, err.message, err.stack, true, [source]);
 
-        target_elements.forEach((element) => {
-          // Get the content before removing it.
-          let element_data = {};
+						// Stop loading the page when an error has occured; it's not going to work!
+						if (!DEBUG) {
+							window.close();
+						}
+					})();
+					
+					// Stop loading immediately during the error. 
+					break;
+				};
+			}
+		}
 
-          // Swap the placement of the existing content.
-          function swap() {
-            element_data[`content`] = element.innerHTML;
-            element.innerHTML = ``;
+		// Get the window.
+		this[`metadata`] = chrome.windows.getCurrent();
 
-            let element_text = document.createElement(`span`);
-            element_text.innerHTML = element_data[`content`];
+		/*
+		window_metadata[`id`] = window.id;
+		window_metadata[`focused`] = window.focused;
+		window_metadata[`state`] = window.state;
+		window_metadata[`type`] = window.type;
+		window_metadata[`incognito`] = window.incognito;
+		window_metadata[`alwaysOnTop`] = window.alwaysOnTop;
+		window_metadata[`sessionId`] = window.sessionId;
+		window_metadata[`tabs`] = window.tabs;*/
 
-            element.appendChild(element_text);
-          }
+		/* Fill in data and events.  */
+		function appearance() {
+			// Add missing classes to all elements.
+			function elements() {
+				// Add buttons elements.
+				function buttons() {
+					document.querySelectorAll(`button`).forEach((button) => {
+						if (!button.classList.contains(`btn`)) {
+							button.classList.add(`btn`);
+						}
+					});
 
-          // Add the icon.
-          function iconify() {
-            // Get the icon.
-            element_data[`icon`] = element.getAttribute(`data-icon`);
+					[]
+						.concat(
+							document.querySelectorAll(`a`)
+								? document.querySelectorAll(`a`)
+								: [],
+							document.querySelectorAll(`button`)
+								? document.querySelectorAll(`button`)
+								: [],
+							document.querySelectorAll(
+								`input:not([type="checkbox"]):not([type="radio"]):not([type="range"])`,
+							)
+								? document.querySelectorAll(
+										`input:not([type="checkbox"]):not([type="radio"]):not([type="range"])`,
+									)
+								: [],
+						)
+						.forEach((ELEMENT_TYPE) => {
+							ELEMENT_TYPE.forEach((button) => {
+								if (
+									button.classList
+										? !button.classList.contains(`waves-effect`)
+										: true
+								) {
+									button.classList.add(`waves-effect`);
+								}
+							});
+						});
+				}
+				buttons();
+			}
 
-            // Get the icon.
-            let icon_element = document.createElement(`i`);
-            icon_element.className = `mdi mdi-`.concat(element_data[`icon`]);
-            element.prepend(icon_element);
-          }
+			function icons() {
+				let target_elements = document.querySelectorAll(`[data-icon]`);
 
-          swap();
-          iconify();
-        });
-      }
+				target_elements.forEach((element) => {
+					// Get the content before removing it.
+					let element_data = {};
 
-      function text() {
-        let text_elements = {};
-        text_elements[`content`] = document.querySelectorAll("[for]");
-        text_elements[`alt`] = document.querySelectorAll("[alt-for]");
-        text_elements[`title`] = document.querySelectorAll("[title-for]");
+					// Swap the placement of the existing content.
+					function swap() {
+						element_data[`content`] = element.innerHTML;
+						element.innerHTML = ``;
 
-        text_elements[`content`].forEach((text_element) => {
-          let text_inserted = texts.localized(
-            text_element.getAttribute(`for`),
-            false,
-            text_element.hasAttribute(`for-parameter`)
-              ? text_element.getAttribute(`for-parameter`).split(",")
-              : null,
-          );
-          if (!text_inserted) {
-            text_inserted = texts.localized(
-              `term_`.concat(text_element.getAttribute(`for`)),
-            );
-          }
+						let element_text = document.createElement(`span`);
+						element_text.innerHTML = element_data[`content`];
 
-          if (text_element.tagName.toLowerCase().includes(`input`)) {
-            text_element.setAttribute(`placholder`, text_inserted);
-          } else {
-            text_element.innerText = text_inserted;
-          }
-        });
+						element.appendChild(element_text);
+					}
 
-        delete text_elements[`content`];
-        Object.keys(text_elements).forEach((key) => {
-          if (text_elements[key]) {
-            text_elements[key].forEach((text_element) => {
-              let text_inserted = texts.localized(
-                text_element.getAttribute(key.concat(`-for`)),
-                false,
-                text_element.hasAttribute(key.concat(`for-parameter`))
-                  ? text_element
-                      .getAttribute(key.concat(`for-parameter`))
-                      .split(",")
-                  : null,
-              );
-              if (!text_inserted) {
-                text_inserted = texts.localized(
-                  `term_`.concat(text_element.getAttribute(key.concat(`-for`))),
-                );
-              }
+					// Add the icon.
+					function iconify() {
+						// Get the icon.
+						element_data[`icon`] = element.getAttribute(`data-icon`);
 
-              text_element.setAttribute(key, text_inserted);
-            });
-          }
-        });
-      }
+						// Get the icon.
+						let icon_element = document.createElement(`i`);
+						icon_element.className = `mdi mdi-`.concat(element_data[`icon`]);
+						element.prepend(icon_element);
+					}
 
-      async function storage() {
-        // Import the module.
-        const secretariat = await import(
-          chrome.runtime.getURL("scripts/secretariat.js")
-        );
+					swap();
+					iconify();
+				});
+			}
 
-        let input_elements = document.querySelectorAll("[data-store]");
+			function text() {
+				let text_elements = {};
+				text_elements[`content`] = document.querySelectorAll("[for]");
+				text_elements[`alt`] = document.querySelectorAll("[alt-for]");
+				text_elements[`title`] = document.querySelectorAll("[title-for]");
 
-        input_elements.forEach((input_element) => {
-          // Gather data about the element.
-          // Get the corresponding storage data.
-          let data = {};
-          data[`source`] = input_element.getAttribute(`data-store`);
-          data[`value`] = secretariat.read(data[`source`], -1);
+				text_elements[`content`].forEach((text_element) => {
+					let text_inserted = texts.localized(
+						text_element.getAttribute(`for`),
+						false,
+						text_element.hasAttribute(`for-parameter`)
+							? text_element.getAttribute(`for-parameter`).split(",")
+							: null,
+					);
+					if (!text_inserted) {
+						text_inserted = texts.localized(
+							`term_`.concat(text_element.getAttribute(`for`)),
+						);
+					}
 
-          data[`value`].then((value) => {
-            switch (input_element.getAttribute(`type`).toLowerCase()) {
-              case `checkbox`:
-                input_element.checked = value;
-                break;
-              case `progress`:
-              case `range`:
-                // Ensure that it is a positive floating-point number.
-                value = !value ? 0 : Math.abs(parseFloat(value));
-                if (value > 100) {
-                  value = value / 100;
-                }
+					if (text_element.tagName.toLowerCase().includes(`input`)) {
+						text_element.setAttribute(`placholder`, text_inserted);
+					} else {
+						text_element.innerText = text_inserted;
+					}
+				});
 
-                // Set the attribute of the progress bar.
-                input_element.setAttribute(`value`, value);
-                input_element.setAttribute(`max`, 1);
-                break;
-              default:
-                input_element.value = value ? value : ``;
-                break;
-            }
-          });
-        });
-      }
+				delete text_elements[`content`];
+				Object.keys(text_elements).forEach((key) => {
+					if (text_elements[key]) {
+						text_elements[key].forEach((text_element) => {
+							let text_inserted = texts.localized(
+								text_element.getAttribute(key.concat(`-for`)),
+								false,
+								text_element.hasAttribute(key.concat(`for-parameter`))
+									? text_element
+											.getAttribute(key.concat(`for-parameter`))
+											.split(",")
+									: null,
+							);
+							if (!text_inserted) {
+								text_inserted = texts.localized(
+									`term_`.concat(text_element.getAttribute(key.concat(`-for`))),
+								);
+							}
 
-      elements();
-      text();
-      icons();
-      storage();
-    }
+							text_element.setAttribute(key, text_inserted);
+						});
+					}
+				});
+			}
 
-    // Adds events to the window.
-    function events() {
-      /* Add events related to storage. */
-      async function storage() {
-        // Import the module.
-        const secretariat = await import(
-          chrome.runtime.getURL("scripts/secretariat.js")
-        );
+			async function storage() {
+				// Import the module.
+				const secretariat = await import(
+					chrome.runtime.getURL("scripts/secretariat.js")
+				);
 
-        let input_elements = document.querySelectorAll("[data-store]");
+				let input_elements = document.querySelectorAll("[data-store]");
 
-        input_elements.forEach((input_element) => {
-          // Gather data about the element.
-          // Get the corresponding storage data.
+				input_elements.forEach((input_element) => {
+					// Gather data about the element.
+					// Get the corresponding storage data.
+					let data = {};
+					data[`source`] = input_element.getAttribute(`data-store`);
+					data[`value`] = secretariat.read(data[`source`], -1);
 
-          let element = {};
-          element[`type`] = input_element.getAttribute(`type`).toLowerCase();
-          element[`event`] = function () {};
+					data[`value`].then((value) => {
+						switch (input_element.getAttribute(`type`).toLowerCase()) {
+							case `checkbox`:
+								input_element.checked = value;
+								break;
+							case `progress`:
+							case `range`:
+								// Ensure that it is a positive floating-point number.
+								value = !value ? 0 : Math.abs(parseFloat(value));
+								if (value > 100) {
+									value = value / 100;
+								}
 
-          switch (element[`type`]) {
-            case `checkbox`:
-              element[`event`] = function () {
-                let UI_item = {};
-                UI_item[`source`] = this.getAttribute(`data-store`);
-                UI_item[`value`] = this.checked;
-                secretariat.write(UI_item[`source`], UI_item[`value`]);
-              };
-              break;
-            default:
-              element[`event`] = function () {
-                let UI_item = {};
-                UI_item[`source`] = this.getAttribute(`data-store`);
-                UI_item[`value`] = element[`type`].includes(`num`)
-                  ? parseFloat(this.value) % 1 != 0
-                    ? parseFloat(this.value)
-                    : parseInt(this.value)
-                  : this.value;
-                secretariat.write(UI_item[`source`], UI_item[`value`]);
-              };
-              break;
-          }
+								// Set the attribute of the progress bar.
+								input_element.setAttribute(`value`, value);
+								input_element.setAttribute(`max`, 1);
+								break;
+							default:
+								input_element.value = value ? value : ``;
+								break;
+						}
+					});
+				});
+			}
 
-          input_element.addEventListener("change", element[`event`]);
-        });
-      }
+			elements();
+			text();
+			icons();
+			storage();
+		}
 
-      /* Map buttons to their corresponding action buttons. */
-      function actions() {
-        function links() {
-          let buttons = document.querySelectorAll("button[href]");
+		// Adds events to the window.
+		function events() {
+			/* Add events related to storage. */
+			async function storage() {
+				// Import the module.
+				const secretariat = await import(
+					chrome.runtime.getURL("scripts/secretariat.js")
+				);
 
-          if (buttons) {
-            buttons.forEach((button) => {
-              let event = function () {
-                // Get the data from the button.
-                let target = {};
-                target[`source`] = this.getAttribute(`href`);
+				let input_elements = document.querySelectorAll("[data-store]");
 
-                // Get the correct path.
-                target[`path`] = (
-                  !target[`source`].includes(`://`)
-                    ? window.location.pathname
-                        .split(`/`)
-                        .slice(0, -1)
-                        .join(`/`)
-                        .concat(`/`)
-                    : ``
-                ).concat(target[`source`]);
+				input_elements.forEach((input_element) => {
+					// Gather data about the element.
+					// Get the corresponding storage data.
 
-                windowman.new(
-                  target[`path`],
-                  this.getAttribute(`tab-height`)
-                    ? this.getAttribute(`tab-height`)
-                    : null,
-                  this.getAttribute(`tab-width`)
-                    ? this.getAttribute(`tab-width`)
-                    : null,
-                );
-              };
-              button.addEventListener("click", event);
-            });
-          }
-        }
+					let element = {};
+					element[`type`] = input_element.getAttribute(`type`).toLowerCase();
+					element[`event`] = function () {};
 
-        /* Enable the searching interface. */
-        function search() {
-          document.querySelectorAll(`[data-result]`).forEach((element) => {
-            // Begin searching when the textbox is changed.
-            element.addEventListener(`change`, async function () {
-              let search = {};
-              search[`criteria`] = element.value;
-              if (search[`criteria`]) {
-                if (
-                  element.getAttribute(`data-results-filters`)
-                    ? element.getAttribute(`data-results-filters`).trim()
-                    : false
-                ) {
-                  search[`additional criteria`] = element
-                    .getAttribute(`data-results-filters`)
-                    .split(`,`);
-                }
-                search[`source`] = element.getAttribute(`data-result`);
-                search[`raw`] = await (async () => {
-                  const secretariat = await import(
-                    chrome.runtime.getURL(`scripts/secretariat.js`)
-                  );
+					switch (element[`type`]) {
+						case `checkbox`:
+							element[`event`] = function () {
+								let UI_item = {};
+								UI_item[`source`] = this.getAttribute(`data-store`);
+								UI_item[`value`] = this.checked;
+								secretariat.write(UI_item[`source`], UI_item[`value`]);
+							};
+							break;
+						default:
+							element[`event`] = function () {
+								let UI_item = {};
+								UI_item[`source`] = this.getAttribute(`data-store`);
+								UI_item[`value`] = element[`type`].includes(`num`)
+									? parseFloat(this.value) % 1 != 0
+										? parseFloat(this.value)
+										: parseInt(this.value)
+									: this.value;
+								secretariat.write(UI_item[`source`], UI_item[`value`]);
+							};
+							break;
+					}
 
-                  await secretariat.search(
-                    search[`source`],
-                    search[`criteria`],
-                    null,
-                    search[`additional criteria`],
-                  );
-                })();
-              }
-            });
-          });
-        }
+					input_element.addEventListener("change", element[`event`]);
+				});
+			}
 
-        // Responsiveness to different screen sizes.
-        function resize() {
-          function sidebar() {
-            if (document.querySelector(`.sidebar`)) {
-              if (window.innerWidth < 600) {
-                document
-                  .querySelector(`.sidebar`)
-                  .style.setProperty(`display`, `none`);
-                document
-                  .querySelector(`.sidebar`)
-                  .style.setProperty(`position`, `fixed`);
-              } else {
-                document
-                  .querySelector(`.sidebar`)
-                  .style.removeProperty(`display`);
-                document
-                  .querySelector(`.sidebar`)
-                  .style.removeProperty(`position`);
-              }
-              if (document.querySelector(`[data-action="ui,close,navbar"]`)) {
-                document
-                  .querySelector(`[data-action="ui,close,navbar"]`)
-                  .addEventListener(`click`, function () {
-                    if (document.querySelector(`.sidebar`)) {
-                      document
-                        .querySelector(`.sidebar`)
-                        .style.removeProperty("display");
-                      document
-                        .querySelector(`.sidebar`)
-                        .style.removeProperty("position");
-                    }
-                  });
-              }
-              if (document.querySelector(`[data-action="ui,open,navbar"]`)) {
-                document
-                  .querySelector(`[data-action="ui,open,navbar"]`)
-                  .addEventListener(`click`, function () {
-                    document
-                      .querySelector(`.sidebar`)
-                      .style.setProperty("display", "block");
-                    document
-                      .querySelector(`.sidebar`)
-                      .style.setProperty("position", "fixed");
-                  });
-              }
-            }
-          }
+			/* Map buttons to their corresponding action buttons. */
+			function actions() {
+				function links() {
+					let buttons = document.querySelectorAll("button[href]");
 
-          sidebar();
-        }
+					if (buttons) {
+						buttons.forEach((button) => {
+							let event = function () {
+								// Get the data from the button.
+								let target = {};
+								target[`source`] = this.getAttribute(`href`);
 
-        window.addEventListener("resize", resize);
-        resize();
-        search();
-        links();
-      }
+								// Get the correct path.
+								target[`path`] = (
+									!target[`source`].includes(`://`)
+										? window.location.pathname
+												.split(`/`)
+												.slice(0, -1)
+												.join(`/`)
+												.concat(`/`)
+										: ``
+								).concat(target[`source`]);
 
-      /*
-    Update the interface based on the storage data changes.
-    */
-      async function updates() {
-        // Import the module.
-        const secretariat = await import(
-          chrome.runtime.getURL("scripts/secretariat.js")
-        );
+								windowman.new(
+									target[`path`],
+									this.getAttribute(`tab-height`)
+										? this.getAttribute(`tab-height`)
+										: null,
+									this.getAttribute(`tab-width`)
+										? this.getAttribute(`tab-width`)
+										: null,
+								);
+							};
+							button.addEventListener("click", event);
+						});
+					}
+				}
 
-        // Get the storage data.
-        let storage_data = await secretariat.read();
+				/* Enable the searching interface. */
+				function search() {
+					document.querySelectorAll(`[data-result]`).forEach((element) => {
+						// Begin searching when the textbox is changed.
+						element.addEventListener(`change`, async function () {
+							let search = {};
+							search[`criteria`] = element.value;
+							if (search[`criteria`]) {
+								if (
+									element.getAttribute(`data-results-filters`)
+										? element.getAttribute(`data-results-filters`).trim()
+										: false
+								) {
+									search[`additional criteria`] = element
+										.getAttribute(`data-results-filters`)
+										.split(`,`);
+								}
+								search[`source`] = element.getAttribute(`data-result`);
+								search[`raw`] = await (async () => {
+									const secretariat = await import(
+										chrome.runtime.getURL(`scripts/secretariat.js`)
+									);
 
-        async function enable() {
-          let input_elements = document.querySelectorAll("[data-enable]");
+									await secretariat.search(
+										search[`source`],
+										search[`criteria`],
+										null,
+										search[`additional criteria`],
+									);
+								})();
+							}
+						});
+					});
+				}
 
-          if (input_elements) {
-            input_elements.forEach((input_element) => {
-              if (input_element.getAttribute("data-enable")) {
-                (async () => {
-                  input_element.disabled = !((await secretariat.read(
-                    input_element.getAttribute("data-enable"),
-                  )) != null
-                    ? (typeof (await secretariat.read(
-                        input_element.getAttribute("data-enable"),
-                      ))).includes(`obj`)
-                      ? (
-                          await secretariat.read(
-                            input_element.getAttribute("data-enable"),
-                          )
-                        ).length > 0
-                      : !!(await secretariat.read(
-                          input_element.getAttribute("data-enable"),
-                        ))
-                    : false);
-                })();
-              }
-            });
-          }
-        }
+				// Responsiveness to different screen sizes.
+				function resize() {
+					function sidebar() {
+						
+						if (document.querySelector(`.sidenav`)) {
+							(document.querySelectorAll(`.sidenav`)).forEach(function (sidebar_element) {
+								if (sidebar_element.getAttribute(`name`)) {
+									document.querySelector(`[works-sidebar="${sidebar_element.getAttribute(`name`)}"]`)
+									.addEventListener(`click`, function () {
+										M.Sidenav.getInstance(sidebar_element).open();
+									});
+								} else if (document.querySelector(`[data-action="ui,open,navbar"]`)) {
+									document.querySelector(`[data-action="ui,open,navbar"]`).forEach(function (button_element) {
+										button_element.addEventListener(`click`, function() {
+											M.Sidenav.getInstance(sidebar).open();
+										});
+									});
+								}
+							});
+						}
+					}
 
-        // Update the input elements.
-        secretariat.observe((what) => {
-          enable();
-        });
+					sidebar();
+				}
 
-        enable();
-      }
+				resize();
+				search();
+				links();
+			}
 
-      storage();
-      actions();
-      updates();
-    }
+			/*
+		Update the interface based on the storage data changes.
+		*/
+			async function updates() {
+				// Import the module.
+				const secretariat = await import(
+					chrome.runtime.getURL("scripts/secretariat.js")
+				);
 
-    headers();
-    appearance();
-    events();
-  }
+				// Get the storage data.
+				let storage_data = await secretariat.read();
+
+				async function enable() {
+					let input_elements = document.querySelectorAll("[data-enable]");
+
+					if (input_elements) {
+						input_elements.forEach((input_element) => {
+							if (input_element.getAttribute("data-enable")) {
+								(async () => {
+									input_element.disabled = !((await secretariat.read(
+										input_element.getAttribute("data-enable"),
+									)) != null
+										? (typeof (await secretariat.read(
+												input_element.getAttribute("data-enable"),
+											))).includes(`obj`)
+											? (
+													await secretariat.read(
+														input_element.getAttribute("data-enable"),
+													)
+												).length > 0
+											: !!(await secretariat.read(
+													input_element.getAttribute("data-enable"),
+												))
+										: false);
+								})();
+							}
+						});
+					}
+				}
+
+				// Update the input elements.
+				secretariat.observe((what) => {
+					enable();
+				});
+
+				enable();
+			}
+
+			storage();
+			actions();
+			updates();
+		}
+
+		headers();
+		appearance();
+		events();
+	}
 }
 
 export { windowman };

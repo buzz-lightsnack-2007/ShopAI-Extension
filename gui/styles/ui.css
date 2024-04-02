@@ -24,7 +24,7 @@
         --surface-color: #000000 !important;
 
         --font-color-main: rgba(255, 255, 255) !important;
-        --font-color-medium: rgba(255, 255, 255) !important;
+        --font-color-medium: rgba(200, 200, 200) !important;
         --font-color-disabled: rgba(255, 255, 255) !important;
 
         --font-on-primary-color-main: rgba(255, 255, 255) !important;
@@ -164,42 +164,6 @@ nav .input-field label {
     position: sticky;
     z-index: 10;
 }
-
-@media screen and (min-width: 600px) {
-    .dual {
-        height: 100%;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-    }
-
-    .dual .side {
-        width: 37%;
-    }
-
-    .dual > *:not(.side) {
-        flex-grow: 1;
-    }
-}
-
-@media screen and (min-width: 1000px) {
-    .dual > * {
-        transition: 0.1s ease-in-out;
-    }
-
-    .dual .side {
-        width: 25%;
-    }
-}
-
 .author {
     font-weight: italic;
-}
-
-@media screen and (max-width: 600px) {
-    .sidebar {
-        display: none;
-        z-index: 20;
-        width: 100%;
-    }
 }
