@@ -333,7 +333,7 @@ export default class windowman {
 				// Get the storage data.
 				let storage_data = await secretariat.read();
 
-				async function update_interface() {
+				async function enable() {
 					let input_elements = document.querySelectorAll("[data-enable]");
 
 					if (input_elements) {
@@ -341,12 +341,12 @@ export default class windowman {
 							if (input_element.getAttribute("data-enable")) {
 								(async () => {
 									input_element.disabled =
-										(await secretariat.read(
-											input_element.getAttribute("data-enable"),
-										)) == null ||
-										(await secretariat.read(
-											input_element.getAttribute("data-enable"),
-										));
+										!(((await secretariat.read(input_element.getAttribute("data-enable"))) != null)
+											? ((typeof (await secretariat.read(input_element.getAttribute("data-enable")))).includes(`Object`)
+												? ((await secretariat.read(input_element.getAttribute("data-enable"))).length > 0)
+												: !!(await secretariat.read(input_element.getAttribute("data-enable")))
+											)
+											: false);
 								})();
 							}
 						});
@@ -355,10 +355,10 @@ export default class windowman {
 
 				// Update the input elements.
 				secretariat.observe((what) => {
-					update_interface();
+					enable();
 				});
 
-				update_interface();
+				enable();
 			}
 
 			storage();
