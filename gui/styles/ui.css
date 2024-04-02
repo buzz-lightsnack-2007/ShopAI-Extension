@@ -164,6 +164,10 @@ nav .input-field label {
     position: sticky;
     z-index: 10;
 }
-.author {
-    font-weight: italic;
+
+#title {
+	font-weight: bold;
+}
+#author {
+    font-style: italic;
 }

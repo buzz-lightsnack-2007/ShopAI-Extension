@@ -11,7 +11,7 @@
     <main class="dual">
 		<ul id="slide-out" class="sidenav sidenav-fixed" name="control">
 			<li>
-				<li for="extension_name" class="flow-text"></li>
+				<li for="extension_name" class="flow-text" id="title"></li>
 			</li>
 			<li>
 				<div class="input-field">
@@ -44,9 +44,34 @@
             </nav>
             <section>
                 <article class="">
-                    <h1 data-result-content="name" class="flow-text"></h1>
+                    <h1 id="title" data-result-content="name" class="flow-text"></h1>
                     <p id="author" data-result-content="author"></p>
                     <p data-result-content="description"></p>
+					
+					<fieldset>
+						<legend for="preferences"></legend>
+						<ul class="input-field">
+							<li>
+								<label>
+									<input
+										type="checkbox"
+										data-result-store="settings,filters"
+										data-result-store-parameter="enabled"
+										class="filled-in"
+									/>
+									<span for="enable"></span>
+								</label>
+							</li>
+						</ul>
+						<div class="input-field">
+							<input type="url" class="validate" placeholder=" ">
+							<label>Source or Local Name</label>
+						</div>
+						<div class="input-field">
+							<textarea class="validate" placeholder=" "></textarea>
+							<label>Filter Content</label>
+						</div>
+					</fieldset>
             </section>
         </section>
     </main>
