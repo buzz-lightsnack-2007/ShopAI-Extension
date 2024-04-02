@@ -133,7 +133,7 @@
     }
   },
   "settings_filters_search_prompt": {
-    "message": "Search URL or add source..."
+    "message": "Search URL or source"
   },
   "settings_filters_update_stop": {
     "message": "No filters were updated as none were available."
@@ -181,5 +181,8 @@
         "description": "The file path"
       }
     }
+  },
+  "error_msg_notJSON": {
+    "message": "The file has been downloaded, but it is not the correct file type."
   }
 }
