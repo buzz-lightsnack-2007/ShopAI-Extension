@@ -132,11 +132,17 @@
       }
     }
   },
+  "settings_filters_search_prompt": {
+    "message": "Search URL or add source..."
+  },
   "settings_filters_update_stop": {
     "message": "No filters were updated as none were available."
   },
   "settings_filters_open": {
     "message": "Edit"
+  },
+  "settings_filters_add_one": {
+    "message": "Add the current source."
   },
 
   "error_msg": {
