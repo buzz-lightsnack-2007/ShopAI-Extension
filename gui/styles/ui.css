@@ -3,7 +3,7 @@
     --font-color-medium: rgba(25, 25, 25) !important;
     --font-color-disabled: rgba(63, 63, 63) !important;
 
-    --error-color: #CF6679 !important;
+    --error-color: #cf6679 !important;
 
     --primary-color: rgba(255, 134, 57) !important;
     --primary-color-dark: rgba(221, 106, 59) !important;
@@ -14,6 +14,8 @@
     --secondary-color: rgba(221, 106, 59, 1) !important;
     --secondary-color-hover-solid: rgba(252, 162, 133) !important;
     --secondary-color-focus-solid: rgba(221, 106, 59) !important;
+
+    --secondary-container-color: rgba(221, 106, 59) !important;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -39,10 +41,15 @@
         --background-color-level-4dp: rgba(255, 255, 255, 0.09) !important;
         --background-color-level-16dp-solid: #262626 !important;
         --background-color-card: var(--surface-color) !important;
-        --background-color-slight-emphasis: rgba(255, 255, 255, 0.05) !important;
+        --background-color-slight-emphasis: rgba(
+            255,
+            255,
+            255,
+            0.05
+        ) !important;
 
         --separator-color: #424242 !important;
-        --error-color: #CF6679 !important;
+        --error-color: #cf6679 !important;
 
         --slider-track-color: rgba(255, 255, 255, 0.26) !important;
         --switch-thumb-off-color: #bababa !important;
@@ -67,10 +74,10 @@
 body {
     color: var(--font-color-main);
     background-color: var(--background-color);
-
 }
 
-body:has(main.container), .background {
+body:has(main.container),
+.background {
     background: linear-gradient(
         25deg,
         var(--primary-color-dark) 0%,
@@ -81,6 +88,10 @@ body:has(main.container), .background {
 
 main.container {
     background-color: var(--background-color);
+}
+
+nav .input-field input[type="search"] {
+    color: var(--font-color-main) !important;
 }
 
 ul.sidenav-fixed + * {
@@ -131,23 +142,30 @@ ul.input-field {
     align-items: center;
 }
 
-.dual > * {
-    transition: .1s ease-in-out;
-}
-
 .dual > * > *:not(nav) {
     margin: 1em;
 }
 
-.dual .nav-wrapper > .input-field {
-    padding: .5em 1em .5em 1em;
+.dual .nav-wrapper .input-field {
+    padding: 0.5em 1em 0.5em 1em;
+}
+
+.dual .nav-wrapper .input-field input,
+.dual .nav-wrapper .input-field textarea {
+    border-radius: 0;
+    padding-top: 0 !important;
 }
 
 nav .input-field label {
     left: auto !important;
 }
 
-@media screen and (min-width: 500px) {
+.nav-wrapper {
+    position: sticky;
+    z-index: 10;
+}
+
+@media screen and (min-width: 600px) {
     .dual {
         height: 100%;
         display: flex;
@@ -165,13 +183,23 @@ nav .input-field label {
 }
 
 @media screen and (min-width: 1000px) {
+    .dual > * {
+        transition: 0.1s ease-in-out;
+    }
+
     .dual .side {
         width: 25%;
     }
-
-
 }
 
 .author {
-	font-weight: italic;
+    font-weight: italic;
+}
+
+@media screen and (max-width: 600px) {
+    .sidebar {
+        display: none;
+        z-index: 20;
+        width: 100%;
+    }
 }
