@@ -18,57 +18,60 @@ export default class windowman {
 
   // Prepare the window with its metadata.
   constructor() {
-    function headers() {
-      let LOAD_STATE = true;
-      let UI = {
-        CSS: [
-          chrome.runtime.getURL(
-            "gui/styles/external/fonts/materialdesignicons.min.css",
-          ),
-          chrome.runtime.getURL(
-            "gui/styles/external/materialize/css/materialize.css",
-          ),
-          chrome.runtime.getURL("gui/styles/ui.css"),
-        ],
-      };
+	function headers() {
+		let LOAD_STATE = true;
+		let UI = {
+			CSS: [
+				chrome.runtime.getURL("gui/styles/external/fonts/materialdesignicons.min.css"),
+				chrome.runtime.getURL("gui/styles/external/materialize/css/materialize.css"),
+				chrome.runtime.getURL("gui/styles/ui.css"),
+			]
+		};
 
-      for (let index = 0; index < UI[`CSS`].length; index++) {
-        const source = UI.CSS[index];
+		for (let index = 0; index < UI[`CSS`].length; index++) {
+			const source = UI.CSS[index];
 
-        (async () => {
-          const net = await import(chrome.runtime.getURL(`/scripts/net.js`));
+			try {
+				(async () => {
+					// Import source reading for later. 
+					const reader = (await import(chrome.runtime.getURL(`/gui/scripts/read.js`))).default;
+					
+					const net = await import(chrome.runtime.getURL(`/scripts/net.js`));
 
-          let resource = false;
-          try {
-            resource = await net.download(source, `text`, true);
-          } catch (err) {}
+					let resource = false;
+					try {
+					resource = await net.download(source, `text`, true);
+					} catch (err) {}
 
-          if (resource) {
-            let metadata_element = document.createElement(`link`);
-            metadata_element.setAttribute(`rel`, `stylesheet`);
-            metadata_element.setAttribute(`type`, `text/css`);
-            metadata_element.setAttribute(`href`, source);
-            document.querySelector(`head`).appendChild(metadata_element);
-          } else {
-            const alerts = (
-              await import(chrome.runtime.getURL(`/gui/scripts/alerts.js`))
-            ).default;
-            const reader = (
-              await import(chrome.runtime.getURL(`/gui/scripts/read.js`))
-            ).default;
+					if (resource) {
+						let metadata_element = document.createElement(`link`);
+						metadata_element.setAttribute(`rel`, `stylesheet`);
+						metadata_element.setAttribute(`type`, `text/css`);
+						metadata_element.setAttribute(`href`, source);
+						document.querySelector(`head`).appendChild(metadata_element);
+					} else {
+						throw new ReferenceError(reader.localized(`error_msg_fileNotFound`));
+					}
+					
+				})();
+			} catch(err) {
+				(async() => {
+					const alerts = (await import(chrome.runtime.getURL(`/gui/scripts/alerts.js`))).default;
+					
+					// Raise an alert. 
+					alerts.error(err.name, err.message, err.stack, true, [source]);
 
-            alerts.error(-1, reader.localized(`error_msg_fileNotFound`), true, [
-              source,
-            ]);
-
-            // Stop loading the page when an error has occured; it's not going to work!
-            if (!DEBUG) {
-              window.close();
-            }
-          }
-        })();
-      }
-    }
+					// Stop loading the page when an error has occured; it's not going to work!
+					if (!DEBUG) {
+						window.close();
+					}
+				})();
+				
+				// Stop loading immediately during the error. 
+				break;
+			};
+		}
+	}
 
     // Get the window.
     this[`metadata`] = chrome.windows.getCurrent();
@@ -453,11 +456,6 @@ export default class windowman {
             input_elements.forEach((input_element) => {
               if (input_element.getAttribute("data-enable")) {
                 (async () => {
-                  console.log(
-                    await secretariat.read(
-                      input_element.getAttribute("data-enable"),
-                    ),
-                  );
                   input_element.disabled = !((await secretariat.read(
                     input_element.getAttribute("data-enable"),
                   )) != null

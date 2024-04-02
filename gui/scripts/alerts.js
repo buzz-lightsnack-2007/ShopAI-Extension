@@ -52,15 +52,15 @@ export default class alerts {
 	@param {number} ERROR_MESSAGE the custom error message
 	@param {boolean} critical the critical nature
 	*/
-	static error(ERROR_CODE, ERROR_MESSAGE, critical = true) {
+	static error(ERROR_CODE, ERROR_MESSAGE, ERROR_STACK, critical = true) {
 		(async () => {
 			// Import the templating.
 			const texts = (await import(chrome.runtime.getURL("gui/scripts/read.js"))).default;
 
 			// Display the error message.
-			console.error(texts.localized(`error_msg`, null, [ERROR_CODE, ERROR_MESSAGE]));
+			console.error(texts.localized(`error_msg`, false, [ERROR_CODE, ERROR_MESSAGE, ERROR_STACK]));
 			if (critical) {
-				alert(texts.localized(`error_msg_GUI`, null, [String(ERROR_CODE)]));
+				alert(texts.localized(`error_msg_GUI`, false, [String(ERROR_CODE)]));
 			} else {
 				try {
 					M.toast({ text: message });
