@@ -144,6 +144,9 @@
   "settings_filters_add_one": {
     "message": "Add the current source."
   },
+  "settings_filters_add_prompt": {
+    "message": "Enter the URL of the source to add."
+  },
 
   "error_msg": {
     "message": "$error_code$: $error_msg$",
