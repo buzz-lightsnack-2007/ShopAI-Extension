@@ -90,6 +90,11 @@ class windowman {
 							button.classList.add(`waves-effect`);
 						}
 					})
+					document.querySelectorAll(`a`).forEach((button) => {
+						if (!button.classList.contains(`waves-effect`)) {
+							button.classList.add(`waves-effect`);
+						}
+					})
 
 					
 				}
