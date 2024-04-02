@@ -9,38 +9,46 @@
 
 <body>
     <main class="dual">
-        <side class="side">
-			<nav class="nav-wrapper">
-				<div class="input-field">
-					<input type="search" data-result="filters" for="settings_filters_search_prompt"></input>
-				</div>
+        <side class="side sidebar">
+            <nav class="nav-wrapper">
+                <ul class="left">
+                    <li for="extension_name" class="flow-text"></li>
+                </ul>
+                <ul class="hide-on-med-and-up right">
+                    <li><a data-icon="chevron-left" data-action="ui,close,navbar"></a></li>
+                </ul>
             </nav>
+            <div class="input-field outlined">
+                <input type="search" data-result="filters" placeholder=" "></input>
+                <label for="settings_filters_search_prompt"></label>
+            </div>
             <div class="collection" data-results-target="filters" data-results-filters="url">
             </div>
         </side>
         <section>
             <nav class="nav-wrapper">
                 <ul class="left">
-                    <li><a class="waves-effect" data-icon="menu" id="menu_trigger"></a></li>
+                    <li><a class="hide-on-med-and-up" data-icon="menu" data-action="ui,open,navbar"></a></li>
                 </ul>
                 <ul class="right">
-                    <li><a class="waves-effect" data-icon="trash-can" data-action="filters,delete,one"></a></li>
-                    <li><a class="waves-effect" data-icon="sync" data-action="filters,update,one"></a></li>
+                    <li><a data-icon="trash-can" data-action="filters,delete,one"></a></li>
+                    <li><a data-icon="sync" data-action="filters,update,one"></a></li>
                 </ul>
             </nav>
-			<section>
-				<article class="">
-					<h1 data-result-content="name" class="flow-text"></h1>
-					<p id="author" data-result-content="author"></p>
-					<p data-result-content="description"></p>
-			</section>
+            <section>
+                <article class="">
+                    <h1 data-result-content="name" class="flow-text"></h1>
+                    <p id="author" data-result-content="author"></p>
+                    <p data-result-content="description"></p>
+            </section>
         </section>
     </main>
     <side class="fixed-action-btn">
-		<button class="btn-floating btn-large" data-icon="plus" accesskey="+" data-action="filters,add,one"></button>
-		<ul>
-			<li><button data-action="filters,update" class="btn-floating waves-effect" title-for="settings_filters_update" data-icon="refresh" accesskey="r"></button></li>
-		</ul>
+        <button class="btn-floating btn-large" data-icon="plus" accesskey="+" data-action="filters,add,one"></button>
+        <ul>
+            <li><button data-action="filters,update" class="btn-floating waves-effect"
+                    title-for="settings_filters_update" data-icon="refresh" accesskey="r"></button></li>
+        </ul>
     </side>
 </body>
 

@@ -343,7 +343,39 @@ export default class windowman {
         }
 
         /* Enable the searching interface. */
-        function search() {}
+        function search() {
+          document.querySelectorAll(`[data-result]`).forEach((element) => {
+            // Begin searching when the textbox is changed.
+            element.addEventListener(`change`, async function () {
+              let search = {};
+              search[`criteria`] = element.value;
+              if (search[`criteria`]) {
+                if (
+                  element.getAttribute(`data-results-filters`)
+                    ? element.getAttribute(`data-results-filters`).trim()
+                    : false
+                ) {
+                  search[`additional criteria`] = element
+                    .getAttribute(`data-results-filters`)
+                    .split(`,`);
+                }
+                search[`source`] = element.getAttribute(`data-result`);
+                search[`raw`] = await (async () => {
+                  const secretariat = await import(
+                    chrome.runtime.getURL(`scripts/secretariat.js`)
+                  );
+
+                  await secretariat.search(
+                    search[`source`],
+                    search[`criteria`],
+                    null,
+                    search[`additional criteria`],
+                  );
+                })();
+              }
+            });
+          });
+        }
 
         // Responsiveness to different screen sizes.
         function resize() {
@@ -398,6 +430,7 @@ export default class windowman {
 
         window.addEventListener("resize", resize);
         resize();
+        search();
         links();
       }
 
