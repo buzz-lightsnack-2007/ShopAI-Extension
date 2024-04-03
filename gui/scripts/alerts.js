@@ -60,7 +60,7 @@ export default class alerts {
 			// Display the error message.
 			console.error(texts.localized(`error_msg`, false, [ERROR_CODE, ERROR_MESSAGE, ERROR_STACK]));
 			if (critical) {
-				alert(texts.localized(`error_msg_GUI`, false, [String(ERROR_CODE)]));
+				alert(texts.localized(`error_msg_GUI`, false, [String(ERROR_CODE), ERROR_MESSAGE]));
 			} else {
 				try {
 					M.toast({ text: message });
