@@ -165,9 +165,33 @@ nav .input-field label {
     z-index: 10;
 }
 
+@media only screen and (min-width: 992px) {
+	body:has(.sidenav-fixed) [works-sidebar] {
+		display: none;
+	}
+}
+
 #title {
 	font-weight: bold;
 }
 #author {
     font-style: italic;
+}
+
+nav ul:not(.dropdown-content) > li > a {
+	height: 100%;
+}
+
+textarea {
+	resize: vertical;
+	color: var(--font-color-main);
+}
+
+textarea:focus {
+	outline: none;
+	
+}
+
+textarea[type="code"] {
+	font-family: monospace !important;
 }
