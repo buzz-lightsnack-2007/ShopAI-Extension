@@ -19,7 +19,8 @@
 					<label for="settings_filters_search_prompt"></label>
 				</div>
 			</li>
-			<div data-results-target="filters">
+			<div data-results-list="filters">
+				
 			</div>
 		</ul>
         <section>
@@ -28,11 +29,11 @@
                     <li><a data-icon="menu" works-sidebar="control"></a></li>
                 </ul>
                 <ul class="right">
-                    <li><a data-icon="trash-can" data-action="filters,delete,one"></a></li>
-                    <li><a data-icon="sync" data-action="filters,update,one"></a></li>
+                    <li><a data-icon="trash-can" data-result-enable="filters" data-action="filters,delete,one"></a></li>
+                    <li><a data-icon="sync" data-result-enable="filters" data-action="filters,update,one"></a></li>
                 </ul>
             </nav>
-            <section>
+            <section id="container">
                 <article class="">
                     <h1 id="title" data-result-content="name" class="flow-text"></h1>
                     <p id="author" data-result-content="author"></p>
