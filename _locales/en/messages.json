@@ -176,12 +176,16 @@
 		}
 	},
 	"error_msg_GUI": {
-		"message": "Unfortunately, an exception of type $error_code$ has occured. Click OK to terminate the script.",
+		"message": "Unfortunately, an exception of type $error_code$ has occured. $error_message$ Click OK to continue.",
 		"description": "The error message template for a full graphical UI",
 		"placeholders": {
 			"error_code": {
 				"content": "$1",
 				"description": "The error code"
+			},
+			"error_message": {
+				"content": "$2",
+				"description": "The error message"
 			}
 		}
 	},
