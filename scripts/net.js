@@ -42,8 +42,7 @@ export async function download(URL, TYPE, VERIFY_ONLY = false, STRICT = false) {
 			};
 		}
 	} catch(err) {
-		alerts.error(err.name, err.message, err.stack);
-		let DATA = null;
+		throw err;
 	}
 
 	// Return the filter.
