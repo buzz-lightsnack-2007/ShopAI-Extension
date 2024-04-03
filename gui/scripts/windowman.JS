@@ -429,17 +429,9 @@ export default class windowman {
 						input_elements.forEach((input_element) => {
 							if (input_element.getAttribute("data-enable")) {
 								(async () => {
-									input_element.disabled = !((await secretariat.read(
-										input_element.getAttribute("data-enable"),
-									)) != null
-										? (typeof (await secretariat.read(
-												input_element.getAttribute("data-enable"),
-											))).includes(`obj`)
-											? (
-													await secretariat.read(
-														input_element.getAttribute("data-enable"),
-													)
-												).length > 0
+									input_element.disabled = !((await secretariat.read(input_element.getAttribute("data-enable"))) != null
+										? (typeof (await secretariat.read(input_element.getAttribute("data-enable")))).includes(`obj`)
+											? (Object.keys(await secretariat.read(input_element.getAttribute("data-enable")))).length > 0
 											: !!(await secretariat.read(
 													input_element.getAttribute("data-enable"),
 												))
