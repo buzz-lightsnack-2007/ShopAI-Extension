@@ -106,13 +106,12 @@ export default class windowman {
 							document.querySelectorAll(`button`)
 								? document.querySelectorAll(`button`)
 								: [],
-							document.querySelectorAll(
-								`input:not([type="checkbox"]):not([type="radio"]):not([type="range"])`,
-							)
-								? document.querySelectorAll(
-										`input:not([type="checkbox"]):not([type="radio"]):not([type="range"])`,
-									)
+							document.querySelectorAll(`textarea`)
+								? document.querySelectorAll(`textarea`)
 								: [],
+							document.querySelectorAll(`input:not([type="checkbox"]):not([type="radio"]):not([type="range"])`)
+								? document.querySelectorAll(`input:not([type="checkbox"]):not([type="radio"]):not([type="range"])`)
+								: []
 						)
 						.forEach((ELEMENT_TYPE) => {
 							ELEMENT_TYPE.forEach((button) => {
@@ -347,37 +346,116 @@ export default class windowman {
 
 				/* Enable the searching interface. */
 				function search() {
-					document.querySelectorAll(`[data-result]`).forEach((element) => {
-						// Begin searching when the textbox is changed.
-						element.addEventListener(`change`, async function () {
-							let search = {};
-							search[`criteria`] = element.value;
-							if (search[`criteria`]) {
-								if (
-									element.getAttribute(`data-results-filters`)
-										? element.getAttribute(`data-results-filters`).trim()
-										: false
-								) {
-									search[`additional criteria`] = element
-										.getAttribute(`data-results-filters`)
-										.split(`,`);
-								}
-								search[`source`] = element.getAttribute(`data-result`);
-								search[`raw`] = await (async () => {
-									const secretariat = await import(
-										chrome.runtime.getURL(`scripts/secretariat.js`)
-									);
+					if (document.querySelectorAll(`[data-result]`)) {
+						/* 
+							Display the search result. 
+							
+							@param {object} ELEMENT_TARGET the target element
+							@param {object} RESULTS the results
+							@param {object} TITLE_FIELD the title field for each result
+						*/
+						var SEARCH = {}; 
 
-									await secretariat.search(
-										search[`source`],
-										search[`criteria`],
-										null,
-										search[`additional criteria`],
-									);
-								})();
+						function display(TARGET_NAME, RESULTS, TITLE_FIELD) {
+
+							if (document.querySelectorAll(`[data-results-list="${TARGET_NAME}"]`)) {
+								(document.querySelectorAll(`[data-results-list="${TARGET_NAME}"]`)).forEach(function (ELEMENT_TARGET) {
+									// Clear the target element.
+									ELEMENT_TARGET.innerHTML = ``;
+	
+									function setSelected(element) {
+										SEARCH[TARGET_NAME][`selected`] = element.getAttribute(`data-result-linked`);
+										(element.parentElement).parentElement.querySelectorAll(`li`).forEach((element_others) => {
+											element_others.classList.remove(`active`);
+										}); element.parentElement.classList.add(`active`);									
+									}
+	
+									// Display the results.
+									(Object.keys(RESULTS)).forEach((result) => {
+										let result_element = document.createElement(`li`);
+										let result_title = document.createElement(`a`);
+										result_title.setAttribute(`data-result-linked`, result);
+										result_title.classList.add(`waves-effect`);
+										result_title.innerText = (RESULTS[result][TITLE_FIELD]) ? RESULTS[result][TITLE_FIELD] : result;
+	
+										result_title.addEventListener(`click`, function () {
+											pick(RESULTS[result], TARGET_NAME);
+											setSelected(this);
+										});
+
+										result_element.appendChild(result_title);
+										ELEMENT_TARGET.appendChild(result_element);
+										
+										if (SEARCH[TARGET_NAME][`selected`] == result) {setSelected(result_title);}
+									});
+								});
 							}
+						}
+
+						/* Function to execute when a search result item has been picked. 
+	
+						@param {object} ITEM the item picked
+						@param {string} AREA the ID of this entire search thing
+						*/
+						function pick(ITEM, AREA) {
+							
+							console.log(ITEM, AREA);
+						}
+						
+						async function find(element) {
+							if (element.getAttribute(`data-result`)) {
+								if (!SEARCH[element.getAttribute(`data-result`)]) {
+									SEARCH[element.getAttribute(`data-result`)] = {};
+								}
+								SEARCH[element.getAttribute(`data-result`)][`criteria`] = element.value.trim();
+								
+								if (SEARCH[element.getAttribute(`data-result`)][`criteria`]) {
+									if (
+										element.getAttribute(`data-results-filters`)
+											? element.getAttribute(`data-results-filters`).trim()
+											: false
+									) {
+										SEARCH[element.getAttribute(`data-result`)][`additional criteria`] = element
+											.getAttribute(`data-results-filters`)
+											.split(`,`);
+									}
+									SEARCH[element.getAttribute(`data-result`)][`results`] = await (async () => {
+										const secretariat = await import(
+											chrome.runtime.getURL(`scripts/secretariat.js`)
+										);
+	
+										return await secretariat.search(
+											element.getAttribute(`data-result`),
+											SEARCH[element.getAttribute(`data-result`)][`criteria`],
+											SEARCH[element.getAttribute(`data-result`)][`additional criteria`],
+										);
+									})();
+								} else {
+									SEARCH[element.getAttribute(`data-result`)][`results`] = await (async () => {
+										const secretariat = await import(
+											chrome.runtime.getURL(`scripts/secretariat.js`)
+										);
+	
+										return await secretariat.read(element.getAttribute(`data-result`));
+									})();
+								}
+								display(element.getAttribute(`data-result`), SEARCH[element.getAttribute(`data-result`)][`results`], `name`);
+							}
+	
+						}
+	
+						document.querySelectorAll(`[data-result]`).forEach((element) => {
+							/* GUI changes to find
+							
+							@param {object} ELEMENT the element to change
+							*/
+								
+							element.addEventListener(`change`, async function () {find(element)});
+							find(element);
 						});
-					});
+						
+						
+					}
 				}
 
 				// Responsiveness to different screen sizes.
