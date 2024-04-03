@@ -15,7 +15,7 @@
     --secondary-color-hover-solid: rgba(252, 162, 133) !important;
     --secondary-color-focus-solid: rgba(221, 106, 59) !important;
 
-    --secondary-container-color: rgba(221, 106, 59) !important;
+    --secondary-container-color: rgba(252, 162, 133) !important;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -90,6 +90,10 @@ main.container {
     background-color: var(--background-color);
 }
 
+nav {
+    background-color: var(--primary-color);
+}
+
 nav .input-field input[type="search"] {
     color: var(--font-color-main) !important;
 }
@@ -146,16 +150,6 @@ ul.input-field {
     margin: 1em;
 }
 
-.dual .nav-wrapper .input-field {
-    padding: 0.5em 1em 0.5em 1em;
-}
-
-.dual .nav-wrapper .input-field input,
-.dual .nav-wrapper .input-field textarea {
-    border-radius: 0;
-    padding-top: 0 !important;
-}
-
 nav .input-field label {
     left: auto !important;
 }
@@ -194,4 +188,19 @@ textarea:focus {
 
 textarea[type="code"] {
 	font-family: monospace !important;
+}
+
+fieldset {
+    padding: 2em;
+    border-radius: 4px;
+}
+fieldset > legend {
+    padding: 0.5em;
+}
+fieldset > ul {
+    margin-top: 0em;
+}
+
+fieldset > ul li {
+    padding-top: 0em;
 }
