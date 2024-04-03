@@ -11,6 +11,8 @@
     --primary-color-raised-hover-solid: rgba(252, 162, 133) !important;
     --primary-color-raised-focus-solid: rgba(221, 106, 59) !important;
 
+    --background-color-level-16dp-solid: rgba(255, 238, 235);
+
     --secondary-color: rgba(221, 106, 59, 1) !important;
     --secondary-color-hover-solid: rgba(252, 162, 133) !important;
     --secondary-color-focus-solid: rgba(221, 106, 59) !important;
