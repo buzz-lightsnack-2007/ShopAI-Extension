@@ -1,192 +1,201 @@
 {
-  "extension_name": {
-    "message": "ShopAI",
-    "description": "Extension name"
-  },
-  "extension_description": {
-    "message": "Shop wisely with AI!",
-    "description": "Extension description"
-  },
-  "extension_version": {
-    "message": "The Story Begins",
-    "description": "Extension version name (not number)"
-  },
-  "GUI_welcome_headline": {
-    "message": "Welcome to ShopAI!",
-    "description": "Welcome message"
-  },
-  "GUI_welcome_version": {
-    "message": "You’ve got version $manifest_version$.",
-    "description": "Version number in welcome message",
-    "placeholders": {
-      "manifest_version": {
-        "content": "$1",
-        "description": "The manifest version"
-      }
-    }
-  },
-  "GUI_status_version": {
-    "message": "V$manifest_version$",
-    "description": "Version number in status bars",
-    "placeholders": {
-      "manifest_version": {
-        "content": "$1",
-        "description": "The manifest version"
-      }
-    }
-  },
-  "GUI_credits_0": {
-    "message": "Made with love.",
-    "description": "credits #0"
-  },
-  "GUI_alert_confirm_action_text": {
-    "message": "Are you sure you would want to do this?",
-    "description": "confirm user's dangerous action"
-  },
-  "GUI_title_preferences": {
-    "message": "ShopAI Settings",
-    "description": "Welcome message"
-  },
-  "term_preferences": {
-    "message": "Settings"
-  },
-  "term_about": {
-    "message": "About"
-  },
-  "term_filters": {
-    "message": "Filters"
-  },
-  "term_apply": {
-    "message": "Apply"
-  },
-  "term_cancel": {
-    "message": "Cancel"
-  },
-  "term_general": {
-    "message": "General"
-  },
-  "term_storage": {
-    "message": "Storage"
-  },
-  "term_help": {
-    "message": "Help"
-  },
-  "term_behavior": {
-    "message": "Behaviour"
-  },
-  "term_analysis": {
-    "message": "Analysis"
-  },
-  "term_API_Key": {
-    "message": "API Key"
-  },
+	"extension_name": {
+		"message": "ShopAI",
+		"description": "Extension name"
+	},
+	"extension_description": {
+		"message": "Shop wisely with AI!",
+		"description": "Extension description"
+	},
+	"extension_version": {
+		"message": "The Story Begins",
+		"description": "Extension version name (not number)"
+	},
+	"GUI_welcome_headline": {
+		"message": "Welcome to ShopAI!",
+		"description": "Welcome message"
+	},
+	"GUI_welcome_version": {
+		"message": "You’ve got version $manifest_version$.",
+		"description": "Version number in welcome message",
+		"placeholders": {
+			"manifest_version": {
+				"content": "$1",
+				"description": "The manifest version"
+			}
+		}
+	},
+	"GUI_status_version": {
+		"message": "V$manifest_version$",
+		"description": "Version number in status bars",
+		"placeholders": {
+			"manifest_version": {
+				"content": "$1",
+				"description": "The manifest version"
+			}
+		}
+	},
+	"GUI_credits_0": {
+		"message": "Made with love.",
+		"description": "credits #0"
+	},
+	"GUI_alert_confirm_action_text": {
+		"message": "Are you sure you would want to do this?",
+		"description": "confirm user's dangerous action"
+	},
+	"GUI_title_preferences": {
+		"message": "ShopAI Settings",
+		"description": "Welcome message"
+	},
+	"term_preferences": {
+		"message": "Settings"
+	},
+	"term_about": {
+		"message": "About"
+	},
+	"term_filters": {
+		"message": "Filters"
+	},
+	"term_apply": {
+		"message": "Apply"
+	},
+	"term_cancel": {
+		"message": "Cancel"
+	},
+	"term_general": {
+		"message": "General"
+	},
+	"term_storage": {
+		"message": "Storage"
+	},
+	"term_help": {
+		"message": "Help"
+	},
+	"term_behavior": {
+		"message": "Behaviour"
+	},
+	"term_analysis": {
+		"message": "Analysis"
+	},
+	"term_API_Key": {
+		"message": "API Key"
+	},
+	"term_enable": {
+		"message": "Enable"
+	},
 
-  "settings_general_showApplicable": {
-    "message": "Show product's ratings in this extension's icon"
-  },
-  "settings_general_injectToPage": {
-    "message": "Inject a quick access button"
-  },
-  "settings_behavior_autoRun": {
-    "message": "Automatically run this extension on a supported page"
-  },
-  "settings_filters_description": {
-    "message": "Filters help determine the contents of the website before summarizing it."
-  },
-  "settings_storage_description": {
-    "message": "To speed up browsing, ShopAI stores information of the products you have previously visited. This information will be updated whenever the product's information has been changed. "
-  },
-  "settings_analysis_description": {
-    "message": "ShopAI is powered by Google Gemini Pro to summarize the contents of the website and to provide a rating for the products. An API key by Google is required to use this feature. Usage of this feature is subject to Google's Terms and Conditions."
-  },
-  "settings_storage_clear": {
-    "message": "Empty"
-  },
-  "settings_filters_update": {
-    "message": "Update"
-  },
-  "settings_filters_update_status": {
-    "message": "Updating the filter at $filter_url$…",
-    "placeholders": {
-      "filter_url": {
-        "content": "$1"
-      }
-    }
-  },
-  "settings_filters_update_status_complete": {
-    "message": "Updated the filter at $filter_url$.",
-    "placeholders": {
-      "filter_url": {
-        "content": "$1"
-      }
-    }
-  },
-  "settings_filters_update_status_failure": {
-    "message": "Can not update the filter at $filter_url$ due to error $error_message$.",
-    "placeholders": {
-      "error_message": {
-        "content": "$1"
-      },
-      "filter_url": {
-        "content": "$2"
-      }
-    }
-  },
-  "settings_filters_search_prompt": {
-    "message": "Search"
-  },
-  "settings_filters_update_stop": {
-    "message": "No filters were updated as none were available."
-  },
-  "settings_filters_open": {
-    "message": "Edit"
-  },
-  "settings_filters_add_one": {
-    "message": "Add the current source."
-  },
-  "settings_filters_add_prompt": {
-    "message": "Enter the URL of the source to add."
-  },
+	"settings_general_showApplicable": {
+		"message": "Show product's ratings in this extension's icon"
+	},
+	"settings_general_injectToPage": {
+		"message": "Inject a quick access button"
+	},
+	"settings_behavior_autoRun": {
+		"message": "Automatically run this extension on a supported page"
+	},
+	"settings_filters_description": {
+		"message": "Filters help determine the contents of the website before summarizing it."
+	},
+	"settings_storage_description": {
+		"message": "To speed up browsing, ShopAI stores information of the products you have previously visited. This information will be updated whenever the product's information has been changed. "
+	},
+	"settings_analysis_description": {
+		"message": "ShopAI is powered by Google Gemini Pro to summarize the contents of the website and to provide a rating for the products. An API key by Google is required to use this feature. Usage of this feature is subject to Google's Terms and Conditions."
+	},
+	"settings_storage_clear": {
+		"message": "Empty"
+	},
+	"settings_filters_update": {
+		"message": "Update"
+	},
+	"settings_filters_update_status": {
+		"message": "Updating the filter at $filter_url$…",
+		"placeholders": {
+			"filter_url": {
+				"content": "$1"
+			}
+		}
+	},
+	"settings_filters_update_status_complete": {
+		"message": "Updated the filter at $filter_url$.",
+		"placeholders": {
+			"filter_url": {
+				"content": "$1"
+			}
+		}
+	},
+	"settings_filters_update_status_failure": {
+		"message": "Can not update the filter at $filter_url$ due to error $error_message$.",
+		"placeholders": {
+			"error_message": {
+				"content": "$1"
+			},
+			"filter_url": {
+				"content": "$2"
+			}
+		}
+	},
+	"settings_filters_search_prompt": {
+		"message": "Search"
+	},
+	"settings_filters_update_stop": {
+		"message": "No filters were updated as none were available."
+	},
+	"settings_filters_open": {
+		"message": "Edit"
+	},
+	"settings_filters_add_one": {
+		"message": "Add the current source."
+	},
+	"settings_filters_add_prompt": {
+		"message": "Enter the URL of the source to add."
+	},
+	"settings_filters_source_prompt": {
+		"message": "Source or Local Name"
+	},
+	"settings_filters_content": {
+		"message": "Filter Contents"
+	},
 
-  "error_msg": {
-    "message": "$error_code$: $error_msg$ \n$error_trace$",
-    "description": "The error message template",
-    "placeholders": {
-      "error_code": {
-        "content": "$1",
-        "description": "The error code"
-      },
-      "error_msg": {
-        "content": "$2",
-        "description": "The error message"
-      }, 
-	  "error_trace": {
-        "content": "$3",
-        "description": "The error trace"
-      }
-    }
-  },
-  "error_msg_GUI": {
-    "message": "Unfortunately, an exception of type $error_code$ has occured. Click OK to terminate the script.",
-    "description": "The error message template for a full graphical UI",
-    "placeholders": {
-      "error_code": {
-        "content": "$1",
-        "description": "The error code"
-      }
-    }
-  },
-  "error_msg_fileNotFound": {
-    "message": "Could not find the file $file_path$.",
-    "description": "The error message template for a file not found exception",
-    "placeholders": {
-      "file_path": {
-        "content": "$1",
-        "description": "The file path"
-      }
-    }
-  },
-  "error_msg_notJSON": {
-    "message": "The file has been downloaded, but it is not the correct file type."
-  }
+	"error_msg": {
+		"message": "$error_code$: $error_msg$ \n$error_trace$",
+		"description": "The error message template",
+		"placeholders": {
+			"error_code": {
+				"content": "$1",
+				"description": "The error code"
+			},
+			"error_msg": {
+				"content": "$2",
+				"description": "The error message"
+			}, 
+		"error_trace": {
+				"content": "$3",
+				"description": "The error trace"
+			}
+		}
+	},
+	"error_msg_GUI": {
+		"message": "Unfortunately, an exception of type $error_code$ has occured. Click OK to terminate the script.",
+		"description": "The error message template for a full graphical UI",
+		"placeholders": {
+			"error_code": {
+				"content": "$1",
+				"description": "The error code"
+			}
+		}
+	},
+	"error_msg_fileNotFound": {
+		"message": "Could not find the file $file_path$.",
+		"description": "The error message template for a file not found exception",
+		"placeholders": {
+			"file_path": {
+				"content": "$1",
+				"description": "The file path"
+			}
+		}
+	},
+	"error_msg_notJSON": {
+		"message": "The file has been downloaded, but it is not the correct file type."
+	}
 }
