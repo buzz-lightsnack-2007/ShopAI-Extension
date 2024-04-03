@@ -6,40 +6,46 @@
 Download a file from the network or locally.
 
 @param {string} URL the URL to download
-@param {string} type the expected type of file
-@param {boolean} verify_only whether to verify the file only, not return its content
+@param {string} TYPE the expected TYPE of file
+@param {boolean} VERIFY_ONLY whether to verify the file only, not return its content
+@param {boolean} STRICT strictly follow the file type provided
 @returns {Promise} the downloaded file
 */
-export async function download(URL, type, verify_only = false) {
-	const alert = await import(chrome.runtime.getURL(`gui/scripts/alerts.js`))
-		.default;
+export async function download(URL, TYPE, VERIFY_ONLY = false, STRICT = false) {
 	const texts = (await import(chrome.runtime.getURL(`gui/scripts/read.js`)))
 		.default;
+	const alerts = (await import(chrome.runtime.getURL(`gui/scripts/alerts.js`))).default;
 
-	let connect = await fetch(URL),
-		data;
+	let CONNECT, DATA; 
 
-	if (connect.ok && !verify_only) {
-		try {
-			data = await connect.text();
+	try {
+		CONNECT = await fetch(URL);
+
+		if (CONNECT.ok && !VERIFY_ONLY) {
+			DATA = await CONNECT.text();
 		
 			if (
-				type
-					? type.toLowerCase().includes(`json`) || type.toLowerCase().includes(`dictionary`)
+				TYPE
+					? TYPE.toLowerCase().includes(`json`) || TYPE.toLowerCase().includes(`dictionary`)
 					: false
 			) {
 				try {
-				data = JSON.parse(data);
+				DATA = JSON.parse(DATA);
 				// When not in JSON, run this.
 				} catch(err) {
-					throw new TypeError(texts.localized(`error_msg_notJSON`, false));
+					if (STRICT) {
+						// Should not allow the data to be returned since it's not correct. 
+						DATA = null;
+						throw new TypeError(texts.localized(`error_msg_notJSON`, false));
+					} else {alerts.warn(texts.localized(`error_msg_notJSON`, false));}
 				};
 			};
-		} catch(err) {
-			alert.error(err.name, err.message, err.stack);
 		}
+	} catch(err) {
+		alerts.error(err.name, err.message, err.stack);
+		let DATA = null;
 	}
 
 	// Return the filter.
-	return verify_only ? connect.ok : data;
+	return VERIFY_ONLY ? CONNECT.ok : DATA;
 }
