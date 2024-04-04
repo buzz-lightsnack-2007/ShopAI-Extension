@@ -214,98 +214,13 @@ export default class windowman {
 				});
 			}
 
-			async function storage() {
-				// Import the module.
-				const secretariat = await import(
-					chrome.runtime.getURL("scripts/secretariat.js")
-				);
-
-				let input_elements = document.querySelectorAll("[data-store]");
-
-				input_elements.forEach((input_element) => {
-					// Gather data about the element.
-					// Get the corresponding storage data.
-					let data = {};
-					data[`source`] = input_element.getAttribute(`data-store`);
-					data[`value`] = secretariat.read(data[`source`], -1);
-
-					data[`value`].then((value) => {
-						switch (input_element.getAttribute(`type`).toLowerCase()) {
-							case `checkbox`:
-								input_element.checked = value;
-								break;
-							case `progress`:
-							case `range`:
-								// Ensure that it is a positive floating-point number.
-								value = !value ? 0 : Math.abs(parseFloat(value));
-								if (value > 100) {
-									value = value / 100;
-								}
-
-								// Set the attribute of the progress bar.
-								input_element.setAttribute(`value`, value);
-								input_element.setAttribute(`max`, 1);
-								break;
-							default:
-								input_element.value = value ? value : ``;
-								break;
-						}
-					});
-				});
-			}
-
 			elements();
 			text();
 			icons();
-			storage();
 		}
 
 		// Adds events to the window.
 		function events() {
-			/* Add events related to storage. */
-			async function storage() {
-				// Import the module.
-				const secretariat = await import(
-					chrome.runtime.getURL("scripts/secretariat.js")
-				);
-
-				let input_elements = document.querySelectorAll("[data-store]");
-
-				input_elements.forEach((input_element) => {
-					// Gather data about the element.
-					// Get the corresponding storage data.
-
-					let element = {};
-					element[`type`] = input_element.getAttribute(`type`).toLowerCase();
-					element[`event`] = function () {};
-
-					switch (element[`type`]) {
-						case `checkbox`:
-							element[`event`] = function () {
-								let UI_item = {};
-								UI_item[`source`] = this.getAttribute(`data-store`);
-								UI_item[`value`] = this.checked;
-								secretariat.write(UI_item[`source`], UI_item[`value`]);
-							};
-							break;
-						default:
-							element[`event`] = function () {
-								let UI_item = {};
-								UI_item[`source`] = this.getAttribute(`data-store`);
-								UI_item[`value`] = element[`type`].includes(`num`)
-									? parseFloat(this.value) % 1 != 0
-										? parseFloat(this.value)
-										: parseInt(this.value)
-									: this.value;
-								secretariat.write(UI_item[`source`], UI_item[`value`]);
-							};
-							break;
-					}
-
-					input_element.addEventListener("change", element[`event`]);
-				});
-			}
-
 			/* Map buttons to their corresponding action buttons. */
 			function actions() {
 				function links() {
@@ -344,120 +259,6 @@ export default class windowman {
 					}
 				}
 
-				/* Enable the searching interface. */
-				function search() {
-					if (document.querySelectorAll(`[data-result]`)) {
-						/* 
-							Display the search result. 
-							
-							@param {object} ELEMENT_TARGET the target element
-							@param {object} RESULTS the results
-							@param {object} TITLE_FIELD the title field for each result
-						*/
-						var SEARCH = {}; 
-
-						function display(TARGET_NAME, RESULTS, TITLE_FIELD) {
-
-							if (document.querySelectorAll(`[data-results-list="${TARGET_NAME}"]`)) {
-								(document.querySelectorAll(`[data-results-list="${TARGET_NAME}"]`)).forEach(function (ELEMENT_TARGET) {
-									// Clear the target element.
-									ELEMENT_TARGET.innerHTML = ``;
-	
-									function setSelected(element) {
-										SEARCH[TARGET_NAME][`selected`] = element.getAttribute(`data-result-linked`);
-										(element.parentElement).parentElement.querySelectorAll(`li`).forEach((element_others) => {
-											element_others.classList.remove(`active`);
-										}); element.parentElement.classList.add(`active`);									
-									}
-	
-									// Display the results.
-									(Object.keys(RESULTS)).forEach((result) => {
-										let result_element = document.createElement(`li`);
-										let result_title = document.createElement(`a`);
-										result_title.setAttribute(`data-result-linked`, result);
-										result_title.classList.add(`waves-effect`);
-										result_title.innerText = (RESULTS[result][TITLE_FIELD]) ? RESULTS[result][TITLE_FIELD] : result;
-	
-										result_title.addEventListener(`click`, function () {
-											pick(RESULTS[result], TARGET_NAME);
-											setSelected(this);
-										});
-
-										result_element.appendChild(result_title);
-										ELEMENT_TARGET.appendChild(result_element);
-										
-										if (SEARCH[TARGET_NAME][`selected`] == result) {setSelected(result_title);}
-									});
-								});
-							}
-						}
-
-						/* Function to execute when a search result item has been picked. 
-	
-						@param {object} ITEM the item picked
-						@param {string} AREA the ID of this entire search thing
-						*/
-						function pick(ITEM, AREA) {
-							
-							console.log(ITEM, AREA);
-						}
-						
-						async function find(element) {
-							if (element.getAttribute(`data-result`)) {
-								if (!SEARCH[element.getAttribute(`data-result`)]) {
-									SEARCH[element.getAttribute(`data-result`)] = {};
-								}
-								SEARCH[element.getAttribute(`data-result`)][`criteria`] = element.value.trim();
-								
-								if (SEARCH[element.getAttribute(`data-result`)][`criteria`]) {
-									if (
-										element.getAttribute(`data-results-filters`)
-											? element.getAttribute(`data-results-filters`).trim()
-											: false
-									) {
-										SEARCH[element.getAttribute(`data-result`)][`additional criteria`] = element
-											.getAttribute(`data-results-filters`)
-											.split(`,`);
-									}
-									SEARCH[element.getAttribute(`data-result`)][`results`] = await (async () => {
-										const secretariat = await import(
-											chrome.runtime.getURL(`scripts/secretariat.js`)
-										);
-	
-										return await secretariat.search(
-											element.getAttribute(`data-result`),
-											SEARCH[element.getAttribute(`data-result`)][`criteria`],
-											SEARCH[element.getAttribute(`data-result`)][`additional criteria`],
-										);
-									})();
-								} else {
-									SEARCH[element.getAttribute(`data-result`)][`results`] = await (async () => {
-										const secretariat = await import(
-											chrome.runtime.getURL(`scripts/secretariat.js`)
-										);
-	
-										return await secretariat.read(element.getAttribute(`data-result`));
-									})();
-								}
-								display(element.getAttribute(`data-result`), SEARCH[element.getAttribute(`data-result`)][`results`], `name`);
-							}
-	
-						}
-	
-						document.querySelectorAll(`[data-result]`).forEach((element) => {
-							/* GUI changes to find
-							
-							@param {object} ELEMENT the element to change
-							*/
-								
-							element.addEventListener(`change`, async function () {find(element)});
-							find(element);
-						});
-						
-						
-					}
-				}
-
 				// Responsiveness to different screen sizes.
 				function resize() {
 					function sidebar() {
@@ -484,58 +285,261 @@ export default class windowman {
 				}
 
 				resize();
-				search();
 				links();
 			}
-
-			/*
-		Update the interface based on the storage data changes.
-		*/
-			async function updates() {
-				// Import the module.
-				const secretariat = await import(
-					chrome.runtime.getURL("scripts/secretariat.js")
-				);
-
-				// Get the storage data.
-				let storage_data = await secretariat.read();
-
-				async function enable() {
-					let input_elements = document.querySelectorAll("[data-enable]");
-
-					if (input_elements) {
-						input_elements.forEach((input_element) => {
-							if (input_element.getAttribute("data-enable")) {
-								(async () => {
-									input_element.disabled = !((await secretariat.read(input_element.getAttribute("data-enable"))) != null
-										? (typeof (await secretariat.read(input_element.getAttribute("data-enable")))).includes(`obj`)
-											? (Object.keys(await secretariat.read(input_element.getAttribute("data-enable")))).length > 0
-											: !!(await secretariat.read(
-													input_element.getAttribute("data-enable"),
-												))
-										: false);
-								})();
-							}
-						});
-					}
-				}
-
-				// Update the input elements.
-				secretariat.observe((what) => {
-					enable();
-				});
-
-				enable();
-			}
-
-			storage();
+			
 			actions();
-			updates();
 		}
 
 		headers();
 		appearance();
 		events();
+	}
+
+	/* Run this function if you would like to synchronize with data. */
+	sync() {
+		async function fill() {
+			// Import the module.
+			const secretariat = await import(
+				chrome.runtime.getURL("scripts/secretariat.js")
+			);
+
+			let input_elements = document.querySelectorAll("[data-store]");
+
+			input_elements.forEach((input_element) => {
+				// Gather data about the element.
+				// Get the corresponding storage data.
+				let data = {};
+				data[`source`] = input_element.getAttribute(`data-store`);
+				data[`value`] = secretariat.read(data[`source`], -1);
+
+				data[`value`].then((value) => {
+					switch (input_element.getAttribute(`type`).toLowerCase()) {
+						case `checkbox`:
+							input_element.checked = value;
+							break;
+						case `progress`:
+						case `range`:
+							// Ensure that it is a positive floating-point number.
+							value = !value ? 0 : Math.abs(parseFloat(value));
+							if (value > 100) {
+								value = value / 100;
+							}
+
+							// Set the attribute of the progress bar.
+							input_element.setAttribute(`value`, value);
+							input_element.setAttribute(`max`, 1);
+							break;
+						default:
+							input_element.value = value ? value : ``;
+							break;
+					}
+				});
+			});
+		}
+		
+		/* Add events related to storage. */
+		async function update() {
+			// Import the module.
+			const secretariat = await import(
+				chrome.runtime.getURL("scripts/secretariat.js")
+			);
+
+			let input_elements = document.querySelectorAll("[data-store]");
+
+			input_elements.forEach((input_element) => {
+				// Gather data about the element.
+				// Get the corresponding storage data.
+
+				let element = {};
+				element[`type`] = input_element.getAttribute(`type`).toLowerCase();
+				element[`event`] = function () {};
+
+				switch (element[`type`]) {
+					case `checkbox`:
+						element[`event`] = function () {
+							let UI_item = {};
+							UI_item[`source`] = this.getAttribute(`data-store`);
+							UI_item[`value`] = this.checked;
+							secretariat.write(UI_item[`source`], UI_item[`value`]);
+						};
+						break;
+					default:
+						element[`event`] = function () {
+							let UI_item = {};
+							UI_item[`source`] = this.getAttribute(`data-store`);
+							UI_item[`value`] = element[`type`].includes(`num`)
+								? parseFloat(this.value) % 1 != 0
+									? parseFloat(this.value)
+									: parseInt(this.value)
+								: this.value;
+							secretariat.write(UI_item[`source`], UI_item[`value`]);
+						};
+						break;
+				}
+
+				input_element.addEventListener("change", element[`event`]);
+			});
+		}
+		
+		/*
+			Update the interface based on the storage data changes.
+		*/
+		async function updates() {
+			// Import the module.
+			const secretariat = await import(
+				chrome.runtime.getURL("scripts/secretariat.js")
+			);
+
+			// Get the storage data.
+			let storage_data = await secretariat.read();
+
+			async function enable() {
+				let input_elements = document.querySelectorAll("[data-enable]");
+
+				if (input_elements) {
+					input_elements.forEach((input_element) => {
+						if (input_element.getAttribute("data-enable")) {
+							(async () => {
+								input_element.disabled = !((await secretariat.read(input_element.getAttribute("data-enable"))) != null
+									? (typeof (await secretariat.read(input_element.getAttribute("data-enable")))).includes(`obj`)
+										? (Object.keys(await secretariat.read(input_element.getAttribute("data-enable")))).length > 0
+										: !!(await secretariat.read(
+												input_element.getAttribute("data-enable"),
+											))
+									: false);
+							})();
+						}
+					});
+				}
+			}
+
+			// Update the input elements.
+			secretariat.observe((what) => {
+				enable();
+			});
+
+			enable();
+		};
+		
+		/* Enable the searching interface. */
+		function search() {
+			if (document.querySelectorAll(`[data-result]`)) {
+				/* 
+					Display the search result. 
+					
+					@param {object} ELEMENT_TARGET the target element
+					@param {object} RESULTS the results
+					@param {object} TITLE_FIELD the title field for each result
+				*/
+				var SEARCH = {}; 
+
+				function display(TARGET_NAME, RESULTS, TITLE_FIELD) {
+
+					if (document.querySelectorAll(`[data-results-list="${TARGET_NAME}"]`)) {
+						(document.querySelectorAll(`[data-results-list="${TARGET_NAME}"]`)).forEach(function (ELEMENT_TARGET) {
+							// Clear the target element.
+							ELEMENT_TARGET.innerHTML = ``;
+
+							function setSelected(element) {
+								SEARCH[TARGET_NAME][`selected`] = element.getAttribute(`data-result-linked`);
+								(element.parentElement).parentElement.querySelectorAll(`li`).forEach((element_others) => {
+									element_others.classList.remove(`active`);
+								}); element.parentElement.classList.add(`active`);									
+							}
+
+							// Display the results.
+							(Object.keys(RESULTS)).forEach((result) => {
+								let result_element = document.createElement(`li`);
+								let result_title = document.createElement(`a`);
+								result_title.setAttribute(`data-result-linked`, result);
+								result_title.classList.add(`waves-effect`);
+								result_title.innerText = (RESULTS[result][TITLE_FIELD]) ? RESULTS[result][TITLE_FIELD] : result;
+
+								result_title.addEventListener(`click`, function () {
+									pick(RESULTS[result], TARGET_NAME);
+									setSelected(this);
+								});
+
+								result_element.appendChild(result_title);
+								ELEMENT_TARGET.appendChild(result_element);
+								
+								if (SEARCH[TARGET_NAME][`selected`] == result) {setSelected(result_title);}
+							});
+						});
+					}
+				}
+
+				/* Function to execute when a search result item has been picked. 
+
+				@param {object} ITEM the item picked
+				@param {string} AREA the ID of this entire search thing
+				*/
+				function pick(ITEM, AREA) {
+					
+					console.log(ITEM, AREA);
+				}
+				
+				async function find(element) {
+					if (element.getAttribute(`data-result`)) {
+						if (!SEARCH[element.getAttribute(`data-result`)]) {
+							SEARCH[element.getAttribute(`data-result`)] = {};
+						}
+						SEARCH[element.getAttribute(`data-result`)][`criteria`] = element.value.trim();
+						
+						if (SEARCH[element.getAttribute(`data-result`)][`criteria`]) {
+							if (
+								element.getAttribute(`data-results-filters`)
+									? element.getAttribute(`data-results-filters`).trim()
+									: false
+							) {
+								SEARCH[element.getAttribute(`data-result`)][`additional criteria`] = element
+									.getAttribute(`data-results-filters`)
+									.split(`,`);
+							}
+							SEARCH[element.getAttribute(`data-result`)][`results`] = await (async () => {
+								const secretariat = await import(
+									chrome.runtime.getURL(`scripts/secretariat.js`)
+								);
+
+								return await secretariat.search(
+									element.getAttribute(`data-result`),
+									SEARCH[element.getAttribute(`data-result`)][`criteria`],
+									SEARCH[element.getAttribute(`data-result`)][`additional criteria`],
+								);
+							})();
+						} else {
+							SEARCH[element.getAttribute(`data-result`)][`results`] = await (async () => {
+								const secretariat = await import(
+									chrome.runtime.getURL(`scripts/secretariat.js`)
+								);
+
+								return await secretariat.read(element.getAttribute(`data-result`));
+							})();
+						}
+						display(element.getAttribute(`data-result`), SEARCH[element.getAttribute(`data-result`)][`results`], `name`);
+					}
+
+				}
+
+				document.querySelectorAll(`[data-result]`).forEach((element) => {
+					/* GUI changes to find
+					
+					@param {object} ELEMENT the element to change
+					*/
+						
+					element.addEventListener(`change`, async function () {find(element)});
+					find(element);
+				});
+				
+				
+			}
+		}
+
+		fill();
+		update();
+		updates();
+		search();
 	}
 }
 
