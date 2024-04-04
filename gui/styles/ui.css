@@ -125,8 +125,8 @@ ul.input-field {
 }
 
 .input-group {
-    margin-block-start: 1em;
-    margin-block-end: 1em;
+    margin-block-start: 1em !important;
+    margin-block-end: 1em !important;
 }
 
 .input-group:not(:has(input)) {
@@ -193,16 +193,16 @@ textarea[type="code"] {
 }
 
 fieldset {
-    padding: 2em;
+    padding: 2em !important;
     border-radius: 4px;
 }
 fieldset > legend {
-    padding: 0.5em;
+    padding: 0.5em !important;
 }
 fieldset > ul {
-    margin-top: 0em;
+    margin-top: 0em !important;
 }
 
 fieldset > ul li {
-    padding-top: 0em;
+    padding-top: 0em !important;
 }
