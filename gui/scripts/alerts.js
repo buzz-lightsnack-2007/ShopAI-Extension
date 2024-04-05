@@ -63,9 +63,9 @@ export default class alerts {
 				alert(texts.localized(`error_msg_GUI`, false, [String(ERROR_CODE), ERROR_MESSAGE]));
 			} else {
 				try {
-					M.toast({ text: message });
-				} catch (err) {}
-			}
+					M.toast({ text: ERROR_MESSAGE });
+				} catch (err) {};
+			};
 		})();
 	}
 }
