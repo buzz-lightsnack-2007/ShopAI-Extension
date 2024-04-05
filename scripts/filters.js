@@ -116,6 +116,11 @@ export default class filters {
 							// Write the filter to storage.
 							secretariat.write(["filters", filter_URL], result, -1);
 							alerts.log(texts.localized(`settings_filters_update_status_complete`,null,[filter_URL]));
+                            
+                            // Add the filter to the sync list.
+                            if (secretariat.read(["settings", `filters`, filter_URL], 1) == null) {
+                                secretariat.write(["settings", `filters`, filter_URL], true, 1);
+                            }
 						}
 					})
 					.catch((error) => {
