@@ -28,22 +28,28 @@ export default class reader {
 					if (field_current) {
 						// Check if array.
 						if (Array.isArray(field_current)) {
+							// Temporarily create an empty list. 
 							field_data[field_names[field_index]] = [];
-
 							
 							if (typeof field_current[0] === "object" && field_current[0] != null && field_current[0]) {
 								field_data[field_names[field_index]].push(read(field_current[0]));
 							} else {
 								let matching_elements = (document.querySelectorAll(field_current[0]));
-
 								for (let field_current_index = 0; field_current_index < matching_elements.length; field_current_index++) {
 									field_data[field_names[field_index]].push(matching_elements[field_current_index].innerText);
 								};
 							};
+							
+							// Must cease to exist if it was just empty anyway. 
+							if ((field_data[field_names[field_index]]).length <= 0) {
+								delete field_data[field_names[field_index]];
+							}
 						} else if (typeof field_current === "object" && field_current != null && field_current) {
 							field_data[field_names[field_index]] = read(field_current);
 						} else {
-							field_data[field_names[field_index]] = (document.querySelector(field_current)) ? document.querySelector(field_current).innerText : null;
+							if (document.querySelector(field_current)) {
+								field_data[field_names[field_index]] = document.querySelector(field_current).innerText;
+							}
 						};
 					};
 				};
