@@ -15,12 +15,14 @@ async function build() {
 
 	let window = new windowman();
 	window.sync();
+	
+	events(window);
 };
 
 /*
 		Define the mapping of each button.
 		*/
-function events() {
+function events(window) {
 	if (document.querySelector(`[data-action="filters,update"]`)) {
 		document
 			.querySelector(`[data-action="filters,update"]`)
@@ -28,7 +30,7 @@ function events() {
 				let filters = new (
 					await import(chrome.runtime.getURL(`scripts/filters.js`))
 				).default();
-				await filters.update();
+				filters.update();
 			});
 	}
 
@@ -70,12 +72,11 @@ function events() {
 
 //main();
 function load() {
+	build();
+	
 	document.addEventListener("DOMContentLoaded", function () {
 		M.AutoInit();
-		events();
 	});
-
-	build();
 }
 
 load();
