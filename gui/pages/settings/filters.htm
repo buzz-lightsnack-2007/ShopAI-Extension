@@ -15,7 +15,7 @@
 			</li>
 			<li>
 				<div class="input-field">
-					<input type="search" data-result="filters" data-results-filters="name,url" placeholder=" "></input>
+					<input type="search" data-result="filters" data-results-filters="name,url" placeholder=" " />
 					<label for="settings_filters_search_prompt"></label>
 				</div>
 			</li>
@@ -33,13 +33,14 @@
                     <li><a data-icon="sync" data-result-enable="filters" data-action="filters,update,one"></a></li>
                 </ul>
             </nav>
-            <section id="container">
-                <article class="">
+            <section class="container">
+                <article data-result-linked="filters" class="">
                     <h1 id="title" data-result-content="name" class="flow-text"></h1>
                     <p id="author" data-result-content="author"></p>
+					<p data-result-content="*"></p>
                     <p data-result-content="description"></p>
-					
-					<fieldset>
+				</article>
+					<fieldset data-result-linked="filters">
 						<legend for="preferences"></legend>
 						<ul class="input-field">
 							<li>
@@ -55,24 +56,24 @@
 							</li>
 						</ul>
 						<div class="input-field">
-							<input type="url" class="validate" placeholder=" ">
+							<input type="url" class="validate" placeholder=" " data-result-store="URL">
 							<label for="settings_filters_source_prompt"></label>
 						</div>
 						<div class="input-field">
-							<textarea class="validate" type="code" placeholder=" "></textarea>
+							<textarea type="text" class="validate" type="code" placeholder=" " data-result-store="data"></textarea>
 							<label for="settings_filters_content"></label>
 						</div>
 					</fieldset>
             </section>
         </section>
     </main>
-    <side class="fixed-action-btn">
+    <footer class="fixed-action-btn">
         <button class="btn-floating btn-large" data-icon="plus" accesskey="+" data-action="filters,add,one"></button>
         <ul>
             <li><button data-action="filters,update" class="btn-floating waves-effect"
                     title-for="settings_filters_update" data-icon="refresh" accesskey="r"></button></li>
         </ul>
-    </side>
+    </footer>
 </body>
 
 </html>
