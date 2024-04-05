@@ -156,6 +156,9 @@
 	"settings_filters_content": {
 		"message": "Filter"
 	},
+	"JSON_parse_error": {
+		"message": "There is a mistake in your JSON formatting. Please correct the error before saving."
+	},
 
 	"error_msg": {
 		"message": "$error_code$: $error_msg$ \n$error_trace$",
