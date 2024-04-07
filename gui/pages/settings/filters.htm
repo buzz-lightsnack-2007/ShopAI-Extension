@@ -19,12 +19,10 @@
 					<label for="settings_filters_search_prompt"></label>
 				</div>
 			</li>
-			<div data-results-list="filters">
-				
-			</div>
+			<div data-results-list="filters"></div>
 		</ul>
         <section>
-            <nav class="nav-wrapper">
+            <nav class="nav-wrapper" data-result-linked="filters">
                 <ul class="left">
                     <li><a data-icon="menu" works-sidebar="control"></a></li>
                 </ul>
@@ -35,35 +33,45 @@
             </nav>
             <section class="container">
                 <article data-result-linked="filters" class="">
-                    <h1 id="title" data-result-content="name" class="flow-text"></h1>
-                    <p id="author" data-result-content="author"></p>
-					<p data-result-content="*"></p>
-                    <p data-result-content="description"></p>
+					<h2 class="flow-text" data-result-content="*"></h2>
+					<div class="input-field">
+						<input type="text" class="validate" placeholder=" " data-result-store="name">
+						<label for="settings_filters_source_name"></label>
+					</div>
+					<ul class="input-field">
+						<li>
+							<label>
+								<input
+									type="checkbox"
+									data-result-store="settings,filters"
+									data-result-store-parameter="enabled"
+									class="filled-in"
+								/>
+								<span for="enable"></span>
+							</label>
+						</li>
+					</ul>
+					<div class="input-field">
+						<input type="text" class="validate" placeholder=" " data-result-store="author">
+						<label for="settings_filters_source_author"></label>
+					</div>
+					<div class="input-field">
+						<input type="text" class="validate" placeholder=" " class="flow-text" data-result-store="description" />
+						<label for="settings_filters_source_description"></label>
+					</div>
+					<div class="input-field">
+						<input type="url" class="validate" placeholder=" " data-result-store="URL">
+						<label for="settings_filters_source_prompt"></label>
+					</div>
+					<div class="input-field">
+						<textarea type="text" class="validate" type="code" placeholder=" " data-result-store="data"></textarea>
+						<label for="settings_filters_content"></label>
+					</div>
+					<div class="input-field">
+						<textarea type="text" class="validate" type="code" placeholder=" " data-result-store="trigger"></textarea>
+						<label for="settings_filters_target"></label>
+					</div>
 				</article>
-					<fieldset data-result-linked="filters">
-						<legend for="preferences"></legend>
-						<ul class="input-field">
-							<li>
-								<label>
-									<input
-										type="checkbox"
-										data-result-store="settings,filters"
-										data-result-store-parameter="enabled"
-										class="filled-in"
-									/>
-									<span for="enable"></span>
-								</label>
-							</li>
-						</ul>
-						<div class="input-field">
-							<input type="url" class="validate" placeholder=" " data-result-store="URL">
-							<label for="settings_filters_source_prompt"></label>
-						</div>
-						<div class="input-field">
-							<textarea type="text" class="validate" type="code" placeholder=" " data-result-store="data"></textarea>
-							<label for="settings_filters_content"></label>
-						</div>
-					</fieldset>
             </section>
         </section>
     </main>
