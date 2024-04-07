@@ -150,12 +150,22 @@
 	"settings_filters_add_prompt": {
 		"message": "Enter the URL of the source to add."
 	},
+	"settings_filters_source_name": {
+		"message": "Title"
+	},
+	"settings_filters_source_author": {
+		"message": "Author"
+	},
+	"settings_filters_source_description": {
+		"message": "Description"
+	},
 	"settings_filters_source_prompt": {
 		"message": "Source or Local Name"
 	},
 	"settings_filters_content": {
 		"message": "Filter"
 	},
+
 	"JSON_parse_error": {
 		"message": "There is a mistake in your JSON formatting. Please correct the error before saving."
 	},
