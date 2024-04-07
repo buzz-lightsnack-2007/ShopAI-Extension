@@ -99,20 +99,7 @@ export default class windowman {
 					});
 
 					[]
-						.concat(
-							document.querySelectorAll(`a`)
-								? document.querySelectorAll(`a`)
-								: [],
-							document.querySelectorAll(`button`)
-								? document.querySelectorAll(`button`)
-								: [],
-							document.querySelectorAll(`textarea`)
-								? document.querySelectorAll(`textarea`)
-								: [],
-							document.querySelectorAll(`input:not([type="checkbox"]):not([type="radio"]):not([type="range"])`)
-								? document.querySelectorAll(`input:not([type="checkbox"]):not([type="radio"]):not([type="range"])`)
-								: []
-						)
+						.concat(document.querySelectorAll(`a`), document.querySelectorAll(`button`), document.querySelectorAll(`textarea`), document.querySelectorAll(`input:not([type="checkbox"]):not([type="radio"]):not([type="range"])`))
 						.forEach((ELEMENT_TYPE) => {
 							ELEMENT_TYPE.forEach((button) => {
 								if (
@@ -297,13 +284,12 @@ export default class windowman {
 	}
 
 	/* Run this function if you would like to synchronize with data. */
-	sync() {
+	async sync() {
+		// Import the module.
+		const secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
+		const alerts = (await import(chrome.runtime.getURL(`/gui/scripts/alerts.js`))).default;
+		
 		async function fill() {
-			// Import the module.
-			const secretariat = await import(
-				chrome.runtime.getURL("scripts/secretariat.js")
-			);
-
 			let input_elements = document.querySelectorAll("[data-store]");
 
 			input_elements.forEach((input_element) => {
@@ -340,11 +326,6 @@ export default class windowman {
 		
 		/* Add events related to storage. */
 		async function update() {
-			// Import the module.
-			const secretariat = await import(
-				chrome.runtime.getURL("scripts/secretariat.js")
-			);
-
 			let input_elements = document.querySelectorAll("[data-store]");
 
 			input_elements.forEach((input_element) => {
@@ -361,7 +342,7 @@ export default class windowman {
 							let UI_item = {};
 							UI_item[`source`] = this.getAttribute(`data-store`);
 							UI_item[`value`] = this.checked;
-							secretariat.write(UI_item[`source`], UI_item[`value`]);
+							secretariat.write(UI_item[`source`], UI_item[`value`], 1);
 						};
 						break;
 					default:
@@ -373,7 +354,7 @@ export default class windowman {
 									? parseFloat(this.value)
 									: parseInt(this.value)
 								: this.value;
-							secretariat.write(UI_item[`source`], UI_item[`value`]);
+							secretariat.write(UI_item[`source`], UI_item[`value`], 1);
 						};
 						break;
 				}
@@ -386,11 +367,6 @@ export default class windowman {
 			Update the interface based on the storage data changes.
 		*/
 		async function updates() {
-			// Import the module.
-			const secretariat = await import(
-				chrome.runtime.getURL("scripts/secretariat.js")
-			);
-
 			// Get the storage data.
 			let storage_data = await secretariat.read();
 
@@ -432,52 +408,184 @@ export default class windowman {
 					@param {object} RESULTS the results
 					@param {object} TITLE_FIELD the title field for each result
 				*/
-				var SEARCH = {}; 
+				var SEARCH = {};
+				
 
 				function display(TARGET_NAME, RESULTS, TITLE_FIELD) {
 
 					if (document.querySelectorAll(`[data-results-list="${TARGET_NAME}"]`)) {
 						(document.querySelectorAll(`[data-results-list="${TARGET_NAME}"]`)).forEach(function (ELEMENT_TARGET) {
+							// Set the target element to the correct data structure (lists). 
+							TARGET_NAME = (!Array.isArray(TARGET_NAME)) ? TARGET_NAME.split(`,`) : TARGET_NAME;
+							
 							// Clear the target element.
 							ELEMENT_TARGET.innerHTML = ``;
 
 							function setSelected(element) {
-								SEARCH[TARGET_NAME][`selected`] = element.getAttribute(`data-result-linked`);
-								(element.parentElement).parentElement.querySelectorAll(`li`).forEach((element_others) => {
+								SEARCH[TARGET_NAME][`selected`] = (element) ? (Object.keys(RESULTS))[(Array.prototype.slice.call(element.parentElement.children)).indexOf(element)] : null;
+								
+								// Array.prototype.slice.call(element.parentElement.children)
+								// console.log(new Array(element.parentElement.querySelectorAll(`*`)), (new Array(element.parentElement.querySelectorAll(`*`))).indexOf(element), (Object.keys(RESULTS))[(new Array(element.parentElement.querySelectorAll(`*`))).indexOf(element)]);
+								if (element) {(element.parentElement).parentElement.querySelectorAll(`li`).forEach((element_others) => {
 									element_others.classList.remove(`active`);
-								}); element.parentElement.classList.add(`active`);									
+								}); element.parentElement.classList.add(`active`)};									
 							}
 
 							// Display the results.
-							(Object.keys(RESULTS)).forEach((result) => {
-								let result_element = document.createElement(`li`);
-								let result_title = document.createElement(`a`);
-								result_title.setAttribute(`data-result-linked`, result);
-								result_title.classList.add(`waves-effect`);
-								result_title.innerText = (RESULTS[result][TITLE_FIELD]) ? RESULTS[result][TITLE_FIELD] : result;
+							{
+								let ACCESS_KEYS = {"top": ["1", "2", "3", "4", "5", "6", "7", "8", "9"], "nav": ["<", ">"]};
+								(Object.keys(RESULTS)).forEach((result) => {
+									let result_element = document.createElement(`li`);
+									let result_title = document.createElement(`a`);
+									result_title.classList.add(`waves-effect`);
+									result_title.innerText = (RESULTS[result][TITLE_FIELD]) ? RESULTS[result][TITLE_FIELD] : result;
+									
+									function accessKey(ELEMENT) {
+										if (!ELEMENT) {
+											let RESULT_INDEX = (Object.keys(RESULTS)).indexOf(result);
+											if (RESULT_INDEX < ACCESS_KEYS[`top`].length) {
+												result_title.setAttribute(`accesskey`, ACCESS_KEYS[`top`][RESULT_INDEX]);
+											}
+										} else {
+											let ELEMENT_INDEX = (new Array((ELEMENT.parentElement).querySelectorAll(`*`))).indexOf(ELEMENT);
+											if (ELEMENT_INDEX >= ACCESS_KEYS[`top`].length) {
+												if (((ELEMENT.parentElement).querySelectorAll(`*`)).length > ELEMENT_INDEX + 1) {
+													((ELEMENT.parentElement).querySelectorAll(`*`))[ELEMENT_INDEX + 1].setAttribute(`accesskey`, ACCESS_KEYS[`nav`][1])
+												};
+												if ((((ELEMENT.parentElement).querySelectorAll(`*`))[ELEMENT_INDEX - 1].getAttribute(`accesskey`)) ? !(ACCESS_KEYS[`top`].includes(((ELEMENT.parentElement).querySelectorAll(`*`))[ELEMENT_INDEX - 1].getAttribute(`accesskey`))) : true) {
+													((ELEMENT.parentElement).querySelectorAll(`*`))[ELEMENT_INDEX - 1].setAttribute(`accesskey`, ACCESS_KEYS[`nav`][1])
+												};
+												// Set the quick return access key. 
+												ELEMENT.setAttribute(`accesskey`, `0`);
+											} 
+										}
+									}
 
-								result_title.addEventListener(`click`, function () {
-									pick(RESULTS[result], TARGET_NAME);
-									setSelected(this);
+									result_title.addEventListener(`click`, function () {
+										setSelected(this);
+										pick(result, RESULTS[result], TARGET_NAME);
+
+										// Set the access key.
+										this.parentElement.querySelectorAll(`*`)
+										accessKey(this);
+									});
+									
+									accessKey();
+									result_element.appendChild(result_title);
+									ELEMENT_TARGET.appendChild(result_element);
+
+									if ((SEARCH[TARGET_NAME]) ? SEARCH[TARGET_NAME][`selected`] == result : false) {
+										setSelected(result_title);
+										pick(result, RESULTS[result], TARGET_NAME);
+									}
 								});
-
-								result_element.appendChild(result_title);
-								ELEMENT_TARGET.appendChild(result_element);
-								
-								if (SEARCH[TARGET_NAME][`selected`] == result) {setSelected(result_title);}
-							});
+							}
 						});
 					}
 				}
 
 				/* Function to execute when a search result item has been picked. 
 
+				@param {string} NAME the name of the currently selected data
 				@param {object} ITEM the item picked
-				@param {string} AREA the ID of this entire search thing
+				@param {string} AREA the ID of the search
 				*/
-				function pick(ITEM, AREA) {
+				async function pick(NAME, ITEM, AREA) {
+					if (AREA) {
+						let CONTAINERS = (document.querySelectorAll(`[data-result-linked="${AREA}"]`));
 					
-					console.log(ITEM, AREA);
+						if (CONTAINERS) {
+							(CONTAINERS).forEach((CONTAINER) => {
+								([].concat(CONTAINER.querySelectorAll(`[data-result-content]`), CONTAINER.querySelectorAll(`[data-result-store]`), document.querySelectorAll(`[data-result-enable]`))).forEach(function (ELEMENTS) {
+									if (ELEMENTS) {
+										CONTAINER.disabled = (ITEM != null) ? !((typeof ITEM).includes(`obj`) && !Array.isArray(ITEM)) : true;
+										(ELEMENTS).forEach(async function(ELEMENT) {
+											ELEMENT.disabled = CONTAINER.disabled;
+											if (!ELEMENT.disabled) {
+												if (ELEMENT.getAttribute(`data-result-store`) && ELEMENT.type) {
+                                                    // Init updater function.
+                                                    ELEMENT[`function`] = function() {};
+                                                    
+                                                    // Make sure that target is contained
+                                                    let DATA = {};
+                                                    
+                                                    DATA[`target`] = (Object.keys(ITEM).includes(ELEMENT.getAttribute(`data-result-store`))) ? [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))] : [...(ELEMENT.getAttribute(`data-result-store`).split(`,`)), ...[NAME]];
+                                                    DATA[`value`] = (Object.keys(ITEM).includes(ELEMENT.getAttribute(`data-result-store`))) ? ITEM[ELEMENT.getAttribute(`data-result-store`)] : await secretariat.read(DATA[`target`]);
+
+													console.log(DATA);
+
+                                                    switch (ELEMENT[`type`]) {
+                                                        case `checkbox`:
+															ELEMENT.checked = DATA[`value`];
+                                                            
+                                                            ELEMENT[`function`] = async function() {
+                                                                await secretariat.write(DATA[`target`], ELEMENT.checked, 1);
+                                                            }
+                                                            
+                                                            break;
+                                                        default:
+                                                            if ((typeof (ITEM[ELEMENT.getAttribute(`data-result-store`)])).includes(`obj`)) {
+                                                                ELEMENT.value = JSON.stringify(DATA[`value`]);
+                                                                
+                                                                ELEMENT[`function`] = async function() {
+                                                                    console.log(`running`);
+                                                                    try {
+                                                                        DATA[`value`] = JSON.parse(ELEMENT.value);
+                                                                        secretariat.write(DATA[`target`], DATA[`value`]);
+                                                                    } catch(err) {
+                                                                        // The JSON isn't valid.
+                                                                        alerts.error(err.name, texts.localized(`JSON_parse_error`), err.stack, false);
+                                                                    };
+                                                                }
+                                                            } else {
+                                                                ELEMENT.value = DATA[`value`];
+                                                                
+                                                                ELEMENT[`function`] = async function() {
+                                                                    await secretariat.write(DATA[`target`], ELEMENT.value);
+                                                                    console.log(`saving...`);
+                                                                }
+                                                            }
+                                                            break;
+                                                    }
+                                                    
+                                                    if (ELEMENT.nodeName.toLowerCase().includes(`textarea`)) {
+                                                        ELEMENT.addEventListener(`blur`, ELEMENT[`function`]);
+                                                    } else {
+                                                        ELEMENT.addEventListener(`change`, ELEMENT[`function`]);
+                                                    }
+												} else if (ELEMENT.getAttribute(`data-result-content`) || ELEMENT.getAttribute(`data-result-store`)) {
+													ELEMENT.innerText = (ITEM[ELEMENT.getAttribute(`data-result-content`)] || ELEMENT.getAttribute(`data-result-content`).includes(`*`))
+													? ((ELEMENT.getAttribute(`data-result-content`).includes(`*`))
+														? NAME
+														: ITEM[ELEMENT.getAttribute(`data-result-content`)])
+													: ((ITEM[ELEMENT.getAttribute(`data-result-store`)])
+														? (ITEM[ELEMENT.getAttribute(`data-result-store`)])
+														: null) /*secretariat.read(((ITEM[(ELEMENT.getAttribute(`data-result-store`).split(`,`))])[ITEM])))*/;
+												}
+											} else {
+												if (ELEMENT.getAttribute(`data-result-store`) && ELEMENT.type) {
+													switch (ELEMENT[`type`]) {
+														case `checkbox`:
+															ELEMENT.checked = false;
+															break;
+														case `range`: 
+														case `number`: 
+															ELEMENT.value = 0;
+															break;
+														default:
+															ELEMENT.value = ``;
+															break;
+													}
+												} else if (ELEMENT.getAttribute(`data-result-content`) || ELEMENT.getAttribute(`data-result-store`)) {
+													ELEMENT.innerText = ``;
+												}
+											};
+										})
+									}
+								})
+							})
+						}
+					}
 				}
 				
 				async function find(element) {
@@ -513,11 +621,19 @@ export default class windowman {
 								const secretariat = await import(
 									chrome.runtime.getURL(`scripts/secretariat.js`)
 								);
-
+								
+								// Return the selected result. 
 								return await secretariat.read(element.getAttribute(`data-result`));
 							})();
 						}
 						display(element.getAttribute(`data-result`), SEARCH[element.getAttribute(`data-result`)][`results`], `name`);
+						
+                        if ((!((SEARCH[element.getAttribute(`data-result`)][`criteria`]) && (SEARCH[element.getAttribute(`data-result`)][`selected`])) || (typeof SEARCH[element.getAttribute(`data-result`)][`results`]).includes(`obj`) && SEARCH[element.getAttribute(`data-result`)][`results`] != null)
+							? ((Object.keys(SEARCH[element.getAttribute(`data-result`)][`results`]).length <= 0) || !((SEARCH[element.getAttribute(`data-result`)][`selected`])))
+							: true)
+						{
+							pick(null, null, element.getAttribute(`data-result`));
+						}
 					}
 
 				}
@@ -527,19 +643,19 @@ export default class windowman {
 					
 					@param {object} ELEMENT the element to change
 					*/
-						
-					element.addEventListener(`change`, async function () {find(element)});
+					
+                    element.addEventListener(`change`, async function () {find(element)});
 					find(element);
 				});
-				
-				
+
+				return (SEARCH);
 			}
 		}
 
 		fill();
 		update();
 		updates();
-		search();
+		this[`search`] = search();
 	}
 }
 
