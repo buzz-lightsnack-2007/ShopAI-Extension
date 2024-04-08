@@ -105,6 +105,25 @@
 						<section class="input-group">
 							<label class="input-description">
 								<legend
+									for="duration"
+									class="flow-text"
+								></legend>
+								<label
+									for="settings_update_duration_description"
+								></label>
+							</label>
+							<div class="input-field">
+								<input
+									type="number"
+									data-store="settings,sync,duration"
+									data-store-location="1"
+								/>
+								<label for="settings_update_duration_prompt"></label>
+							</div>
+						</section>
+						<section class="input-group">
+							<label class="input-description">
+								<legend
 									for="analysis"
 									class="flow-text"
 								></legend>
@@ -117,6 +136,7 @@
 									type="password"
 									data-store="settings,analysis,api,key"
 									data-store-location="1"
+									placeholder=" "
 								/>
 								<label for="API_Key"></label>
 							</div>
