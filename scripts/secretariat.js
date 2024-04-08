@@ -305,57 +305,53 @@ export async function write(PATH, DATA, CLOUD = -1) {
 @param {int} CLOUD the storage of the data
 @return {boolean} the user's confirmation
 */
-export function forget(preference, subpreference, CLOUD = 0) {
-	let forget_action = false;
+export async function forget(preference, subpreference, CLOUD = 0) {
+	// Import alerts module.
+	let alerts = (await import(chrome.runtime.getURL(`gui/scripts/alerts.js`))).default;
 
-	(async () => {
-		// Import alerts module.
-		let alerts = (await import(chrome.runtime.getURL(`gui/scripts/alerts.js`)))[
-			`alerts`
-		];
+	// Confirm the action.
+	let forget_action = await alerts.confirm();
 
-		// Confirm the action.
-		let forget_action = alerts.confirm_action();
+	if (forget_action) {
+		if (preference) {
+			if (subpreference) {
+				
+				// Get the data.
+				let DATA = await read(preference, CLOUD);
 
-		if (forget_action) {
-			if (preference) {
-				if (subpreference) {
-					// Get the data.
-					data = read(preference, CLOUD);
-
-					// Should only run when existent
-					if (data[subpreference]) {
-						delete data[subpreference];
-						write([preference, subpreference], data, CLOUD);
-					}
-				} else {
-					// Remove that particular data.
-					if (CLOUD <= 0) {
-						chrome.storage.local.get(null, (data) => {
-							delete data[preference];
-
-							chrome.storage.local.set(data, (result) => {});
-						});
-					}
-					if (CLOUD >= 0) {
-						chrome.storage.sync.get(null, (data) => {
-							delete data[preference];
-
-							chrome.storage.sync.set(data, (result) => {});
-						});
-					}
+				// Should only run when existent
+				if (DATA[subpreference]) {
+					delete DATA[subpreference];
+					console.log(preference, DATA, CLOUD);
+					write(preference, DATA, CLOUD);
 				}
 			} else {
-				// Clear the data storage.
-				if (CLOUD >= 0) {
-					chrome.storage.sync.clear();
-				}
+				// Remove that particular data.
 				if (CLOUD <= 0) {
-					chrome.storage.local.clear();
+					chrome.storage.local.get(null, (data) => {
+						delete data[preference];
+
+						chrome.storage.local.set(data, (result) => {});
+					});
+				}
+				if (CLOUD >= 0) {
+					chrome.storage.sync.get(null, (data) => {
+						delete data[preference];
+
+						chrome.storage.sync.set(data, (result) => {});
+					});
 				}
 			}
+		} else {
+			// Clear the data storage.
+			if (CLOUD >= 0) {
+				chrome.storage.sync.clear();
+			}
+			if (CLOUD <= 0) {
+				chrome.storage.local.clear();
+			}
 		}
-	})();
+	}
 
 	return forget_action;
 }
