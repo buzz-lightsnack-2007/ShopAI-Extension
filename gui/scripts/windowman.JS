@@ -412,7 +412,6 @@ export default class windowman {
 				*/
 				var SEARCH = {};
 				
-
 				function display(TARGET_NAME, RESULTS, TITLE_FIELD) {
 
 					if (document.querySelectorAll(`[data-results-list="${TARGET_NAME}"]`)) {
@@ -433,7 +432,7 @@ export default class windowman {
 							}
 
 							// Display the results.
-							{
+							if ((RESULTS != null && (typeof RESULTS).includes(`obj`) && !Array.isArray(RESULTS)) ? Object.keys(RESULTS).length > 0 : false) {
 								let ACCESS_KEYS = {"top": ["1", "2", "3", "4", "5", "6", "7", "8", "9"], "nav": ["<", ">"]};
 								(Object.keys(RESULTS)).forEach((result) => {
 									let result_element = document.createElement(`li`);
@@ -496,63 +495,62 @@ export default class windowman {
 					
 						if (CONTAINERS) {
 							(CONTAINERS).forEach((CONTAINER) => {
-								([].concat(CONTAINER.querySelectorAll(`[data-result-content]`), CONTAINER.querySelectorAll(`[data-result-store]`), document.querySelectorAll(`[data-result-enable]`))).forEach(function (ELEMENTS) {
+								([].concat(CONTAINER.querySelectorAll(`[data-result-content]`), CONTAINER.querySelectorAll(`[data-result-store]`), document.querySelectorAll(`[data-result-enable]`))).forEach(async function (ELEMENTS) {
 									if (ELEMENTS) {
 										CONTAINER.disabled = (ITEM != null) ? !((typeof ITEM).includes(`obj`) && !Array.isArray(ITEM)) : true;
 										(ELEMENTS).forEach(async function(ELEMENT) {
 											ELEMENT.disabled = CONTAINER.disabled;
 											if (!ELEMENT.disabled) {
 												if (ELEMENT.getAttribute(`data-result-store`) && ELEMENT.type) {
-                                                    // Init updater function.
+													// Init updater function.
                                                     ELEMENT[`function`] = function() {};
                                                     
-                                                    // Make sure that target is contained
-                                                    let DATA = {};
-                                                    
-                                                    DATA[`target`] = (Object.keys(ITEM).includes(ELEMENT.getAttribute(`data-result-store`))) ? [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))] : [...(ELEMENT.getAttribute(`data-result-store`).split(`,`)), ...[NAME]];
-													
-													let TARGET = (Object.keys(ITEM).includes(ELEMENT.getAttribute(`data-result-store`))) ? [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))] : [...(ELEMENT.getAttribute(`data-result-store`).split(`,`)), ...[NAME]];
-                                                    DATA[`value`] = (Object.keys(ITEM).includes(ELEMENT.getAttribute(`data-result-store`))) ? ITEM[ELEMENT.getAttribute(`data-result-store`)] : await secretariat.read(TARGET);
+													var DATA = {};
 
-                                                    switch (ELEMENT[`type`]) {
+													DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
+													DATA[`value`] = ((Object.keys(ITEM).includes(ELEMENT.getAttribute(`data-result-store`))) ? ITEM[ELEMENT.getAttribute(`data-result-store`)] : await secretariat.read(DATA[`target`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1));
+
+													switch (ELEMENT[`type`]) {
 														case `checkbox`:
-															ELEMENT.checked = DATA[`value`];
-															console.log(await secretariat.read(null, 1));
-                                                            
-                                                            ELEMENT[`function`] = async function() {
+															ELEMENT.checked = (DATA[`value`]);
+
+															ELEMENT[`function`] = function() {
+																DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
 																DATA[`value`] = ELEMENT.checked;
-                                                                await secretariat.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
-                                                            }
-                                                            break;
-                                                        default:
-                                                            if ((typeof (ITEM[ELEMENT.getAttribute(`data-result-store`)])).includes(`obj`)) {
-                                                                ELEMENT.value = JSON.stringify(DATA[`value`]);
-                                                                
-                                                                ELEMENT[`function`] = function() {
+																secretariat.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
+															};
+															break;
+														default:
+															if ((typeof (ITEM[ELEMENT.getAttribute(`data-result-store`)])).includes(`obj`)) {
+																ELEMENT.value = JSON.stringify(DATA[`value`]);
+
+																ELEMENT[`function`] = function() {
 																	try {
+																		DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
 																		DATA[`value`] = JSON.parse(ELEMENT.value.trim());
-																		(async function() {secretariat.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);})
-                                                                    } catch(err) {
-                                                                        // The JSON isn't valid.
-                                                                        alerts.error(err.name, texts.localized(`JSON_parse_error`), err.stack, false);
-                                                                    };
-                                                                }
-                                                            } else {
-                                                                ELEMENT.value = DATA[`value`];
-																
-                                                                ELEMENT[`function`] = async function() {
+																		secretariat.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
+																	} catch(err) {
+																		// The JSON isn't valid.
+																		alerts.error(err.name, texts.localized(`JSON_parse_error`), err.stack, false);
+																	};
+																}
+															} else {
+																ELEMENT.value = DATA[`value`];
+
+																ELEMENT[`function`] = function() {
+																	DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
 																	DATA[`value`] = ELEMENT.value.trim()
-                                                                    await secretariat.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
-                                                                }
-                                                            }
-                                                            break;
-                                                    }
-                                                    
-                                                    if (ELEMENT.nodeName.toLowerCase().includes(`textarea`)) {
-                                                        ELEMENT.addEventListener(`blur`, ELEMENT[`function`]);
-                                                    } else {
-                                                        ELEMENT.addEventListener(`change`, ELEMENT[`function`]);
-                                                    }
+																	secretariat.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
+																}
+															}
+															break;
+													}
+
+													if (ELEMENT.nodeName.toLowerCase().includes(`textarea`)) {
+														ELEMENT.addEventListener(`blur`, ELEMENT[`function`]);
+													} else {
+														ELEMENT.addEventListener(`change`, ELEMENT[`function`]);
+													}
 												} else if (ELEMENT.getAttribute(`data-result-content`) || ELEMENT.getAttribute(`data-result-store`)) {
 													ELEMENT.innerText = (ITEM[ELEMENT.getAttribute(`data-result-content`)] || ELEMENT.getAttribute(`data-result-content`).includes(`*`))
 													? ((ELEMENT.getAttribute(`data-result-content`).includes(`*`))
@@ -560,7 +558,7 @@ export default class windowman {
 														: ITEM[ELEMENT.getAttribute(`data-result-content`)])
 													: ((ITEM[ELEMENT.getAttribute(`data-result-store`)])
 														? (ITEM[ELEMENT.getAttribute(`data-result-store`)])
-														: null) /*secretariat.read(((ITEM[(ELEMENT.getAttribute(`data-result-store`).split(`,`))])[ITEM])))*/;
+														:  null) /*secretariat.read(((ITEM[(ELEMENT.getAttribute(`data-result-store`).split(`,`))])[ITEM])));*/
 												}
 											} else {
 												if (ELEMENT.getAttribute(`data-result-store`) && ELEMENT.type) {
@@ -628,8 +626,11 @@ export default class windowman {
 						}
 						display(element.getAttribute(`data-result`), SEARCH[element.getAttribute(`data-result`)][`results`], `name`);
 						
-                        if ((!((SEARCH[element.getAttribute(`data-result`)][`criteria`]) && (SEARCH[element.getAttribute(`data-result`)][`selected`])) || (typeof SEARCH[element.getAttribute(`data-result`)][`results`]).includes(`obj`) && SEARCH[element.getAttribute(`data-result`)][`results`] != null)
-							? ((Object.keys(SEARCH[element.getAttribute(`data-result`)][`results`]).length <= 0) || !((SEARCH[element.getAttribute(`data-result`)][`selected`])))
+                        if ((
+							!(SEARCH[element.getAttribute(`data-result`)][`selected`])
+								|| (typeof SEARCH[element.getAttribute(`data-result`)][`results`]).includes(`obj`) && SEARCH[element.getAttribute(`data-result`)][`results`] != null)
+							? (((SEARCH[element.getAttribute(`data-result`)][`results`] != null) ? (Object.keys(SEARCH[element.getAttribute(`data-result`)][`results`]).length <= 0) : false)
+								|| !((SEARCH[element.getAttribute(`data-result`)][`selected`])))
 							: true)
 						{
 							pick(null, null, element.getAttribute(`data-result`));
