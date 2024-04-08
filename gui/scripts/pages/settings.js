@@ -57,6 +57,28 @@ function events(window) {
 				})();
 			});
 	}
+	
+	if (document.querySelector(`[data-action="filters,delete,one"]`)) {
+		document
+			.querySelector(`[data-action="filters,delete,one"]`)
+			.addEventListener(`click`, async () => {
+				(async () => {
+					// Import the filters module.
+					let texts = (
+						await import(chrome.runtime.getURL(`gui/scripts/read.js`))
+					).default;
+					let filters = new (
+						await import(chrome.runtime.getURL(`scripts/filters.js`))
+					).default();
+
+					// Open text input window for adding a filter.
+					let filter_source = prompt(texts.localized(`settings_filters_add_prompt`));
+					if (filter_source ? filter_source.trim() : false) {
+						filters.remove(filter_source.trim());
+					}
+				})();
+			});
+	}
 
 	if (document.querySelector(`[data-action="storage,clear"]`)) {
 		document

@@ -292,14 +292,15 @@ export default class windowman {
 		async function fill() {
 			let input_elements = document.querySelectorAll("[data-store]");
 
-			input_elements.forEach((input_element) => {
+			input_elements.forEach(function(input_element) {
 				// Gather data about the element.
 				// Get the corresponding storage data.
 				let data = {};
 				data[`source`] = input_element.getAttribute(`data-store`);
-				data[`value`] = secretariat.read(data[`source`], -1);
+				data[`origin`] = (input_element.hasAttribute(`data-store-location`)) ? parseInt(input_element.getAttribute(`data-store-location`)) : -1
+				data[`value`] = secretariat.read(data[`source`], data[`origin`]);
 
-				data[`value`].then((value) => {
+				data[`value`].then(async function(value) {
 					switch (input_element.getAttribute(`type`).toLowerCase()) {
 						case `checkbox`:
 							input_element.checked = value;
@@ -335,14 +336,14 @@ export default class windowman {
 				let element = {};
 				element[`type`] = input_element.getAttribute(`type`).toLowerCase();
 				element[`event`] = function () {};
-
 				switch (element[`type`]) {
 					case `checkbox`:
 						element[`event`] = function () {
 							let UI_item = {};
 							UI_item[`source`] = this.getAttribute(`data-store`);
 							UI_item[`value`] = this.checked;
-							secretariat.write(UI_item[`source`], UI_item[`value`], 1);
+							UI_item[`store`] = (this.hasAttribute(`data-store-location`)) ? parseInt(this.getAttribute(`data-store-location`)) : -1;
+							secretariat.write(UI_item[`source`], UI_item[`value`], UI_item[`store`]);
 						};
 						break;
 					default:
@@ -354,12 +355,13 @@ export default class windowman {
 									? parseFloat(this.value)
 									: parseInt(this.value)
 								: this.value;
-							secretariat.write(UI_item[`source`], UI_item[`value`], 1);
+							UI_item[`store`] = (this.hasAttribute(`data-store-location`)) ? parseInt(this.getAttribute(`data-store-location`)) : -1;
+							secretariat.write(UI_item[`source`], UI_item[`value`], UI_item[`store`]);
 						};
 						break;
 				}
 
-				input_element.addEventListener("change", element[`event`]);
+				input_element.addEventListener(`change`, element[`event`]);
 			});
 		}
 		
@@ -422,13 +424,12 @@ export default class windowman {
 							ELEMENT_TARGET.innerHTML = ``;
 
 							function setSelected(element) {
-								SEARCH[TARGET_NAME][`selected`] = (element) ? (Object.keys(RESULTS))[(Array.prototype.slice.call(element.parentElement.children)).indexOf(element)] : null;
+								SEARCH[TARGET_NAME][`selected`] = (element) ? (Object.keys(RESULTS))[(Array.prototype.slice.call(element.parentElement.parentElement.querySelectorAll(`a`))).indexOf(element)] : null;
 								
 								// Array.prototype.slice.call(element.parentElement.children)
-								// console.log(new Array(element.parentElement.querySelectorAll(`*`)), (new Array(element.parentElement.querySelectorAll(`*`))).indexOf(element), (Object.keys(RESULTS))[(new Array(element.parentElement.querySelectorAll(`*`))).indexOf(element)]);
 								if (element) {(element.parentElement).parentElement.querySelectorAll(`li`).forEach((element_others) => {
 									element_others.classList.remove(`active`);
-								}); element.parentElement.classList.add(`active`)};									
+								}); element.parentElement.classList.add(`active`)};							
 							}
 
 							// Display the results.
@@ -466,7 +467,6 @@ export default class windowman {
 										pick(result, RESULTS[result], TARGET_NAME);
 
 										// Set the access key.
-										this.parentElement.querySelectorAll(`*`)
 										accessKey(this);
 									});
 									
@@ -510,28 +510,28 @@ export default class windowman {
                                                     let DATA = {};
                                                     
                                                     DATA[`target`] = (Object.keys(ITEM).includes(ELEMENT.getAttribute(`data-result-store`))) ? [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))] : [...(ELEMENT.getAttribute(`data-result-store`).split(`,`)), ...[NAME]];
-                                                    DATA[`value`] = (Object.keys(ITEM).includes(ELEMENT.getAttribute(`data-result-store`))) ? ITEM[ELEMENT.getAttribute(`data-result-store`)] : await secretariat.read(DATA[`target`]);
-
-													console.log(DATA);
+													
+													let TARGET = (Object.keys(ITEM).includes(ELEMENT.getAttribute(`data-result-store`))) ? [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))] : [...(ELEMENT.getAttribute(`data-result-store`).split(`,`)), ...[NAME]];
+                                                    DATA[`value`] = (Object.keys(ITEM).includes(ELEMENT.getAttribute(`data-result-store`))) ? ITEM[ELEMENT.getAttribute(`data-result-store`)] : await secretariat.read(TARGET);
 
                                                     switch (ELEMENT[`type`]) {
-                                                        case `checkbox`:
+														case `checkbox`:
 															ELEMENT.checked = DATA[`value`];
+															console.log(await secretariat.read(null, 1));
                                                             
                                                             ELEMENT[`function`] = async function() {
-                                                                await secretariat.write(DATA[`target`], ELEMENT.checked, 1);
+																DATA[`value`] = ELEMENT.checked;
+                                                                await secretariat.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
                                                             }
-                                                            
                                                             break;
                                                         default:
                                                             if ((typeof (ITEM[ELEMENT.getAttribute(`data-result-store`)])).includes(`obj`)) {
                                                                 ELEMENT.value = JSON.stringify(DATA[`value`]);
                                                                 
-                                                                ELEMENT[`function`] = async function() {
-                                                                    console.log(`running`);
-                                                                    try {
-                                                                        DATA[`value`] = JSON.parse(ELEMENT.value);
-                                                                        secretariat.write(DATA[`target`], DATA[`value`]);
+                                                                ELEMENT[`function`] = function() {
+																	try {
+																		DATA[`value`] = JSON.parse(ELEMENT.value.trim());
+																		(async function() {secretariat.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);})
                                                                     } catch(err) {
                                                                         // The JSON isn't valid.
                                                                         alerts.error(err.name, texts.localized(`JSON_parse_error`), err.stack, false);
@@ -539,10 +539,10 @@ export default class windowman {
                                                                 }
                                                             } else {
                                                                 ELEMENT.value = DATA[`value`];
-                                                                
+																
                                                                 ELEMENT[`function`] = async function() {
-                                                                    await secretariat.write(DATA[`target`], ELEMENT.value);
-                                                                    console.log(`saving...`);
+																	DATA[`value`] = ELEMENT.value.trim()
+                                                                    await secretariat.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
                                                                 }
                                                             }
                                                             break;
@@ -634,8 +634,11 @@ export default class windowman {
 						{
 							pick(null, null, element.getAttribute(`data-result`));
 						}
-					}
 
+						secretariat.observe((what) => {
+							find(element);
+						});
+					}
 				}
 
 				document.querySelectorAll(`[data-result]`).forEach((element) => {
