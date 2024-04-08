@@ -229,7 +229,7 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = false) {
 @param {object} DATA the new data to be written
 @param {int} CLOUD store in the cloud; otherwise set to automatic
 */
-export function write(PATH, DATA, CLOUD = -1) {
+export async function write(PATH, DATA, CLOUD = -1) {
 	let DATA_INJECTED = {};
 
 	/* Forcibly write the data to chrome database
@@ -278,26 +278,24 @@ export function write(PATH, DATA, CLOUD = -1) {
 		return DATABASE;
 	}
 
-	read(null, CLOUD).then((DATA_ALL) => {
-		// handle empty collected data.
-		if (!DATA_ALL) {
-			DATA_ALL = {};
-		}
+	let DATA_ALL = await read(null, CLOUD);
+	if ((DATA_ALL != null && (typeof DATA_ALL).includes(`obj`)) ? Object.keys(DATA_ALL).length <= 0 : true) {
+		DATA_ALL = {};
+	}
 
-		let DATA_NAME = PATH;
+	let DATA_NAME = PATH;
 
-		// Convert the entered prefname to an array if it is not one.
-		if (!(typeof SUBPATH).includes(`object`)) {
-			// Split what is not an object.
-			DATA_NAME = String(PATH).trim().split(",");
-		}
+	// Convert the entered prefname to an array if it is not one.
+	if (!(typeof SUBPATH).includes(`object`)) {
+		// Split what is not an object.
+		DATA_NAME = String(PATH).trim().split(",");
+	}
 
-		// Merge!
-		DATA_INJECTED = nest(DATA_ALL, DATA_NAME, DATA);
+	// Merge!
+	DATA_INJECTED = nest(DATA_ALL, DATA_NAME, DATA);
 
-		// Write!
-		write_database(DATA_INJECTED, CLOUD);
-	});
+	// Write!
+	write_database(DATA_INJECTED, CLOUD);
 }
 
 /* Dangerous: Resets all data or a domain's data.
