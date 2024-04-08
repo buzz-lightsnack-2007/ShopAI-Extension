@@ -21,8 +21,21 @@ export default class alerts {
 		return user_response;
 	}
 
+	constructor(TITLE, MESSAGE) {
+		// Set this message's properties. 
+		this.TITLE = TITLE;
+		this.MESSAGE = MESSAGE;
+
+		// Display the message.
+		console.log(TITLE, MESSAGE);
+		try {
+			M.toast({ text: TITLE.concat(`\n`).concat(MESSAGE) });
+		} catch (err) {}
+	}
+
 	static log(message) {
 		console.log(message);
+		
 		try {
 			M.toast({ text: message });
 		} catch (err) {}
