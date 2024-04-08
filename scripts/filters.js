@@ -2,6 +2,8 @@
 Manage filters.
 */
 
+const secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
+
 export default class filters {
 	constructor() {
 		this.all = async () => {
@@ -28,10 +30,7 @@ export default class filters {
 			);
 
 			// Get the filters.
-			let filter = await secretariat.read(`filters`, -1, {
-				field: "URL",
-				"test value": URL,
-			});
+			let filter = await secretariat.search(`filters`, -1, [`URL`]);
 
 			// If there are filters, then filter the URL.
 			return filter;
@@ -89,8 +88,8 @@ export default class filters {
 			// Add every item to the queue based on what was loaded first.
 			if (await secretariat.read(`filters`, -1)) {
 				for (let FILTER_URL_INDEX = 0; FILTER_URL_INDEX < Object.keys(await secretariat.read(`filters`, -1)).length; FILTER_URL_INDEX++) {
-					let FILTER_URL = Object.keys(await secretariat.read(`filters`, -1))[FILTER_URL_INDEX];
-					console.log(FILTER_URL);
+					console.log(await secretariat.read([`settings`], 1));
+					let FILTER_URL = Object.keys(await secretariat.read([`settings`, `filters`], 1))[FILTER_URL_INDEX];
 					if (FILTER_URL.includes(`://`)) {
 						filters.enqueue(FILTER_URL);
 					}
@@ -107,11 +106,10 @@ export default class filters {
 					texts.localized(`settings_filters_update_status`, null, [filter_URL]),
 				);
 
-				console.log(filter_URL);
 				// Create promise of downloading.
 				let filter_download = net.download(filter_URL, `JSON`, false, true);
 				filter_download
-					.then((result) => {
+					.then(async function (result) {
 						// Only work when the filter is valid.
 						if (result) {
 							// Write the filter to storage.
@@ -119,7 +117,7 @@ export default class filters {
 							alerts.log(texts.localized(`settings_filters_update_status_complete`,null,[filter_URL]));
                             
                             // Add the filter to the sync list.
-                            if (secretariat.read(["settings", `filters`, filter_URL], 1) == null) {
+                            if ((await secretariat.read(["settings", `filters`, filter_URL], 1)) == null) {
                                 secretariat.write(["settings", `filters`, filter_URL], true, 1);
                             }
 						}
@@ -138,5 +136,24 @@ export default class filters {
 		this.all = await secretariat.read(`filters`, -1);
 
 		return this.all;
+	}
+
+	/* Select the most appropriate filter based on a URL.
+
+	@param {string} URL the URL to remove
+	*/
+	async remove(URL) {
+		let CHOICE = await secretariat.forget(`filters`, URL);
+		if (CHOICE) {
+			console.log(await secretariat.read(null, -1), URL);
+			if (await secretariat.read([`settings`, `filters`, URL], 1)) {
+				console.log(await secretariat.read([`settings`, `filters`], 1));
+				let DATA_GROUP = await secretariat.read([`settings`, `filters`], 1);
+				delete DATA_GROUP[URL];
+				await secretariat.write([`settings`, `filters`], DATA_GROUP, 1);
+			};
+		}
+		
+		return CHOICE;
 	}
 }
