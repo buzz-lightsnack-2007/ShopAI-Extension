@@ -87,14 +87,14 @@ export default class filters {
 			}
 		} else {
 			// Add every item to the queue based on what was loaded first.
-			if ((await Promise.all([secretariat.read(`filters`, -1)]))[0]) {
-				Object.keys(
-					(await Promise.all([secretariat.read(`filters`, -1)]))[0],
-				).every((filter_URL) => {
-					if (filter_URL.includes(`://`)) {
-						filters.enqueue(filter_URL);
+			if (await secretariat.read(`filters`, -1)) {
+				for (let FILTER_URL_INDEX = 0; FILTER_URL_INDEX < Object.keys(await secretariat.read(`filters`, -1)).length; FILTER_URL_INDEX++) {
+					let FILTER_URL = Object.keys(await secretariat.read(`filters`, -1))[FILTER_URL_INDEX];
+					console.log(FILTER_URL);
+					if (FILTER_URL.includes(`://`)) {
+						filters.enqueue(FILTER_URL);
 					}
-				});
+				}
 			}
 		}
 
@@ -107,6 +107,7 @@ export default class filters {
 					texts.localized(`settings_filters_update_status`, null, [filter_URL]),
 				);
 
+				console.log(filter_URL);
 				// Create promise of downloading.
 				let filter_download = net.download(filter_URL, `JSON`, false, true);
 				filter_download
@@ -123,7 +124,7 @@ export default class filters {
                             }
 						}
 					})
-					.catch((error) => {
+					.catch(async function(error) {
 						// Inform the user of the download failure.
 						alerts.error(error.name, texts.localized(`settings_filters_update_status_failure`, null, [error.name, filter_URL]), error.stack);
 					});
