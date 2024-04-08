@@ -3,6 +3,9 @@ Manage filters.
 */
 
 const secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
+const net = await import(chrome.runtime.getURL("scripts/net.js"));
+const texts = (await import(chrome.runtime.getURL("gui/scripts/read.js"))).default;
+const alerts = (await import(chrome.runtime.getURL("gui/scripts/alerts.js"))).default;
 
 export default class filters {
 	constructor() {
@@ -24,11 +27,6 @@ export default class filters {
 	*/
 	async select(URL = window.location.href) {
 		this.one = await (async () => {
-			// Import the secretariat.
-			const secretariat = await import(
-				chrome.runtime.getURL("scripts/secretariat.js")
-			);
-
 			// Get the filters.
 			let filter = await secretariat.search(`filters`, -1, [`URL`]);
 
@@ -45,17 +43,6 @@ export default class filters {
 	@return {boolean} the state
 	*/
 	async update(URL) {
-		// Import the updater.
-		const secretariat = await import(
-			chrome.runtime.getURL("scripts/secretariat.js")
-		);
-		const net = await import(chrome.runtime.getURL("scripts/net.js"));
-		const texts = (await import(chrome.runtime.getURL("gui/scripts/read.js")))
-			.default;
-		const alerts = (
-			await import(chrome.runtime.getURL("gui/scripts/alerts.js"))
-		).default;
-
 		// Apparently, JS doesn't have a native queueing system, but it might best work here.
 		class Queue {
 			constructor() {
@@ -143,17 +130,24 @@ export default class filters {
 	@param {string} URL the URL to remove
 	*/
 	async remove(URL) {
-		let CHOICE = await secretariat.forget(`filters`, URL);
-		if (CHOICE) {
-			console.log(await secretariat.read(null, -1), URL);
-			if (await secretariat.read([`settings`, `filters`, URL], 1)) {
-				console.log(await secretariat.read([`settings`, `filters`], 1));
-				let DATA_GROUP = await secretariat.read([`settings`, `filters`], 1);
-				delete DATA_GROUP[URL];
-				await secretariat.write([`settings`, `filters`], DATA_GROUP, 1);
-			};
+		if (URL.includes(`://`)) {
+			let CHOICE = await secretariat.forget(`filters`, URL);
+			if (CHOICE) {
+				console.log(await secretariat.read(null, -1), URL);
+				if (await secretariat.read([`settings`, `filters`, URL], 1)) {
+					console.log(await secretariat.read([`settings`, `filters`], 1));
+					let DATA_GROUP = await secretariat.read([`settings`, `filters`], 1);
+					delete DATA_GROUP[URL];
+					await secretariat.write([`settings`, `filters`], DATA_GROUP, 1);
+				};
+			}
+
+			return CHOICE;
+		} else {
+			// Inform the user of the download being unnecessary.
+			alerts.warn(texts.localized(`settings_filters_removal_stop`));
+			return false;
 		}
 		
-		return CHOICE;
 	}
 }
