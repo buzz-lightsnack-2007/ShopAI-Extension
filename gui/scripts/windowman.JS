@@ -513,11 +513,10 @@ export default class windowman {
 													switch (ELEMENT[`type`]) {
 														case `checkbox`:
 															ELEMENT.checked = (DATA[`value`]);
-
+															
 															ELEMENT[`function`] = function() {
 																DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
-																DATA[`value`] = ELEMENT.checked;
-																secretariat.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
+																secretariat.write(DATA[`target`], ELEMENT.checked, (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
 															};
 															break;
 														default:
@@ -539,8 +538,7 @@ export default class windowman {
 
 																ELEMENT[`function`] = function() {
 																	DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
-																	DATA[`value`] = ELEMENT.value.trim()
-																	secretariat.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
+																	secretariat.write(DATA[`target`], ELEMENT.value.trim(), (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
 																}
 															}
 															break;
