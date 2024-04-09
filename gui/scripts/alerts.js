@@ -16,13 +16,17 @@ export default class alerts {
 
 	constructor(TITLE, MESSAGE) {
 		// Set this message's properties. 
-		this.TITLE = TITLE;
-		this.MESSAGE = MESSAGE;
+		if (MESSAGE = null) {
+			this.message = TITLE;
+		} else {
+			this.title = TITLE;
+			this.message = MESSAGE;
+		}
 
 		// Display the message.
-		console.log(TITLE, MESSAGE);
+		console.log((MESSAGE ? (this.title).concat(`\n`) : ``).concat(this.message));
 		try {
-			M.toast({ text: TITLE.concat(`\n`).concat(MESSAGE) });
+			M.toast({ text: (MESSAGE ? (this.title).concat(`\n`) : ``).concat(this.message) });
 		} catch (err) {}
 	}
 
