@@ -16,7 +16,7 @@ export default class alerts {
 
 	constructor(TITLE, MESSAGE) {
 		// Set this message's properties. 
-		if (MESSAGE = null) {
+		if (MESSAGE == null) {
 			this.message = TITLE;
 		} else {
 			this.title = TITLE;

@@ -89,9 +89,7 @@ export default class filters {
 				let filter_URL = filters.dequeue();
 
 				// Inform the user of download state.
-				alerts.log(
-					texts.localized(`settings_filters_update_status`, null, [filter_URL]),
-				);
+				new alerts (texts.localized(`settings_filters_update_status`, null, [filter_URL]));
 
 				// Create promise of downloading.
 				let filter_download = net.download(filter_URL, `JSON`, false, true);
