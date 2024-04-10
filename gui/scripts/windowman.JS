@@ -386,6 +386,9 @@ export default class windowman {
 												input_element.getAttribute("data-enable"),
 											))
 									: false);
+								if ((input_element.parentElement.nodeName.toLowerCase()).includes(`li`)) {
+									input_element.parentElement.disabled = input_element.disabled;
+								}
 							})();
 						}
 					});
@@ -495,9 +498,9 @@ export default class windowman {
 					
 						if (CONTAINERS) {
 							(CONTAINERS).forEach((CONTAINER) => {
+								CONTAINER.disabled = (ITEM != null) ? !((typeof ITEM).includes(`obj`) && !Array.isArray(ITEM)) : true;
 								([].concat(CONTAINER.querySelectorAll(`[data-result-content]`), CONTAINER.querySelectorAll(`[data-result-store]`), document.querySelectorAll(`[data-result-enable]`))).forEach(async function (ELEMENTS) {
 									if (ELEMENTS) {
-										CONTAINER.disabled = (ITEM != null) ? !((typeof ITEM).includes(`obj`) && !Array.isArray(ITEM)) : true;
 										(ELEMENTS).forEach(async function(ELEMENT) {
 											ELEMENT.disabled = CONTAINER.disabled;
 											if (!ELEMENT.disabled) {
@@ -574,6 +577,11 @@ export default class windowman {
 													}
 												} else if (ELEMENT.getAttribute(`data-result-content`) || ELEMENT.getAttribute(`data-result-store`)) {
 													ELEMENT.innerText = ``;
+												}
+
+												// Disable the list element if in case it is a clickable element. 
+												if ((ELEMENT.parentElement.nodeName.toLowerCase()).includes(`li`)) {
+													ELEMENT.parentElement.disabled = CONTAINER.disabled;
 												}
 											};
 										})
