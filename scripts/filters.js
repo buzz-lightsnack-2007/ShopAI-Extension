@@ -129,20 +129,9 @@ export default class filters {
 	*/
 	async remove(URL) {
 		if (URL.includes(`://`)) {
-			let CHOICE = await secretariat.forget(`filters`, URL);
-			if (CHOICE) {
-				console.log(await secretariat.read(null, -1), URL);
-				if (await secretariat.read([`settings`, `filters`, URL], 1)) {
-					console.log(await secretariat.read([`settings`, `filters`], 1));
-					let DATA_GROUP = await secretariat.read([`settings`, `filters`], 1);
-					delete DATA_GROUP[URL];
-					await secretariat.write([`settings`, `filters`], DATA_GROUP, 1);
-				};
-			}
-
-			return CHOICE;
+			return (await secretariat.forget([`filters`, URL], -1, false)) ? await secretariat.forget([`settings`, `filters`, URL], 1, true) : false;
 		} else {
-			// Inform the user of the download being unnecessary.
+			// Inform the user of the removal being unnecessary.
 			alerts.warn(texts.localized(`settings_filters_removal_stop`));
 			return false;
 		}
