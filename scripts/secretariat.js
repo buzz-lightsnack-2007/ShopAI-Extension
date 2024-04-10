@@ -305,43 +305,25 @@ export async function write(PATH, DATA, CLOUD = -1) {
 @param {int} CLOUD the storage of the data
 @return {boolean} the user's confirmation
 */
-export async function forget(preference, subpreference, CLOUD = 0) {
+export async function forget(preference, CLOUD = 0, override = false) {
 	// Import alerts module.
 	let alerts = (await import(chrome.runtime.getURL(`gui/scripts/alerts.js`))).default;
 
 	// Confirm the action.
-	let forget_action = await alerts.confirm();
+	let forget_action = override ? override : await alerts.confirm();
 
 	if (forget_action) {
 		if (preference) {
-			if (subpreference) {
-				
-				// Get the data.
-				let DATA = await read(preference, CLOUD);
+			if (!(Array.isArray(preference))) {
+				preference = String(preference).trim().split(",");
+			};
+			
+			let DATA = await read(preference.slice(0,-1), CLOUD);
+			if ((((typeof (DATA)).includes(`obj`) && !Array.isArray(DATA) && DATA != null) ? Object.keys(DATA) : false) ? DATA[preference.slice(-1)] : false) {
+				delete DATA[preference.slice(-1)];
+			};
 
-				// Should only run when existent
-				if (DATA[subpreference]) {
-					delete DATA[subpreference];
-					console.log(preference, DATA, CLOUD);
-					write(preference, DATA, CLOUD);
-				}
-			} else {
-				// Remove that particular data.
-				if (CLOUD <= 0) {
-					chrome.storage.local.get(null, (data) => {
-						delete data[preference];
-
-						chrome.storage.local.set(data, (result) => {});
-					});
-				}
-				if (CLOUD >= 0) {
-					chrome.storage.sync.get(null, (data) => {
-						delete data[preference];
-
-						chrome.storage.sync.set(data, (result) => {});
-					});
-				}
-			}
+			await write(preference.slice(0,-1), DATA, CLOUD);
 		} else {
 			// Clear the data storage.
 			if (CLOUD >= 0) {
