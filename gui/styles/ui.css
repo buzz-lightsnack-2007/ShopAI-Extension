@@ -11,7 +11,7 @@
     --primary-color-raised-hover-solid: rgba(252, 162, 133) !important;
     --primary-color-raised-focus-solid: rgba(221, 106, 59) !important;
 
-    --background-color-level-16dp-solid: rgba(255, 238, 235);
+    --background-color-level-16dp-solid: rgba(255, 238, 235) !important;
 
     --secondary-color: rgba(221, 106, 59, 1) !important;
     --secondary-color-hover-solid: rgba(252, 162, 133) !important;
@@ -93,7 +93,13 @@ main.container {
 }
 
 nav {
-    background-color: var(--primary-color);
+    background-color: none;
+    background: linear-gradient(
+        335deg,
+        var(--primary-color-dark) 0%,
+        var(--primary-color) 62%,
+        var(--primary-color-raised-hover-solid) 100%
+    );
 }
 
 nav .input-field input[type="search"] {
@@ -217,4 +223,8 @@ fieldset > ul {
 
 fieldset > ul li {
     padding-top: 0em !important;
+}
+
+.input-field {
+    margin-bottom: .25em;
 }
