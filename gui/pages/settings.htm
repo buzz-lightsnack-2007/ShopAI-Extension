@@ -103,22 +103,9 @@
 							</side>
 						</section>
 						<section class="input-group">
-							<label class="input-description">
-								<legend
-									for="duration"
-									class="flow-text"
-								></legend>
-								<label
-									for="settings_update_duration_description"
-								></label>
-							</label>
 							<div class="input-field">
-								<input
-									type="number"
-									data-store="settings,sync,duration"
-									data-store-location="1"
-								/>
-								<label for="settings_update_duration_prompt"></label>
+								<input type="number" data-store="settings,sync,duration" data-store-location="1" placeholder=" " min=".25" step=".25" />
+								<label for="settings_update_duration_description"></label>
 							</div>
 						</section>
 						<section class="input-group">
@@ -132,12 +119,7 @@
 								></label>
 							</label>
 							<div class="input-field">
-								<input
-									type="password"
-									data-store="settings,analysis,api,key"
-									data-store-location="1"
-									placeholder=" "
-								/>
+								<input type="password" data-store="settings,analysis,api,key" data-store-location="1" placeholder=" " class="validate" required />
 								<label for="API_Key"></label>
 							</div>
 						</section>

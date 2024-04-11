@@ -350,8 +350,17 @@ export default class windowman {
 						element[`event`] = function () {
 							let UI_item = {};
 							UI_item[`source`] = this.getAttribute(`data-store`);
+
+							if (element[`type`].includes(`num`) || element[`type`].includes(`range`)) {
+								if ((this.hasAttribute(`min`)) ? this.value < parseFloat(this.getAttribute(`min`)) : false) {
+									this.value = this.getAttribute(`min`);
+								} else if((this.hasAttribute(`max`)) ? this.value > parseFloat(this.getAttribute(`max`)) : false) {
+									this.value = this.getAttribute(`max`);
+								};
+							};
+
 							UI_item[`value`] = element[`type`].includes(`num`)
-								? parseFloat(this.value) % 1 != 0
+								? this.value % parseInt(this.value) != 0
 									? parseFloat(this.value)
 									: parseInt(this.value)
 								: this.value;
