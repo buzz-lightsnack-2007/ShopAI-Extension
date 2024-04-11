@@ -2,7 +2,7 @@
 // Import the file module.
 // import file from `./net.js`;
 
-export default class gemini {
+class gemini {
     #key;
     #request;
 
@@ -178,3 +178,5 @@ export default class gemini {
         return(analyze(RESPONSE_RAW));
     }
 };
+
+module.exports = gemini;
