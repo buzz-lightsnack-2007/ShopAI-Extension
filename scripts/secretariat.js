@@ -83,9 +83,7 @@ export async function read(DATA_NAME, CLOUD = 0) {
 		let DATA = DATA_ALL;
 
 		// Pull the data out.
-		if (
-			DATA_ALL && DATA_PATH && DATA_PATH != null ? DATA_PATH.length > 0 : false
-		) {
+		if (DATA_ALL != null && DATA_PATH && DATA_PATH != null ? DATA_PATH.length > 0 : false) {
 			let DATA_PATH_SELECTED = String(DATA_PATH.shift()).trim();
 
 			// Get the selected data.
