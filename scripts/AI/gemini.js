@@ -33,7 +33,7 @@ export default class gemini {
         this.model[`name`] = ((typeof model).includes(`str`) && model) ? ((model.includes(`models/`)) ? model : `models/`.concat(model)) : 'gemini-pro';
 
         // Set the request location.
-        this.#request[`location`] = `https://generativelanguage.googleapis.com/`.concat(((version != null && !Array.isArray(version) && typeof(version).includes(`obj`)) ? version[`API`] : false) ? version[`API`] : `v1beta`, `/`, this.model.name);
+        this.#request[`location`] = `https://generativelanguage.googleapis.com/${((version != null && !Array.isArray(version) && typeof(version).includes(`obj`)) ? version[`API`] : false) ? version[`API`] : `v1beta`}/${this.model.name}`;
     };
 
 
