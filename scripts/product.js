@@ -90,17 +90,23 @@ export default class product {
 		// Stop when the data is already analyzed.
 		if (this[`analysis`]) {return(this.analysis)}
 		else if (this.status ? (!this.status.update) : false) {this.analysis = await secretariat.read([`sites`, this.URL, `analysis`]);}
-		else {
+		if ((this.analysis && this.analysis != null && this.analysis != undefined) ? !((typeof this.analysis).contains(`obj`) && !Array.isArray(this.analysis)) : true) {
 			// Analyze the data. 
 			const gemini = (await import(chrome.runtime.getURL("scripts/AI/gemini.js"))).default;
 			let analyzer = new gemini (await secretariat.read([`settings`,`analysis`,`api`,`key`]), `gemini-pro`);
 			
 			// Analyze the data. 
-			await analyzer.generate(this.details);
+			let PROMPT = [];
+
+			// Add the "system" prompt. 
+			PROMPT.push({"text": texts.localized(`AI_message_prompt`)});
+			
+			// This is the user prompt. 
+			PROMPT.push({"text": JSON.stringify(this.details)});
 	
 			// Return the analysis
-			this.analysis = analyzer.response;
-		}
+			this.analysis = JSON.stringify(await analyzer.generate(PROMPT));
+		};
 
 		return(this.analysis);
 	};
