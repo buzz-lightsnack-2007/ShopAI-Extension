@@ -220,5 +220,8 @@
 	},
 	"error_msg_notattached": {
 		"message": "The product data has not been attached to the storage."
+	},
+	"error_msg_APImissing": {
+		"message": "You have not yet added the API keys. To continue, please add one in the options."
 	}
 }
