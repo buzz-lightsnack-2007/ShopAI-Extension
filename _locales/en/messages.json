@@ -214,5 +214,8 @@
 	},
 	"error_msg_notJSON": {
 		"message": "The file has been downloaded, but it is not the correct file type."
+	},
+	"error_msg_notattached": {
+		"message": "The product data has not been attached to the storage."
 	}
 }
