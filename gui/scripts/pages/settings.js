@@ -98,10 +98,7 @@ function events(window) {
 		document
 			.querySelector(`[data-action="storage,clear"]`)
 			.addEventListener(`click`, async () => {
-				let storage = (
-					await import(chrome.runtime.getURL(`scripts/secretariat.js`))
-				)["secretariat"];
-				storage.forget(`sites`);
+				secretariat.forget(`sites`);
 			});
 	}
 }
