@@ -223,5 +223,8 @@
 	},
 	"error_msg_APImissing": {
 		"message": "You have not yet added the API keys. To continue, please add one in the options."
+	},
+	"AI_message_prompt": {
+		"message": ""
 	}
 }

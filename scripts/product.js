@@ -85,4 +85,23 @@ export default class product {
 		// Write the analysis data to the storage. 
 		(this[`analysis`]) ? secretariat.write([`sites`, this.URL, `analysis`], this.analysis): false;
 	};
+
+	async analyze() {
+		// Stop when the data is already analyzed.
+		if (this[`analysis`]) {return(this.analysis)}
+		else if (this.status ? (!this.status.update) : false) {this.analysis = await secretariat.read([`sites`, this.URL, `analysis`]);}
+		else {
+			// Analyze the data. 
+			const gemini = (await import(chrome.runtime.getURL("scripts/AI/gemini.js"))).default;
+			let analyzer = new gemini (await secretariat.read([`settings`,`analysis`,`api`,`key`]), `gemini-pro`);
+			
+			// Analyze the data. 
+			await analyzer.generate(this.details);
+	
+			// Return the analysis
+			this.analysis = analyzer.response;
+		}
+
+		return(this.analysis);
+	};
 };
