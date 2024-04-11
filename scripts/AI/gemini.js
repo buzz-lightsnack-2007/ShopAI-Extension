@@ -2,6 +2,7 @@
 // Import the file module.
 // import file from `./net.js`;
 
+// Don't forget to set the class as export default.
 export default class gemini {
     #key;
     #request;
@@ -10,8 +11,9 @@ export default class gemini {
 
     @param {string} key the API key. Remember to not commit your API keys.
     @param {string} model the model to use
+    @param {object} version the API and bot version
     */
-    constructor (key, model) {
+    constructor (key, model, version = {"API": "v1beta"}) {
         if ((key) ? (((typeof key).includes(`str`)) ? !(key.trim()) : true) : true) {
             throw new Error(`The API key is required.`);
         };
@@ -31,7 +33,7 @@ export default class gemini {
         this.model[`name`] = ((typeof model).includes(`str`) && model) ? ((model.includes(`models/`)) ? model : `models/`.concat(model)) : 'gemini-pro';
 
         // Set the request location.
-        this.#request[`location`] = `https://generativelanguage.googleapis.com/v1beta/`.concat(this.model.name);
+        this.#request[`location`] = `https://generativelanguage.googleapis.com/`.concat(((version != null && !Array.isArray(version) && typeof(version).includes(`obj`)) ? version[`API`] : false) ? version[`API`] : `v1beta`, `/`, this.model.name);
     };
 
 
