@@ -2,7 +2,7 @@
 This does not stand for "FamiCom" but instead on Finalization and Completion. This script provides installation run scripts.
 */
 
-import { init } from "./secretariat.js";
+import { init, read, write } from "./secretariat.js";
 
 let config = chrome.runtime.getURL("config/config.json");
 
@@ -54,5 +54,22 @@ export default class fc {
   /* main function */
   static run() {
     fc.trigger();
+    fc.every();
   }
+
+  static async every() {
+    let DURATION_PREFERENCES = await read([`settings`,`sync`]);
+
+    if (((typeof DURATION_PREFERENCES).includes(`obj`) && DURATION_PREFERENCES != null && !Array.isArray(DURATION_PREFERENCES)) ? ((DURATION_PREFERENCES[`duration`]) ? (DURATION_PREFERENCES[`duration`] > 0) : false) : false) {
+      // Convert DURATION_PREFERENCES[`duration`]) from hrs to milliseconds.
+      DURATION_PREFERENCES[`duration`] = DURATION_PREFERENCES[`duration`] * 60 * 60 * 1000;
+      let filters = new (await import(chrome.runtime.getURL(`scripts/filters.js`))).default();
+     
+      // Now, set the interval. 
+      setInterval(async () => {
+        // Update the filters. 
+        filters.update();
+      }, DURATION_PREFERENCES[`duration`]);
+    };
+  };
 }
