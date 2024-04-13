@@ -2,7 +2,7 @@
 Manage the local cache.
 */
 
-import logging from "/gui/scripts/logging.JS";
+import alerts from "/gui/scripts/alerts.js";
 
 /* Read all stored data in the browser cache.
 
@@ -13,13 +13,10 @@ import logging from "/gui/scripts/logging.JS";
 */
 export async function read(DATA_NAME, CLOUD = 0) {
 	// Initialize the selected pref data.
-	let DATA = {},
-		DATA_ALL = {},
-		DATA_RETURNED = {};
+	let DATA, DATA_RETURNED;
 
 	// Convert the entered prefname to an array if it is not one.
-	if (!(typeof DATA_NAME).includes(`object`)) {
-		// Avoid null
+	if ((!Array.isArray(DATA_NAME)) && DATA_NAME != null) {
 		if ((typeof DATA_NAME).includes(`str`) ? DATA_NAME.trim() : DATA_NAME) {
 			// Syntax of splitting is by commas.
 			DATA_NAME = String(DATA_NAME).trim().split(",");
@@ -27,13 +24,12 @@ export async function read(DATA_NAME, CLOUD = 0) {
 	}
 
 	/*
-			Get all dataset.
+	Get all storage values. 
 
-			@param {number} SOURCE the data source
+	@param {number} SOURCE the data source
 	*/
 	async function read_database(SOURCE = -1) {
-		let data = {};
-		let data_returned;
+		let data, data_returned;
 
 		async function read_database_local() {
 			return new Promise((resolve, reject) => {
@@ -64,12 +60,7 @@ export async function read(DATA_NAME, CLOUD = 0) {
 		}
 
 		// Return the data.
-		if (SOURCE > 0) {
-			data_returned = read_database_sync();
-		} else {
-			data_returned = read_database_local();
-		}
-
+		data_returned = (SOURCE > 0) ? read_database_sync() : read_database_local();
 		return data_returned;
 	}
 
@@ -83,7 +74,7 @@ export async function read(DATA_NAME, CLOUD = 0) {
 		let DATA = DATA_ALL;
 
 		// Pull the data out.
-		if (DATA_ALL != null && DATA_PATH && DATA_PATH != null ? DATA_PATH.length > 0 : false) {
+		if (DATA_ALL != null && (Array.isArray(DATA_PATH) && DATA_PATH != null) ? DATA_PATH.length > 0 : false) {
 			let DATA_PATH_SELECTED = String(DATA_PATH.shift()).trim();
 
 			// Get the selected data.
@@ -93,48 +84,38 @@ export async function read(DATA_NAME, CLOUD = 0) {
 			if (DATA_PATH.length > 0) {
 				// Recursively run to make use of the existing data.
 				DATA = find_data(DATA, DATA_PATH);
-			}
+			};
 		} else {
 			return null;
 		}
 
+		
 		// Now return the data.
 		return DATA;
 	}
 
-	// Read data from local and sync storage (asynchronous operations)
-	try {
-		if (CLOUD <= 0) {
-			[DATA_ALL[`local`]] = await Promise.all([read_database(-1)]);
-		}
-		if (CLOUD >= 0) {
-			[DATA_ALL[`sync`]] = await Promise.all([read_database(1)]);
-		}
-	} catch ({ name, message }) {
-		logging.error(name, message);
-	}
+	switch (CLOUD) {
+		case 0: 
+			DATA = {}; DATA_RETURNED = {};
 
-	// Let's get through everything and then determine which one has…
-	Object.keys(DATA_ALL).forEach((DATA_SOURCE) => {
-		if (DATA_ALL[DATA_SOURCE]) {
-			DATA[DATA_SOURCE] = DATA_NAME
-				? find_data(DATA_ALL[DATA_SOURCE], DATA_NAME)
-				: DATA_ALL[DATA_SOURCE];
-		}
-	});
+			DATA[`sync`] = await read(DATA_NAME, 1);
+			DATA[`local`] = await read(DATA_NAME, -1);
 
-	// Now return the data.
-	DATA_RETURNED[`source`] =
-		CLOUD != 0
-			? CLOUD > 0
-				? `sync`
-				: `local`
-			: (DATA[`sync`] ? DATA[`sync`].length <= 0 : DATA[`sync`])
+			// Now return the data.
+			DATA_RETURNED[`source`] = (DATA[`sync`] != null)
 				? `sync`
 				: `local`;
-	DATA_RETURNED[`value`] = DATA[DATA_RETURNED[`source`]];
+			DATA_RETURNED[`value`] = DATA[DATA_RETURNED[`source`]];
 
-	return DATA_RETURNED[`value`];
+			return DATA_RETURNED[`value`];
+			break;
+		default: 
+			CLOUD = (CLOUD > 0) ? 1 : -1;
+			DATA = await read_database(CLOUD);
+			DATA_RETURNED = (DATA_NAME) ? find_data(DATA, DATA_NAME) : DATA;
+			return(DATA_RETURNED);
+			break;
+	}
 }
 
 /* More enhanced searching.
