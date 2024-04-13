@@ -6,15 +6,11 @@ const secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js")
 const net = await import(chrome.runtime.getURL("scripts/net.js"));
 const texts = (await import(chrome.runtime.getURL("gui/scripts/read.js"))).default;
 const alerts = (await import(chrome.runtime.getURL("gui/scripts/alerts.js"))).default;
+const common = (await import(chrome.runtime.getURL("scripts/common.js")));
 
 export default class filters {
 	constructor() {
 		this.all = async () => {
-			// Import the updater.
-			const secretariat = await import(
-				chrome.runtime.getURL("scripts/secretariat.js")
-			);
-
 			return secretariat.read(`filters`, -1).then((filters) => {
 				return filters;
 			});
@@ -43,27 +39,8 @@ export default class filters {
 	@return {boolean} the state
 	*/
 	async update(URL) {
-		// Apparently, JS doesn't have a native queueing system, but it might best work here.
-		class Queue {
-			constructor() {
-				this.elements = [];
-			}
-
-			enqueue(element) {
-				this.elements.push(element);
-			}
-
-			dequeue() {
-				return this.elements.shift();
-			}
-
-			isEmpty() {
-				return this.elements.length <= 0;
-			}
-		}
-
 		// Create a queue of the filters.
-		let filters = new Queue();
+		let filters = new common.Queue();
 
 		if (URL) {
 			// Check if the URL is in a valid protocol
@@ -75,7 +52,6 @@ export default class filters {
 			// Add every item to the queue based on what was loaded first.
 			if (await secretariat.read(`filters`, -1)) {
 				for (let FILTER_URL_INDEX = 0; FILTER_URL_INDEX < Object.keys(await secretariat.read(`filters`, -1)).length; FILTER_URL_INDEX++) {
-					console.log(await secretariat.read([`settings`], 1));
 					let FILTER_URL = Object.keys(await secretariat.read([`settings`, `filters`], 1))[FILTER_URL_INDEX];
 					if (FILTER_URL.includes(`://`)) {
 						filters.enqueue(FILTER_URL);
