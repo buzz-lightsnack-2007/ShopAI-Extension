@@ -297,8 +297,8 @@ export default class windowman {
 				// Get the corresponding storage data.
 				let data = {};
 				data[`source`] = input_element.getAttribute(`data-store`);
-				data[`origin`] = (input_element.hasAttribute(`data-store-location`)) ? parseInt(input_element.getAttribute(`data-store-location`)) : -1
-				data[`value`] = secretariat.read(data[`source`], data[`origin`]);
+				// data[`origin`] = (input_element.hasAttribute(`data-store-location`)) ? parseInt(input_element.getAttribute(`data-store-location`)) : -1
+				data[`value`] = secretariat.read(data[`source`]);
 
 				data[`value`].then(async function(value) {
 					switch (input_element.getAttribute(`type`).toLowerCase()) {
