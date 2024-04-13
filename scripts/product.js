@@ -105,7 +105,12 @@ export default class product {
 			PROMPT.push({"text": JSON.stringify(this.details)});
 	
 			// Return the analysis
-			this.analysis = JSON.stringify(await analyzer.generate(PROMPT));
+			await analyzer.generate(PROMPT);
+
+			// Remove all markdown formatting. 
+			if (analyzer.candidate) {
+				this.analysis = JSON.parse(analyzer.candidate.replace(/(```json|```|`)/g, ''));
+			};
 		};
 
 		return(this.analysis);
