@@ -16,12 +16,15 @@ async function build() {
 	let window = new windowman();
 	window.sync();
 	
+	// Add the window events. 
 	events(window);
 };
 
 /*
-		Define the mapping of each button.
-		*/
+Define the mapping of each button.
+
+@param {object} window the window
+*/
 function events(window) {
 	if (document.querySelector(`[data-action="filters,update"]`)) {
 		document
