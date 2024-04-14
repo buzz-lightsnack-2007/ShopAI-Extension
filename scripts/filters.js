@@ -51,9 +51,10 @@ export default class filters {
 			}
 		} else {
 			// Add every item to the queue based on what was loaded first.
-			if (await read(`filters`, -1)) {
-				for (let FILTER_URL_INDEX = 0; FILTER_URL_INDEX < Object.keys(await read(`filters`, -1)).length; FILTER_URL_INDEX++) {
-					let FILTER_URL = Object.keys(await read([`settings`, `filters`], 1))[FILTER_URL_INDEX];
+			let FILTERS_ALL = await read(["settings", `filters`]);
+			if ((typeof (FILTERS_ALL) == `obj` && !Array.isArray(FILTERS_ALL)) ? Object.keys(FILTERS_ALL).length <= 0 : false) {
+				for (let FILTER_URL_INDEX = 0; FILTER_URL_INDEX < Object.keys(FILTERS_ALL).length; FILTER_URL_INDEX++) {
+					let FILTER_URL = (Object.keys(FILTERS_ALL, 1))[FILTER_URL_INDEX];
 					if (FILTER_URL.includes(`://`)) {
 						filters.enqueue(FILTER_URL);
 					}
@@ -78,10 +79,10 @@ export default class filters {
 							write(["filters", filter_URL], result, -1);
 							alerts.log(texts.localized(`settings_filters_update_status_complete`,null,[filter_URL]));
                             
-                            // Add the filter to the sync list.
-                            if ((await read(["settings", `filters`, filter_URL], 1)) == null) {
-                                write(["settings", `filters`, filter_URL], true, 1);
-                            }
+							// Add the filter to the sync list.
+							if ((await read(["settings", `filters`])) ? !((Object.keys(await read(["settings", `filters`]))).includes(filter_URL)) : true) {
+								write(["settings", `filters`, filter_URL], true, 1);
+							}
 						}
 					})
 					.catch(async function(error) {
