@@ -18,13 +18,13 @@
 	"content_scripts": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
-			"js": ["scripts/watchman.js"]
+			"js": ["scripts/outside/watchman.js"]
 		}
 	],
 	"web_accessible_resources": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
-			"resources": ["scripts/*.js", "gui/scripts/*.js", "gui/scripts/*.JS", "config/*.json"]
+			"resources": ["scripts/*.js", "gui/scripts/*.js", "gui/scripts/AI/*.js", "gui/scripts/outside/*.js", "gui/scripts/*.JS", "config/*.json"]
 		}
 	],
 
