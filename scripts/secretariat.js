@@ -15,14 +15,6 @@ export async function read(DATA_NAME, CLOUD = 0) {
 	// Initialize the selected pref data.
 	let DATA, DATA_RETURNED;
 
-	// Convert the entered prefname to an array if it is not one.
-	if ((!Array.isArray(DATA_NAME)) && DATA_NAME != null) {
-		if ((typeof DATA_NAME).includes(`str`) ? DATA_NAME.trim() : DATA_NAME) {
-			// Syntax of splitting is by commas.
-			DATA_NAME = String(DATA_NAME).trim().split(",");
-		}
-	}
-
 	/*
 	Get all storage values. 
 
@@ -89,22 +81,25 @@ export async function read(DATA_NAME, CLOUD = 0) {
 			return null;
 		}
 
-		
 		// Now return the data.
 		return DATA;
+	}
+
+	// Convert the entered prefname to an array if it is not one.
+	if (!Array.isArray(DATA_NAME) && DATA_NAME != null) {
+		// Syntax of splitting is by commas.
+		DATA_NAME = String(DATA_NAME).trim().split(",");
 	}
 
 	switch (CLOUD) {
 		case 0: 
 			DATA = {}; DATA_RETURNED = {};
 
-			DATA[`sync`] = await read(DATA_NAME, 1);
-			DATA[`local`] = await read(DATA_NAME, -1);
+			DATA[`sync`] = await read((DATA_NAME) ? [...DATA_NAME] : null, 1);
+			DATA[`local`] = await read((DATA_NAME) ? [...DATA_NAME] : null, -1);
 
 			// Now return the data.
-			DATA_RETURNED[`source`] = (DATA[`sync`] != null)
-				? `sync`
-				: `local`;
+			DATA_RETURNED[`source`] = (DATA[`sync`] != null) ? `sync` : `local`;
 			DATA_RETURNED[`value`] = DATA[DATA_RETURNED[`source`]];
 
 			return DATA_RETURNED[`value`];
