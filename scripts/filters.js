@@ -23,7 +23,7 @@ export default class filters {
 	@param {string} URL the current URL
 	*/
 	async select(URL = window.location.href) {
-		this.one = await (async () => {
+		let SELECTED = await (async () => {
 			// Get the filters.
 			let filter = await search(`filters`, URL, `URL`, false, {"cloud": -1});
 
@@ -31,8 +31,11 @@ export default class filters {
 			return filter;
 		})();
 
-		return (this.one);
-	}
+		if ((SELECTED && SELECTED != null && (typeof SELECTED).includes(`obj`)) ? Object.keys(SELECTED) : false) {
+			this.one = (Object.entries(SELECTED))[0][1];
+			return (this.one);
+		};
+	};
 
 	/* Update all filters or just one.
 
