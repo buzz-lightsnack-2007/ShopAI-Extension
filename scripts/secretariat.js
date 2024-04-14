@@ -118,27 +118,24 @@ export async function read(DATA_NAME, CLOUD = 0) {
 @param {Array} SOURCE the source of the data
 @param {string} TERM the term to search
 @param {Array} ADDITIONAL_PLACES additional places to search
+@param {object} OPTIONS the options
 @return {Array} the results
 */
-export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = false) {
-	let DATA = await read(SOURCE);
+export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = false, OPTIONS = {}) {
+	let DATA = await read(SOURCE, (OPTIONS[`cloud`] != null) ? OPTIONS[`cloud`] : 0);
 	let RESULTS;
 
 	if (DATA) {
 		RESULTS = {};
 
-		if (TERM) {
+		if (TERM && (!(typeof ADDITIONAL_PLACES).includes(`str`) || !ADDITIONAL_PLACES)) {
 			// Sequentially search through the data, first by key.
 			let key_number = {"total": (Object.keys(DATA)).length, "current": 0};
 			
 			while (key_number[`current`] < key_number[`total`]) {
 				let DATA_NAME = (Object.keys(DATA))[key_number[`current`]]
 				
-				if (
-					STRICT
-						? DATA_NAME == TERM
-						: (DATA_NAME.includes(TERM) || TERM.includes(DATA_NAME))
-				) {
+				if (STRICT ? DATA_NAME == TERM : (DATA_NAME.includes(TERM) || TERM.includes(DATA_NAME))) {
 					RESULTS[DATA_NAME] = DATA[DATA_NAME];
 				}
 				
@@ -147,10 +144,7 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = false) {
 			
 			// Then, get the additional places.
 			if (
-				(ADDITIONAL_PLACES != null ? Array.isArray(ADDITIONAL_PLACES) : false)
-					? ADDITIONAL_PLACES.length > 0
-					: false
-			) {
+				(ADDITIONAL_PLACES != null ? Array.isArray(ADDITIONAL_PLACES) : false) ? ADDITIONAL_PLACES.length > 0 : false) {
 				for (let PARAMETER_PRIORITY_NUMBER = 0; PARAMETER_PRIORITY_NUMBER < ADDITIONAL_PLACES.length; PARAMETER_PRIORITY_NUMBER++) {
 					// Recursively search
 					RESULTS = Object.assign({}, RESULTS, search(SOURCE, TERM, ADDITIONAL_PLACES[PARAMETER_PRIORITY_NUMBER], STRICT));
@@ -162,11 +156,11 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = false) {
 				let VALUE = {};
 				VALUE[`test`] = TERM;
 				
-				for (let DICTIONARY_INDEX = 0; DICTIONARY_INDEX < (Object.keys(DATA)).length; DICTIONARY_INDEX) {
+				for (let DICTIONARY_INDEX = 0; DICTIONARY_INDEX < (Object.keys(DATA)).length; DICTIONARY_INDEX++) {
 					VALUE[`parent`] = DATA[(Object.keys(DATA))[DICTIONARY_INDEX]];
 					
 					if (((typeof VALUE[`parent`]).includes(`obj`) && !Array.isArray(VALUE[`parent`]) && VALUE[`parent`] != null) ? (Object.keys(VALUE[`parent`])).length > 0 : false ) {
-						VALUE[`current`] = (VALUE[`parent`])[`test`];
+						VALUE[`current`] = VALUE[`parent`][ADDITIONAL_PLACES];
 					}
 					
 					if (VALUE[`current`]) {
@@ -193,7 +187,7 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = false) {
 			}
 		}
 	}
-
+	
 	return RESULTS;
 }
 
