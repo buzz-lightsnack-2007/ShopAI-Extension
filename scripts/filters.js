@@ -2,7 +2,7 @@
 Manage filters.
 */
 
-import {read, write} from "./secretariat.js";
+import {read, write, forget} from "./secretariat.js";
 import {download} from "./net.js";
 import texts from "/gui/scripts/read.js";
 import {Queue} from "./common.js";
@@ -106,7 +106,7 @@ export default class filters {
 	*/
 	async remove(URL) {
 		if (URL.includes(`://`)) {
-			return (await forget([`filters`, URL], -1, false)) ? await forget([`settings`, `filters`, URL], 1, true) : false;
+			await forget([`filters`, URL], -1, false) ? await forget([`settings`, `filters`, URL], 1, true) : false;
 		} else {
 			// Inform the user of the removal being unnecessary.
 			alerts.warn(texts.localized(`settings_filters_removal_stop`));
