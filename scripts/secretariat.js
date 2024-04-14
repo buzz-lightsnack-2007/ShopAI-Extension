@@ -292,8 +292,9 @@ export async function forget(preference, CLOUD = 0, override = false) {
 				preference = String(preference).trim().split(",");
 			};
 			
-			let DATA = await read(preference.slice(0,-1), CLOUD);
-			if ((((typeof (DATA)).includes(`obj`) && !Array.isArray(DATA) && DATA != null) ? Object.keys(DATA) : false) ? DATA[preference.slice(-1)] : false) {
+			let DATA = await read([...preference.slice(0,-1)], CLOUD);
+			
+			if (((((typeof (DATA)).includes(`obj`) && !Array.isArray(DATA) && DATA != null) ? Object.keys(DATA) : false) ? Object.keys(DATA).includes((preference.slice(-1))[0]) : false)) {
 				delete DATA[preference.slice(-1)];
 			};
 
