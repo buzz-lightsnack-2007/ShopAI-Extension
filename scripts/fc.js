@@ -67,12 +67,12 @@ export default class fc {
         DURATION_PREFERENCES[`duration`] = 24;
   
         // Write it. 
-        write([`settings`, `sync`], DURATION_PREFERENCES, -1);
+        await write([`settings`, `sync`], DURATION_PREFERENCES, -1);
       };
   
       if (((typeof DURATION_PREFERENCES).includes(`obj`) && DURATION_PREFERENCES != null && !Array.isArray(DURATION_PREFERENCES)) ? ((DURATION_PREFERENCES[`duration`]) ? (DURATION_PREFERENCES[`duration`] > 0) : false) : false) {
         // Convert DURATION_PREFERENCES[`duration`]) from hrs to milliseconds.
-        DURATION_PREFERENCES[`duration`] = DURATION_PREFERENCES[`duration`] * 60 * 60 * 1000;
+        DURATION_PREFERENCES[`duration`] = DURATION_PREFERENCES[`duration`] * (60 ** 2) * 1000;
         let FILTERS = new filters;
   
         // Now, set the interval. 
@@ -84,9 +84,11 @@ export default class fc {
         };
   
         // Provide a way to cancel the interval. 
-        let updater_cancel = () => {
+        let updater_cancel = (updater) => {
   
-        }
+        };
+
+        
       };
     })
 
