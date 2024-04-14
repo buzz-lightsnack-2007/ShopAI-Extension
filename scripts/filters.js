@@ -2,7 +2,7 @@
 Manage filters.
 */
 
-import {read, write, forget} from "./secretariat.js";
+import {read, write, forget, search} from "./secretariat.js";
 import {download} from "./net.js";
 import texts from "/gui/scripts/read.js";
 import {Queue} from "./common.js";
@@ -25,7 +25,7 @@ export default class filters {
 	async select(URL = window.location.href) {
 		this.one = await (async () => {
 			// Get the filters.
-			let filter = await search(`filters`, -1, [`URL`]);
+			let filter = await search(`filters`, URL, `URL`, false, {"cloud": -1});
 
 			// If there are filters, then filter the URL.
 			return filter;
