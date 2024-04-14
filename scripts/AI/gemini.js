@@ -41,8 +41,7 @@ export default class gemini {
 
     /* Ask Google Gemini.
 
-    @param {object} prompt the prompts; may accept a string to be converted to an object
-    @param {object} images the images
+    @param {object} prompt the prompts; may accept a string to be converted to an object; images should already be blob
     @param {boolean} continued whether to continue the existing prompt
     */
     async generate(prompt, safetySettings, generationConfig, continued = false) {
@@ -66,19 +65,17 @@ export default class gemini {
             REQUEST[`contents`] = [];
 
             // Function below by Google (https://ai.google.dev/tutorials/get_started_web)
-            async function fileToGenerativePart(file) {
-                if (typeof FileReader != 'undefined') {
-                    const base64EncodedDataPromise = new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onloadend = () => resolve(reader.result.split(',')[1]);
-                        reader.readAsDataURL(file);
-                    });
-                    return {
-                        inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
-                    };
-                } else {
-                    return null;
-                }
+            async function fileToGenerativePart(image) {
+                let image = {"blob": image};
+                image[`type`] = image[`blob`].type;
+
+                const reader = new FileReader();
+                image[`base64`] = await new Promise((resolve) => {
+                    reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                    reader.readAsDataURL(image[`blob`]);
+                });
+                    
+                return {inlineData: { data: image[`base64`], mimeType: image[`type`] }};
             };
 
             while (REQUEST[`contents`].length < PROMPT.length) {
@@ -95,7 +92,7 @@ export default class gemini {
                     PROMPT[REQUEST[`contents`].length][`images`] = [PROMPT[REQUEST[`contents`].length][`images`]];
                 }
 
-                // Add the photos.
+                // Add the photos, which are already in the blob format. 
                 while ((PROMPT[REQUEST[`contents`].length][`images`]) ? (MESSAGE[`parts`].length < PROMPT[REQUEST[`contents`].length][`images`].length) : false) {
                     let MESSAGE_IMAGE = await fileToGenerativePart(PROMPT[REQUEST[`contents`].length][`images`][MESSAGE[`parts`].length]);
                     if (MESSAGE_IMAGE) {
