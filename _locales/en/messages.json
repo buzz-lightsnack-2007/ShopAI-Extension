@@ -162,6 +162,9 @@
 	"settings_filters_source_prompt": {
 		"message": "Source or Local Name"
 	},
+	"settings_filters_target_URL": {
+		"message": "URL Pattern"
+	},
 	"settings_filters_content": {
 		"message": "Filter"
 	},
