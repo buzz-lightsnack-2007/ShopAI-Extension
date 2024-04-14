@@ -168,7 +168,9 @@
 	"settings_update_duration_description": {
 		"message": "Update Check"
 	},
-
+	"settings_filters_target": {
+		"message": "Injection Target"
+	},
 	"JSON_parse_error": {
 		"message": "There is a mistake in your JSON formatting. Please correct the error before saving."
 	},
