@@ -1,4 +1,6 @@
-const secretariat = await import(chrome.runtime.getURL(`scripts/secretariat.js`));
+import {read, write, observe} from "/scripts/secretariat.js";
+import alerts from "/gui/scripts/alerts.js"
+import texts from "/gui/scripts/read.js";
 
 export function search() {
      if (document.querySelectorAll(`[data-result]`)) {
@@ -25,9 +27,12 @@ export function search() {
                               SEARCH[TARGET_NAME][`selected`] = (element) ? (Object.keys(RESULTS))[(Array.prototype.slice.call(element.parentElement.parentElement.querySelectorAll(`a`))).indexOf(element)] : null;
                               
                               // Array.prototype.slice.call(element.parentElement.children)
-                              if (element) {(element.parentElement).parentElement.querySelectorAll(`li`).forEach((element_others) => {
-                                   element_others.classList.remove(`active`);
-                              }); element.parentElement.classList.add(`active`)};							
+                              if (element) {
+                                   (element.parentElement).parentElement.querySelectorAll(`li`).forEach((element_others) => {
+                                        element_others.classList.remove(`active`);
+                                   });
+                                   element.parentElement.classList.add(`active`)
+                              };							
                          }
 
                          // Display the results.
@@ -102,12 +107,12 @@ export function search() {
                                              if (!ELEMENT.disabled) {
                                                   if (ELEMENT.getAttribute(`data-result-store`) && ELEMENT.type) {
                                                        // Init updater function.
-                                          ELEMENT[`function`] = function() {};
+                                                       ELEMENT[`function`] = function() {};
                                           
                                                        var DATA = {};
 
                                                        DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
-                                                       DATA[`value`] = ((Object.keys(ITEM).includes(ELEMENT.getAttribute(`data-result-store`))) ? ITEM[ELEMENT.getAttribute(`data-result-store`)] : await secretariat.read(DATA[`target`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1));
+                                                       DATA[`value`] = ((Object.keys(ITEM).includes(ELEMENT.getAttribute(`data-result-store`))) ? ITEM[ELEMENT.getAttribute(`data-result-store`)] : await read(DATA[`target`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1));
 
                                                        switch (ELEMENT[`type`]) {
                                                             case `checkbox`:
@@ -115,7 +120,7 @@ export function search() {
                                                                  
                                                                  ELEMENT[`function`] = function() {
                                                                       DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
-                                                                      secretariat.write(DATA[`target`], ELEMENT.checked, (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
+                                                                      write(DATA[`target`], ELEMENT.checked, (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
                                                                  };
                                                                  break;
                                                             default:
@@ -126,7 +131,7 @@ export function search() {
                                                                            try {
                                                                                 DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
                                                                                 DATA[`value`] = JSON.parse(ELEMENT.value.trim());
-                                                                                secretariat.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
+                                                                                write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
                                                                            } catch(err) {
                                                                                 // The JSON isn't valid.
                                                                                 alerts.error(err.name, texts.localized(`JSON_parse_error`), err.stack, false);
@@ -137,7 +142,7 @@ export function search() {
 
                                                                       ELEMENT[`function`] = function() {
                                                                            DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
-                                                                           secretariat.write(DATA[`target`], ELEMENT.value.trim(), (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
+                                                                           write(DATA[`target`], ELEMENT.value.trim(), (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
                                                                       }
                                                                  }
                                                                  break;
@@ -155,7 +160,7 @@ export function search() {
                                                             : ITEM[ELEMENT.getAttribute(`data-result-content`)])
                                                        : ((ITEM[ELEMENT.getAttribute(`data-result-store`)])
                                                             ? (ITEM[ELEMENT.getAttribute(`data-result-store`)])
-                                                            :  null) /*secretariat.read(((ITEM[(ELEMENT.getAttribute(`data-result-store`).split(`,`))])[ITEM])));*/
+                                                            :  null) /*read(((ITEM[(ELEMENT.getAttribute(`data-result-store`).split(`,`))])[ITEM])));*/
                                                   }
                                              } else {
                                                   if (ELEMENT.getAttribute(`data-result-store`) && ELEMENT.type) {
@@ -205,40 +210,32 @@ export function search() {
                                    .getAttribute(`data-results-filters`)
                                    .split(`,`);
                          }
-                         SEARCH[element.getAttribute(`data-result`)][`results`] = await (async () => {
-                              const secretariat = await import(
-                                   chrome.runtime.getURL(`scripts/secretariat.js`)
-                              );
-
-                              return await secretariat.search(
+                         SEARCH[element.getAttribute(`data-result`)][`results`] = await search(
                                    element.getAttribute(`data-result`),
                                    SEARCH[element.getAttribute(`data-result`)][`criteria`],
                                    SEARCH[element.getAttribute(`data-result`)][`additional criteria`],
                               );
-                         })();
                     } else {
-                         SEARCH[element.getAttribute(`data-result`)][`results`] = await (async () => {
-                              const secretariat = await import(
-                                   chrome.runtime.getURL(`scripts/secretariat.js`)
-                              );
-                              
-                              // Return the selected result. 
-                              return await secretariat.read(element.getAttribute(`data-result`));
-                         })();
-                    }
+                         SEARCH[element.getAttribute(`data-result`)][`results`] = await read(element.getAttribute(`data-result`));
+                    };
+
                     display(element.getAttribute(`data-result`), SEARCH[element.getAttribute(`data-result`)][`results`], `name`);
                     
-              if ((
+                    // Make sure it compensates vanished objects and no results detection. 
+                    if (((
                          !(SEARCH[element.getAttribute(`data-result`)][`selected`])
                               || (typeof SEARCH[element.getAttribute(`data-result`)][`results`]).includes(`obj`) && SEARCH[element.getAttribute(`data-result`)][`results`] != null)
                          ? (((SEARCH[element.getAttribute(`data-result`)][`results`] != null) ? (Object.keys(SEARCH[element.getAttribute(`data-result`)][`results`]).length <= 0) : false)
                               || !((SEARCH[element.getAttribute(`data-result`)][`selected`])))
-                         : true)
-                    {
+                         : true) || 
+                         (SEARCH[element.getAttribute(`data-result`)][`results`] && SEARCH[element.getAttribute(`data-result`)][`selected`])
+                              ? !(Object.keys(SEARCH[element.getAttribute(`data-result`)][`results`]).includes(SEARCH[element.getAttribute(`data-result`)][`selected`])) 
+                              : false
+                    ) {
                          pick(null, null, element.getAttribute(`data-result`));
                     }
 
-                    secretariat.observe((what) => {
+                    observe((what) => {
                          find(element);
                     });
                }
@@ -250,7 +247,7 @@ export function search() {
                @param {object} ELEMENT the element to change
                */
                
-          element.addEventListener(`change`, async function () {find(element)});
+               element.addEventListener(`change`, async function () {find(element)});
                find(element);
           });
 
