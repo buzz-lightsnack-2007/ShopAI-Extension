@@ -154,7 +154,6 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = false, OP
 			// Perform a sequential search on the data. 
 			if ((typeof DATA).includes(`obj`) && !Array.isArray(DATA) && SOURCE != null) {
 				let VALUE = {};
-				VALUE[`test`] = TERM;
 				
 				for (let DICTIONARY_INDEX = 0; DICTIONARY_INDEX < (Object.keys(DATA)).length; DICTIONARY_INDEX++) {
 					VALUE[`parent`] = DATA[(Object.keys(DATA))[DICTIONARY_INDEX]];
@@ -165,10 +164,11 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = false, OP
 					
 					if (VALUE[`current`]) {
 						// Add the data. 
-						RESULTS[(Object.keys(DATA))[DICTIONARY_INDEX]] = DATA;
+						RESULTS[(Object.keys(DATA))[DICTIONARY_INDEX]] = (Object.entries(DATA))[DICTIONARY_INDEX][1];
 					}
 				};
 			} else {
+				console.log(DATA);
 				for (let ELEMENT_INDEX = 0; ELEMENT_INDEX < DATA.length; ELEMENT_INDEX++) {
 					if (
 						((STRICT || (typeof DATA[ELEMENT_INDEX]).includes(`num`)) && DATA[ELEMENT_INDEX] == TERM) ||
