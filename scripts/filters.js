@@ -107,7 +107,7 @@ export default class filters {
 	*/
 	async remove(URL) {
 		if (URL.includes(`://`)) {
-			await forget([`filters`, URL], -1, false) ? await forget([`settings`, `filters`, URL], 1, true) : false;
+			return((await forget([`filters`, URL], -1, false)) ? await forget([`settings`, `filters`, URL], 1, true) : false);
 		} else {
 			// Inform the user of the removal being unnecessary.
 			alerts.warn(texts.localized(`settings_filters_removal_stop`));
