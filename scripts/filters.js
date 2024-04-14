@@ -52,7 +52,7 @@ export default class filters {
 		} else {
 			// Add every item to the queue based on what was loaded first.
 			let FILTERS_ALL = await read(["settings", `filters`]);
-			if ((typeof (FILTERS_ALL) == `obj` && !Array.isArray(FILTERS_ALL)) ? Object.keys(FILTERS_ALL).length <= 0 : false) {
+			if (((typeof (FILTERS_ALL)).includes(`obj`) && !Array.isArray(FILTERS_ALL)) ? Object.keys(FILTERS_ALL).length > 0 : false) {
 				for (let FILTER_URL_INDEX = 0; FILTER_URL_INDEX < Object.keys(FILTERS_ALL).length; FILTER_URL_INDEX++) {
 					let FILTER_URL = (Object.keys(FILTERS_ALL, 1))[FILTER_URL_INDEX];
 					if (FILTER_URL.includes(`://`)) {
