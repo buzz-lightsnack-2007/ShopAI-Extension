@@ -39,7 +39,7 @@ function events(window) {
 			.addEventListener(`click`, async () => {
 				// Import the filters module.
 				const texts = (
-					await import(chrome.runtime.getURL(`gui/scripts/read.js`))
+					await import(chrome.runtime.getURL(`/scripts/strings/read.js`))
 				).default;
 				let filters = new (
 					await import(chrome.runtime.getURL(`scripts/filters.js`))
@@ -59,7 +59,7 @@ function events(window) {
 			.addEventListener(`click`, async () => {
 				// Import the filters module.
 				const texts = (
-					await import(chrome.runtime.getURL(`gui/scripts/read.js`))
+					await import(chrome.runtime.getURL(`/scripts/strings/read.js`))
 				).default;
 				let filters = new (
 					await import(chrome.runtime.getURL(`scripts/filters.js`))
@@ -79,7 +79,7 @@ function events(window) {
 			.addEventListener(`click`, async () => {
 				// Import the filters module.
 				let texts = (
-					await import(chrome.runtime.getURL(`gui/scripts/read.js`))
+					await import(chrome.runtime.getURL(`/scripts/strings/read.js`))
 				).default;
 				let filters = new (
 					await import(chrome.runtime.getURL(`scripts/filters.js`))

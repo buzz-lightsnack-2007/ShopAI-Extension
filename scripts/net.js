@@ -13,9 +13,9 @@ Download a file from the network or locally.
 */
 export default class net {
 	static async download(URL, TYPE, VERIFY_ONLY = false, STRICT = false) {
-		const texts = (await import(chrome.runtime.getURL(`gui/scripts/read.js`)))
+		const texts = (await import(chrome.runtime.getURL(`/scripts/strings/read.js`)))
 			.default;
-		const logging = (await import(chrome.runtime.getURL(`gui/scripts/logging.js`))).default;
+		const logging = (await import(chrome.runtime.getURL(`/scripts/logging.js`))).default;
 	
 		let CONNECT, DATA; 
 	

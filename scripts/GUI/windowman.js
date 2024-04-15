@@ -5,7 +5,7 @@ import texts from "../strings/read.js";
 import net from "../net.js";
 
 // MAKE SURE TO TURN THIS OFF DURING BUILD.
-let DEBUG = false;
+let DEBUG = true;
 
 export default class windowman {
 	static new(URL, height, width) {

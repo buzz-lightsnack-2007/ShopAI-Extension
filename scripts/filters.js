@@ -6,8 +6,8 @@ import {read, write, forget, search} from "./secretariat.js";
 import net from "./net.js";
 import texts from "/scripts/strings/read.js";
 import {Queue} from "./common.js";
-import logging from "/gui/scripts/logging.js"
-// const logging = (await import(chrome.runtime.getURL("gui/scripts/logging.js"))).default;
+import logging from "/scripts/logging.js"
+// const logging = (await import(chrome.runtime.getURL("/scripts/logging.js"))).default;
 
 export default class filters {
 	constructor() {
