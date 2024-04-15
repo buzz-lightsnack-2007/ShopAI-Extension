@@ -19,19 +19,13 @@ export default class windowman {
 
 	// Prepare the window with its metadata.
 	constructor() {
-		async function headers() {
+		function headers() {
 			let LOAD_STATE = true;
 			let UI = {
-				CSS: [
-					chrome.runtime.getURL("/gui/styles/external/fonts/materialdesignicons.min.css"),
-					chrome.runtime.getURL("/gui/styles/external/materialize/css/materialize.css"),
-					chrome.runtime.getURL("/gui/styles/ui.css"),
-				]
+				CSS: [chrome.runtime.getURL("/styles/external/fonts/materialdesignicons.min.css"), chrome.runtime.getURL("/styles/external/materialize/css/materialize.css"), chrome.runtime.getURL("/styles/ui.css")]
 			};
 
-			for (let index = 0; index < UI[`CSS`].length; index++) {
-				const source = UI.CSS[index];
-
+			(UI[`CSS`]).forEach(async (source) => {
 				try {
 					let resource = false;
 					
@@ -57,12 +51,9 @@ export default class windowman {
 					// Stop loading the page when an error has occured; it's not going to work!
 					if (!DEBUG) {
 						window.close();
-					}
-					
-					// Stop loading immediately during the error. 
-					break;
+					};
 				};
-			}
+			})
 		}
 
 		// Get the window.
