@@ -5,7 +5,7 @@ Be sensitive to changes and update the state.
 let main = (async () => {
 	// Import modules.
 	let filters = new ((await import(chrome.runtime.getURL("scripts/filters.js"))).default);
-	const processor = (await import(chrome.runtime.getURL("scripts/outside/processor.js"))).default;
+	const processor = (await import(chrome.runtime.getURL("scripts/external/processor.js"))).default;
 
 	class watchman {
 		/* Check the current URL.
