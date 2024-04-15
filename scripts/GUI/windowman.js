@@ -1,7 +1,8 @@
 /* windowman
 Window and window content management */
 
-import texts from "./read.js";
+import texts from "../strings/read.js";
+import net from "../net.js";
 
 // MAKE SURE TO TURN THIS OFF DURING BUILD.
 let DEBUG = false;
@@ -18,13 +19,13 @@ export default class windowman {
 
 	// Prepare the window with its metadata.
 	constructor() {
-		function headers() {
+		async function headers() {
 			let LOAD_STATE = true;
 			let UI = {
 				CSS: [
-					chrome.runtime.getURL("gui/styles/external/fonts/materialdesignicons.min.css"),
-					chrome.runtime.getURL("gui/styles/external/materialize/css/materialize.css"),
-					chrome.runtime.getURL("gui/styles/ui.css"),
+					chrome.runtime.getURL("/gui/styles/external/fonts/materialdesignicons.min.css"),
+					chrome.runtime.getURL("/gui/styles/external/materialize/css/materialize.css"),
+					chrome.runtime.getURL("/gui/styles/ui.css"),
 				]
 			};
 
@@ -32,40 +33,31 @@ export default class windowman {
 				const source = UI.CSS[index];
 
 				try {
-					(async () => {
-						// Import source reading for later. 
-						const reader = (await import(chrome.runtime.getURL(`/gui/scripts/read.js`))).default;
-						
-						const net = await import(chrome.runtime.getURL(`/scripts/net.js`));
-
-						let resource = false;
-						try {
+					let resource = false;
+					
+					try {
 						resource = await net.download(source, `text`, true);
-						} catch (err) {}
+					} catch (err) {}
 
-						if (resource) {
-							let metadata_element = document.createElement(`link`);
-							metadata_element.setAttribute(`rel`, `stylesheet`);
-							metadata_element.setAttribute(`type`, `text/css`);
-							metadata_element.setAttribute(`href`, source);
-							document.querySelector(`head`).appendChild(metadata_element);
-						} else {
-							throw new ReferenceError(reader.localized(`error_msg_fileNotFound`));
-						}
-						
-					})();
+					if (resource) {
+						let metadata_element = document.createElement(`link`);
+						metadata_element.setAttribute(`rel`, `stylesheet`);
+						metadata_element.setAttribute(`type`, `text/css`);
+						metadata_element.setAttribute(`href`, source);
+						document.querySelector(`head`).appendChild(metadata_element);
+					} else {
+						throw new ReferenceError(new texts(`error_msg_fileNotFound`, [UI.CSS[index]]));
+					}
 				} catch(err) {
-					(async() => {
-						const alerts = (await import(chrome.runtime.getURL(`/gui/scripts/alerts.js`))).default;
-						
-						// Raise an alert. 
-						alerts.error(err.name, err.message, err.stack, true, [source]);
+					const alerts = (await import(chrome.runtime.getURL(`/gui/scripts/alerts.js`))).default;
+					
+					// Raise an alert. 
+					alerts.error(err.name, err.message, err.stack, true, [source]);
 
-						// Stop loading the page when an error has occured; it's not going to work!
-						if (!DEBUG) {
-							window.close();
-						}
-					})();
+					// Stop loading the page when an error has occured; it's not going to work!
+					if (!DEBUG) {
+						window.close();
+					}
 					
 					// Stop loading immediately during the error. 
 					break;
@@ -75,16 +67,6 @@ export default class windowman {
 
 		// Get the window.
 		this[`metadata`] = chrome.windows.getCurrent();
-
-		/*
-		window_metadata[`id`] = window.id;
-		window_metadata[`focused`] = window.focused;
-		window_metadata[`state`] = window.state;
-		window_metadata[`type`] = window.type;
-		window_metadata[`incognito`] = window.incognito;
-		window_metadata[`alwaysOnTop`] = window.alwaysOnTop;
-		window_metadata[`sessionId`] = window.sessionId;
-		window_metadata[`tabs`] = window.tabs;*/
 
 		/* Fill in data and events.  */
 		function appearance() {
@@ -417,9 +399,9 @@ export default class windowman {
 		
 		/* Enable the searching interface. */
 		async function search() {
-			const search_GUI_manager = (await import(chrome.runtime.getURL(`gui/scripts/windowman.search.js`)));
+			const search_GUI_manager = (await import(chrome.runtime.getURL(`scripts/gui/windowman.search.js`)));
 			return (search_GUI_manager.search());
-		}
+		};
 
 		fill();
 		update();
@@ -427,5 +409,3 @@ export default class windowman {
 		this[`search`] = search();
 	}
 }
-
-export { windowman };

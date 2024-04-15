@@ -6,12 +6,8 @@
 //import { windowman } from "../windowman.js";
 
 async function build() {
-	let secretariat = await import(
-		chrome.runtime.getURL("scripts/secretariat.js")
-	);
-	let windowman = (
-		await import(chrome.runtime.getURL("gui/scripts/windowman.js"))
-	).default;
+	let secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
+	let windowman = (await import(chrome.runtime.getURL("/scripts/GUI/windowman.js"))).default;
 
 	let window = new windowman();
 	window.sync();

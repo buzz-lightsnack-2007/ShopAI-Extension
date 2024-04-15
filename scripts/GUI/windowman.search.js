@@ -1,6 +1,6 @@
 import {read, write, observe} from "/scripts/secretariat.js";
 import alerts from "/gui/scripts/alerts.js"
-import texts from "/gui/scripts/read.js";
+import texts from "/scripts/strings/read.js";
 
 export function search() {
      if (document.querySelectorAll(`[data-result]`)) {

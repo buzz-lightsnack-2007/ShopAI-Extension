@@ -3,7 +3,7 @@ Manage filters.
 */
 
 import {read, write, forget, search} from "./secretariat.js";
-import {download} from "./net.js";
+import net from "./net.js";
 import texts from "/gui/scripts/read.js";
 import {Queue} from "./common.js";
 import alerts from "/gui/scripts/alerts.js"
@@ -73,7 +73,7 @@ export default class filters {
 				new alerts (texts.localized(`settings_filters_update_status`, null, [filter_URL]));
 
 				// Create promise of downloading.
-				let filter_download = download(filter_URL, `JSON`, false, true);
+				let filter_download = net.download(filter_URL, `JSON`, false, true);
 				filter_download
 					.then(async function (result) {
 						// Only work when the filter is valid.

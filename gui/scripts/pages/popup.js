@@ -3,7 +3,7 @@
 */
 
 // Import modules.
-import windowman from "../windowman.js";
+import windowman from "/scripts/GUI/windowman.js";
 let secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
 
 function start() {

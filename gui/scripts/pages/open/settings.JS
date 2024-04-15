@@ -1,6 +1,6 @@
 // Open the settings in a pop-up window.
 
-import { windowman } from "../../windowman.JS";
+import windowman from "/scripts/GUI/windowman.JS";
 
 function redirect() {
   windowman.new(`gui/pages/settings.htm`);
