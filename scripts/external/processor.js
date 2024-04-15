@@ -11,7 +11,6 @@ export default class processor {
 	
 	async scrape (fields) {
 		this.data = new scraper ((fields) ? fields : this.targets); 
-		console.log(this.data);
 	}
 	
 	async analyze() {
@@ -19,7 +18,6 @@ export default class processor {
 		await this.product.attach();
 		await this.product.analyze();
 		this.product.save();
-		console.log(this.product.analysis);
 	}
 	
 	constructor (filter) {

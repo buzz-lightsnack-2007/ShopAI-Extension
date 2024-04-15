@@ -126,7 +126,6 @@ export default class gemini {
 
         let send = async (REQUEST) => {
             // Send the request.
-            console.log(this.#request[`location`].concat(`:generateContent`), JSON.stringify({method: `POST`, headers: this.#request[`headers`], body: JSON.stringify(REQUEST)}));
             let CONNECT = await fetch(this.#request[`location`].concat(`:generateContent`), {method: `POST`, headers: this.#request[`headers`], body: JSON.stringify(REQUEST)});
 
             if (CONNECT.ok) {
