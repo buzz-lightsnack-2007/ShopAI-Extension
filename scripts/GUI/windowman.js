@@ -9,12 +9,7 @@ let DEBUG = true;
 
 export default class windowman {
 	static new(URL, height, width) {
-		this.window = chrome.windows.create({
-			url: chrome.runtime.getURL(URL),
-			type: "popup",
-			width: width ? parseInt(width) : 600,
-			height: height ? parseInt(height) : 600,
-		});
+		this.window = chrome.windows.create({url: (URL.includes(`://`)) ? URL :  chrome.runtime.getURL(URL), type: "popup", width: width ? parseInt(width) : 600, height: height ? parseInt(height) : 600});
 	}
 
 	// Prepare the window with its metadata.
