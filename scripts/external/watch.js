@@ -29,10 +29,11 @@ let main = (async () => {
 			console.log("ShopAI works here! Click on the button in the toolbar or website to start.");
 			// Show loading screen while the load is incomplete. 
 			
-			let PROC = new processor(matches);
 			
 			// Begin only when the page is fully loaded. 
 			window.addEventListener(`load`, (event) => {
+				// Begin processing. 
+				let PROC = new processor(matches);
 				
 				// Remove the loading screen. 
 				
