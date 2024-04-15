@@ -2,7 +2,7 @@
 // Import the file module.
 // import file from `./net.js`;
 
-const texts = (await import(chrome.runtime.getURL("scripts/read.js"))).default;
+const texts = (await import(chrome.runtime.getURL("scripts/strings/read.js"))).default;
 
 // Don't forget to set the class as export default.
 export default class gemini {
@@ -17,7 +17,7 @@ export default class gemini {
     */
     constructor (key, model, version = {"API": "v1beta"}) {
         if ((key) ? (((typeof key).includes(`str`)) ? !(key.trim()) : true) : true) {
-            throw new ReferenceError(texts.localized(`error_msg_APImissing`));
+            throw new ReferenceError((new texts(`error_msg_APImissing`)).localized);
         };
 
         // Register the API key privately.
