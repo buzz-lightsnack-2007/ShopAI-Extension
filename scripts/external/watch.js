@@ -29,13 +29,13 @@ let main = (async () => {
 			console.log("ShopAI works here! Click on the button in the toolbar or website to start.");
 			// Show loading screen while the load is incomplete. 
 			
-			// Set the icon to indicate that it's active.
-
-			// Begin. 
 			let PROC = new processor(matches);
-
+			
+			// Begin only when the page is fully loaded. 
 			window.addEventListener(`load`, (event) => {
+				
 				// Remove the loading screen. 
+				
 			});
 		}
 

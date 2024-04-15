@@ -18,7 +18,7 @@
 	"content_scripts": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
-			"js": ["scripts/external/watchman.js"]
+			"js": ["scripts/external/watch.js"]
 		}
 	],
 	"web_accessible_resources": [
