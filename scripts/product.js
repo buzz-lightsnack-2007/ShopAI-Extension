@@ -80,7 +80,7 @@ export default class product {
 		if ((this.analysis && this.analysis != null && this.analysis != undefined) ? !((typeof this.analysis).contains(`obj`) && !Array.isArray(this.analysis)) : true) {
 			// Analyze the data. 
 			const gemini = (await import(chrome.runtime.getURL("scripts/AI/gemini.js"))).default;
-			let analyzer = new gemini (await secretariat.read([`settings`,`analysis`,`api`,`key`]), `gemini-pro-vision`);
+			let analyzer = new gemini (await secretariat.read([`settings`,`analysis`,`api`,`key`]), `gemini-pro`);
 			
 			// Analyze the data. 
 			let PROMPT = [];
