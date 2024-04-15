@@ -11,8 +11,6 @@ export default class scraper {
 			/* Read for the particular fields. */
 			function read(fields) {
 				let field_data = {};
-				
-				console.log(Object.keys(fields));
 
 				(Object.keys(fields)).forEach((FIELD_NAME) => {
 					let FIELD = {"name": FIELD_NAME, "value": fields[FIELD_NAME]};
