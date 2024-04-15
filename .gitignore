@@ -1,5 +1,5 @@
 .DS_Store
 /bin
-/gui/styles/external/
+/styles/external/
 /config/config.json
 test.js
