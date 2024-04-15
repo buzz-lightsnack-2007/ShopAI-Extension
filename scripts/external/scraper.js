@@ -48,10 +48,9 @@ export default class scraper {
 		}
 
 		if (Object.keys(field_content).length > 0) {
-			for (let field_name in Object.keys(field_content)) {
-				console.log(field_name);
+			(Object.keys(field_content)).forEach((field_name) => {
 				this[field_name] = field_content[field_name];
-			}
+			});
 		}
 	}
 }
