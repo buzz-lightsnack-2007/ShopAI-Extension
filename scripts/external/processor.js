@@ -17,8 +17,9 @@ export default class processor {
 	async analyze() {
 		this.product = new product(this.data);
 		await this.product.attach();
-		console.log(this.product);
-		console.log(await this.product.analyze());
+		await this.product.analyze();
+		this.product.save();
+		console.log(this.product.analysis);
 	}
 	
 	constructor (filter) {
