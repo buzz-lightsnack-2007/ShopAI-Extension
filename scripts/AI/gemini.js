@@ -133,7 +133,6 @@ export default class gemini {
                 if (Object.keys(RESPONSE).includes(`error`)) {
                     throw new Error(RESPONSE[`error`]);
                 } else {
-                    // this[`history`] = REQUEST[`contents`];
                     this.response = RESPONSE;
                     return RESPONSE;
                 }

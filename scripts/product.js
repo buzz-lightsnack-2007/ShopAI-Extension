@@ -93,19 +93,21 @@ export default class product {
 		if ((this.analysis && this.analysis != null && this.analysis != undefined) ? !((typeof this.analysis).contains(`obj`) && !Array.isArray(this.analysis)) : true) {
 			// Analyze the data. 
 			const gemini = (await import(chrome.runtime.getURL("scripts/AI/gemini.js"))).default;
-			let analyzer = new gemini (await secretariat.read([`settings`,`analysis`,`api`,`key`]), `gemini-pro`);
+			let analyzer = new gemini (await secretariat.read([`settings`,`analysis`,`api`,`key`]), `gemini-pro-vision`);
 			
 			// Analyze the data. 
 			let PROMPT = [];
 
-			// Add the "system" prompt. 
-			PROMPT.push({"text": texts.localized(`AI_message_prompt`)});
+			// Add the prompt. 
+			PROMPT.push({"text": (texts.localized(`AI_message_prompt`)).concat(JSON.stringify(this.details))});
 			
-			// This is the user prompt. 
-			PROMPT.push({"text": JSON.stringify(this.details)});
-	
-			// Return the analysis
-			this.analysis = JSON.stringify(await analyzer.generate(PROMPT));
+			// Run the analysis. 
+			await analyzer.generate(PROMPT);
+
+			if (analyzer.candidate) {
+				// Remove all markdown formatting. 
+				this.analysis = JSON.parse(analyzer.candidate.replace(/(```json|```|`)/g, ''));
+			};
 		};
 
 		return(this.analysis);
