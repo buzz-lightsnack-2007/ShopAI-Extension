@@ -3,7 +3,7 @@ Ask product information to Google Gemini. */
 
 // Import the storage management module.
 const secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
-const texts = (await import(chrome.runtime.getURL("scripts/read.js"))).default;
+const texts = (await import(chrome.runtime.getURL("scripts/strings/read.js"))).default;
 
 // Don't forget to set the class as export default.
 export default class product {
@@ -18,7 +18,7 @@ export default class product {
 	@param {object} options the options
 	*/
 	constructor (details, URL = window.location.href, options) {
-		if (!(typeof(options).includes(`obj`) && !Array.isArray(options) && options != null)) {
+		if (!((typeof options).includes(`obj`) && !Array.isArray(options) && options != null)) {
 			options = {};
 		}
 
@@ -27,19 +27,6 @@ export default class product {
 			// Remove the protocol from the URL. 
 			return(URL.replace(/(^\w+:|^)\/\//, ``).split(`?`));
 		}
-
-		// Compare a digested data to its intended storage location. 
-		function compare(URL, DATA) {
-			let RESULT = secretariat.read([`sites`, URL]).then((DATA_STORED) => {
-				if (DATA_STORED) {
-					return (DATA_STORED == digest(DATA, options));
-				};
-			});
-
-			return(RESULT);
-		}; 
-
-		
 
 		// Set this product's details as part of the object's properties. 
 		this.URL = clean(URL);
@@ -54,7 +41,7 @@ export default class product {
 		// First get the hash of this data. 
 		const digest = async (DATA, OPTIONS) => {
 			DATA = {"raw": DATA};
-			DATA[`hashed`] = await(crypto.subtle.digest(((OPTIONS != null && typeof(OPTIONS).includes(`obj`) && !Array.isArray(OPTIONS)) ? OPTIONS[`digestion`] : false) ? OPTIONS[`digestion`] : "SHA-512", (new TextEncoder()).encode(DATA[`raw`])));
+			DATA[`hashed`] = await(crypto.subtle.digest(((OPTIONS != null && (typeof OPTIONS).includes(`obj`) && !Array.isArray(OPTIONS)) ? OPTIONS[`digestion`] : false) ? OPTIONS[`digestion`] : "SHA-512", (new TextEncoder()).encode(DATA[`raw`])));
 			return (DATA[`hashed`]);	
 		};
 
@@ -68,7 +55,7 @@ export default class product {
 		
 		
 		// Add the data digest. 
-		this.#snip = digest(this.details, this.#options);
+		this.#snip = await digest(this.details, this.#options);
 		
 		// Add the status about this data. 
 		this.status = {};
@@ -77,7 +64,7 @@ export default class product {
 	
 	async save() {
 		// Stop when not attached (basically, not entirely initialized). 
-		if (!this.#snip) {throw new ReferenceError(texts.localized(`error_msg_notattached`))};
+		if (!this.#snip) {throw new ReferenceError((new texts(`error_msg_notattached`)).localized)};
 
 		// Save the data to the storage.
 		secretariat.write([`sites`, this.URL, `data`], this.#snip);
@@ -99,7 +86,7 @@ export default class product {
 			let PROMPT = [];
 
 			// Add the prompt. 
-			PROMPT.push({"text": (texts.localized(`AI_message_prompt`)).concat(JSON.stringify(this.details))});
+			PROMPT.push({"text": ((new texts(`AI_message_prompt`)).localized).concat(JSON.stringify(this.details))});
 			
 			// Run the analysis. 
 			await analyzer.generate(PROMPT);
