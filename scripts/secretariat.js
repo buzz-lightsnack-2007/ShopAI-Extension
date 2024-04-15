@@ -121,7 +121,7 @@ export async function read(DATA_NAME, CLOUD = 0) {
 @param {object} OPTIONS the options
 @return {Array} the results
 */
-export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = false, OPTIONS = {}) {
+export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = 0, OPTIONS = {}) {
 	let DATA = await read(SOURCE, (OPTIONS[`cloud`] != null) ? OPTIONS[`cloud`] : 0);
 	let RESULTS;
 
@@ -130,21 +130,14 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = false, OP
 
 		if (TERM && (!(typeof ADDITIONAL_PLACES).includes(`str`) || !ADDITIONAL_PLACES)) {
 			// Sequentially search through the data, first by key.
-			let key_number = {"total": (Object.keys(DATA)).length, "current": 0};
-			
-			while (key_number[`current`] < key_number[`total`]) {
-				let DATA_NAME = (Object.keys(DATA))[key_number[`current`]]
-				
+			(Object.keys(DATA)).forEach((DATA_NAME) => {
 				if (STRICT ? DATA_NAME == TERM : (DATA_NAME.includes(TERM) || TERM.includes(DATA_NAME))) {
 					RESULTS[DATA_NAME] = DATA[DATA_NAME];
 				}
-				
-				key_number[`current`]++;
-			}
+			});
 			
 			// Then, get the additional places.
-			if (
-				(ADDITIONAL_PLACES != null ? Array.isArray(ADDITIONAL_PLACES) : false) ? ADDITIONAL_PLACES.length > 0 : false) {
+			if ((ADDITIONAL_PLACES != null ? Array.isArray(ADDITIONAL_PLACES) : false) ? ADDITIONAL_PLACES.length > 0 : false) {
 				for (let PARAMETER_PRIORITY_NUMBER = 0; PARAMETER_PRIORITY_NUMBER < ADDITIONAL_PLACES.length; PARAMETER_PRIORITY_NUMBER++) {
 					// Recursively search
 					RESULTS = Object.assign({}, RESULTS, search(SOURCE, TERM, ADDITIONAL_PLACES[PARAMETER_PRIORITY_NUMBER], STRICT));
@@ -274,9 +267,6 @@ export async function write(PATH, DATA, CLOUD = -1) {
 @return {boolean} the user's confirmation
 */
 export async function forget(preference, CLOUD = 0, override = false) {
-	// Import alerts module.
-	let alerts = (await import(chrome.runtime.getURL(`gui/scripts/alerts.js`))).default;
-
 	// Confirm the action.
 	let forget_action = override ? override : await alerts.confirm();
 
