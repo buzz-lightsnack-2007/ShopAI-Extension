@@ -151,17 +151,31 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = 0, OPTION
 				for (let DICTIONARY_INDEX = 0; DICTIONARY_INDEX < (Object.keys(DATA)).length; DICTIONARY_INDEX++) {
 					VALUE[`parent`] = DATA[(Object.keys(DATA))[DICTIONARY_INDEX]];
 					
-					if (((typeof VALUE[`parent`]).includes(`obj`) && !Array.isArray(VALUE[`parent`]) && VALUE[`parent`] != null) ? (Object.keys(VALUE[`parent`])).length > 0 : false ) {
+					/* Test for a valid RegEx. 
+					
+					@param {string} item the item to test
+					*/
+					function isRegEx(item) {
+						let RESULT = {};
+						RESULT[`state`] = false;
+						try {
+							RESULT[`expression`] = new RegExp(item);
+							RESULT[`state`] = true;
+						} catch(err) {};
+
+						return (RESULT[`state`]);
+					};
+
+					if (((typeof VALUE[`parent`]).includes(`obj`) && !Array.isArray(VALUE[`parent`]) && VALUE[`parent`] != null) ? (Object.keys(VALUE[`parent`])).length > 0 : false) {
 						VALUE[`current`] = VALUE[`parent`][ADDITIONAL_PLACES];
 					}
-					
-					if (VALUE[`current`]) {
+
+					if (VALUE[`current`] ? ((STRICT >= 1) ? VALUE[`current`] == TERM : (((STRICT < 0.5) ? (VALUE[`current`].includes(TERM)) : false) || TERM.includes(VALUE[`current`]) || (isRegEx(VALUE[`current`]) ? (new RegExp(VALUE[`current`])).test(TERM) : false))) : false) {
 						// Add the data. 
 						RESULTS[(Object.keys(DATA))[DICTIONARY_INDEX]] = (Object.entries(DATA))[DICTIONARY_INDEX][1];
-					}
+					};
 				};
 			} else {
-				console.log(DATA);
 				for (let ELEMENT_INDEX = 0; ELEMENT_INDEX < DATA.length; ELEMENT_INDEX++) {
 					if (
 						((STRICT || (typeof DATA[ELEMENT_INDEX]).includes(`num`)) && DATA[ELEMENT_INDEX] == TERM) ||

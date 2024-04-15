@@ -31,7 +31,7 @@ export default class filters {
 			return filter;
 		})();
 
-		if ((SELECTED && SELECTED != null && (typeof SELECTED).includes(`obj`)) ? Object.keys(SELECTED) : false) {
+		if ((SELECTED && SELECTED != null && (typeof SELECTED).includes(`obj`)) ? (Object.keys(SELECTED)).length > 0 : false) {
 			this.one = (Object.entries(SELECTED))[0][1];
 			return (this.one);
 		};
