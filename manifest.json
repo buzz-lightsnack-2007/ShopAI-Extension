@@ -7,7 +7,7 @@
 	"permissions": [ "tabs", "activeTab", "storage", "unlimitedStorage"],
 
 	"action": {
-	  "default_icon": "gui/icons/logo_no_tiny.png",
+	  "default_icon": "media/icons/logo_no_tiny.png",
       "default_popup": "pages/open/popup.htm"
 	},
 
@@ -29,8 +29,8 @@
 	],
 
 	"icons": {
-		"1024": "gui/icons/logo.png",
-		"512": "gui/icons/logo_tiny.png"
+		"1024": "media/icons/logo.png",
+		"512": "media/icons/logo_tiny.png"
 	},
 
 	"options_page": "pages/open/settings.htm",
