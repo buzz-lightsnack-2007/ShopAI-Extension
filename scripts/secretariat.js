@@ -286,17 +286,26 @@ export async function forget(preference, CLOUD = 0, override = false) {
 
 	if (forget_action) {
 		if (preference) {
-			if (!(Array.isArray(preference))) {
-				preference = String(preference).trim().split(",");
-			};
-			
-			let DATA = await read([...preference.slice(0,-1)], CLOUD);
-			
-			if (((((typeof (DATA)).includes(`obj`) && !Array.isArray(DATA) && DATA != null) ? Object.keys(DATA) : false) ? Object.keys(DATA).includes((preference.slice(-1))[0]) : false)) {
-				delete DATA[preference.slice(-1)];
+			let erase = async (CLOUD) => {
+				if (!(Array.isArray(preference))) {
+					preference = String(preference).trim().split(",");
+				};
+				
+				let DATA = await read((preference.length > 1) ? [...preference.slice(0,-1)] : null, CLOUD);
+	
+				if (((((typeof (DATA)).includes(`obj`) && !Array.isArray(DATA) && DATA != null) ? Object.keys(DATA) : false) ? Object.keys(DATA).includes((preference.slice(-1))[0]) : false)) {
+					delete DATA[preference.slice(-1)];
+				};
+				
+				await write(preference.slice(0,-1), DATA, CLOUD);
 			};
 
-			await write(preference.slice(0,-1), DATA, CLOUD);
+			if (CLOUD >= 0) {
+				erase(1);
+			};
+			if (CLOUD <= 0) {
+				erase(-1);
+			};
 		} else {
 			// Clear the data storage.
 			if (CLOUD >= 0) {
