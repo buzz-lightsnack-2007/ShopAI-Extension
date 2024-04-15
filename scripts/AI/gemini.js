@@ -35,7 +35,7 @@ export default class gemini {
         this.model[`name`] = ((typeof model).includes(`str`) && model) ? ((model.includes(`models/`)) ? model : `models/`.concat(model)) : 'gemini-pro';
 
         // Set the request location.
-        this.#request[`location`] = `https://generativelanguage.googleapis.com/${((version != null && !Array.isArray(version) && typeof(version).includes(`obj`)) ? version[`API`] : false) ? version[`API`] : `v1beta`}/${this.model.name}`;
+        this.#request[`location`] = `https://generativelanguage.googleapis.com/${((version != null && !Array.isArray(version) && (typeof version).includes(`obj`)) ? version[`API`] : false) ? version[`API`] : `v1beta`}/${this.model.name}`;
     };
 
 
@@ -48,7 +48,7 @@ export default class gemini {
         let create = async () => {
             let REQUEST = {}, PROMPT = [];
 
-            if (typeof(prompt) != `object`) {
+            if ((typeof prompt) != `object`) {
                 PROMPT.push({"text": String(prompt)});
             } else if (Array.isArray(prompt)) {
                 while (PROMPT.length < prompt.length) {
@@ -66,7 +66,7 @@ export default class gemini {
 
             // Function below by Google (https://ai.google.dev/tutorials/get_started_web)
             async function fileToGenerativePart(image) {
-                let image = {"blob": image};
+                image = {"blob": image};
                 image[`type`] = image[`blob`].type;
 
                 const reader = new FileReader();
@@ -126,6 +126,7 @@ export default class gemini {
 
         let send = async (REQUEST) => {
             // Send the request.
+            console.log(this.#request[`location`].concat(`:generateContent`), JSON.stringify({method: `POST`, headers: this.#request[`headers`], body: JSON.stringify(REQUEST)}));
             let CONNECT = await fetch(this.#request[`location`].concat(`:generateContent`), {method: `POST`, headers: this.#request[`headers`], body: JSON.stringify(REQUEST)});
 
             if (CONNECT.ok) {
