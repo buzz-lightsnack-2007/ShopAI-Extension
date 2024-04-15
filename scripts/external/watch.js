@@ -6,6 +6,8 @@ let main = (async () => {
 	// Import modules.
 	let filters = new ((await import(chrome.runtime.getURL("scripts/filters.js"))).default);
 	const processor = (await import(chrome.runtime.getURL("scripts/external/processor.js"))).default;
+	const logging = (await import(chrome.runtime.getURL("scripts/logging.js"))).default;
+	const texts = (await import(chrome.runtime.getURL("scripts/strings/read.js"))).default;
 
 	class watchman {
 		/* Check the current URL.
@@ -26,7 +28,8 @@ let main = (async () => {
 		@return {boolean} the state
 		*/
 		static act(matches) {
-			console.log("ShopAI works here! Click on the button in the toolbar or website to start.");
+			// Let user know that the website is supported, if ever they have opened the console. 
+			new logging((new texts(`message_external_supported`)).localized);
 			// Show loading screen while the load is incomplete. 
 			
 			
@@ -48,7 +51,7 @@ let main = (async () => {
 
 		static async job() {
 			/* The main action. */
-			
+
 			(watchman.observe()).then((RULES) => {
 				if (RULES && Object.keys(RULES).length !== 0) {
 					watchman.act(RULES);
