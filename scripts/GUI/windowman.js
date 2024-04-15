@@ -390,8 +390,8 @@ export default class windowman {
 		
 		/* Enable the searching interface. */
 		async function search() {
-			const search_GUI_manager = (await import(chrome.runtime.getURL(`scripts/GUI/windowman.search.js`)));
-			return (search_GUI_manager.search());
+			const search_GUI_manager = (await import(chrome.runtime.getURL(`scripts/GUI/windowman.search.js`))).default;
+			return (search_GUI_manager.Search());
 		};
 
 		fill();
