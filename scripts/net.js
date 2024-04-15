@@ -11,40 +11,42 @@ Download a file from the network or locally.
 @param {boolean} STRICT strictly follow the file type provided
 @returns {Promise} the downloaded file
 */
-export async function download(URL, TYPE, VERIFY_ONLY = false, STRICT = false) {
-	const texts = (await import(chrome.runtime.getURL(`gui/scripts/read.js`)))
-		.default;
-	const alerts = (await import(chrome.runtime.getURL(`gui/scripts/alerts.js`))).default;
-
-	let CONNECT, DATA; 
-
-	try {
-		CONNECT = await fetch(URL);
-
-		if (CONNECT.ok && !VERIFY_ONLY) {
-			DATA = await CONNECT.text();
-		
-			if (
-				TYPE
-					? TYPE.toLowerCase().includes(`json`) || TYPE.toLowerCase().includes(`dictionary`)
-					: false
-			) {
-				try {
-				DATA = JSON.parse(DATA);
-				// When not in JSON, run this.
-				} catch(err) {
-					if (STRICT) {
-						// Should not allow the data to be returned since it's not correct. 
-						DATA = null;
-						throw new TypeError(texts.localized(`error_msg_notJSON`, false));
-					} else {alerts.warn(texts.localized(`error_msg_notJSON`, false));}
+export default class net {
+	static async download(URL, TYPE, VERIFY_ONLY = false, STRICT = false) {
+		const texts = (await import(chrome.runtime.getURL(`gui/scripts/read.js`)))
+			.default;
+		const alerts = (await import(chrome.runtime.getURL(`gui/scripts/alerts.js`))).default;
+	
+		let CONNECT, DATA; 
+	
+		try {
+			CONNECT = await fetch(URL);
+	
+			if (CONNECT.ok && !VERIFY_ONLY) {
+				DATA = await CONNECT.text();
+			
+				if (
+					TYPE
+						? TYPE.toLowerCase().includes(`json`) || TYPE.toLowerCase().includes(`dictionary`)
+						: false
+				) {
+					try {
+					DATA = JSON.parse(DATA);
+					// When not in JSON, run this.
+					} catch(err) {
+						if (STRICT) {
+							// Should not allow the data to be returned since it's not correct. 
+							DATA = null;
+							throw new TypeError(texts.localized(`error_msg_notJSON`, false));
+						} else {alerts.warn(texts.localized(`error_msg_notJSON`, false));}
+					};
 				};
-			};
+			}
+		} catch(err) {
+			throw err;
 		}
-	} catch(err) {
-		throw err;
+	
+		// Return the filter.
+		return VERIFY_ONLY ? CONNECT.ok : DATA;
 	}
-
-	// Return the filter.
-	return VERIFY_ONLY ? CONNECT.ok : DATA;
 }
