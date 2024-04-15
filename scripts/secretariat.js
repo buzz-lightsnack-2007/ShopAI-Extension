@@ -2,7 +2,7 @@
 Manage the local cache.
 */
 
-import alerts from "/gui/scripts/alerts.js";
+import logging from "/scripts/logging.js";
 
 /* Read all stored data in the browser cache.
 
@@ -268,7 +268,7 @@ export async function write(PATH, DATA, CLOUD = -1) {
 */
 export async function forget(preference, CLOUD = 0, override = false) {
 	// Confirm the action.
-	let forget_action = override ? override : await alerts.confirm();
+	let forget_action = override ? override : await logging.confirm();
 
 	if (forget_action) {
 		if (preference) {

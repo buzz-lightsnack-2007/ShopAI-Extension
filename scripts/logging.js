@@ -1,9 +1,10 @@
-/* alerts.js
+/* logging.js
 Alert management system.
 */
 
 import texts from "/scripts/strings/read.js";
-export default class alerts {
+
+export default class logging {
 	static async confirm(MESSAGE) {
 		let user_response = confirm(
 			texts.localized((MESSAGE) ? MESSAGE : `GUI_alert_confirm_action_text`),

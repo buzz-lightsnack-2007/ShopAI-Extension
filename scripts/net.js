@@ -15,7 +15,7 @@ export default class net {
 	static async download(URL, TYPE, VERIFY_ONLY = false, STRICT = false) {
 		const texts = (await import(chrome.runtime.getURL(`gui/scripts/read.js`)))
 			.default;
-		const alerts = (await import(chrome.runtime.getURL(`gui/scripts/alerts.js`))).default;
+		const logging = (await import(chrome.runtime.getURL(`gui/scripts/logging.js`))).default;
 	
 		let CONNECT, DATA; 
 	
@@ -38,7 +38,7 @@ export default class net {
 							// Should not allow the data to be returned since it's not correct. 
 							DATA = null;
 							throw new TypeError(texts.localized(`error_msg_notJSON`, false));
-						} else {alerts.warn(texts.localized(`error_msg_notJSON`, false));}
+						} else {logging.warn(texts.localized(`error_msg_notJSON`, false));}
 					};
 				};
 			}

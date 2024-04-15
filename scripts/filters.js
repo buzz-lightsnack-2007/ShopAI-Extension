@@ -6,8 +6,8 @@ import {read, write, forget, search} from "./secretariat.js";
 import net from "./net.js";
 import texts from "/scripts/strings/read.js";
 import {Queue} from "./common.js";
-import alerts from "/gui/scripts/alerts.js"
-// const alerts = (await import(chrome.runtime.getURL("gui/scripts/alerts.js"))).default;
+import logging from "/gui/scripts/logging.js"
+// const logging = (await import(chrome.runtime.getURL("gui/scripts/logging.js"))).default;
 
 export default class filters {
 	constructor() {
@@ -70,7 +70,7 @@ export default class filters {
 				let filter_URL = filters.dequeue();
 
 				// Inform the user of download state.
-				new alerts (texts.localized(`settings_filters_update_status`, null, [filter_URL]));
+				new logging (texts.localized(`settings_filters_update_status`, null, [filter_URL]));
 
 				// Create promise of downloading.
 				let filter_download = net.download(filter_URL, `JSON`, false, true);
@@ -80,7 +80,7 @@ export default class filters {
 						if (result) {
 							// Write the filter to storage.
 							write(["filters", filter_URL], result, -1);
-							alerts.log(texts.localized(`settings_filters_update_status_complete`,null,[filter_URL]));
+							logging.log(texts.localized(`settings_filters_update_status_complete`,null,[filter_URL]));
                             
 							// Add the filter to the sync list.
 							if ((await read(["settings", `filters`])) ? !((Object.keys(await read(["settings", `filters`]))).includes(filter_URL)) : true) {
@@ -90,12 +90,12 @@ export default class filters {
 					})
 					.catch(async function(error) {
 						// Inform the user of the download failure.
-						alerts.error(error.name, texts.localized(`settings_filters_update_status_failure`, null, [error.name, filter_URL]), error.stack);
+						logging.error(error.name, texts.localized(`settings_filters_update_status_failure`, null, [error.name, filter_URL]), error.stack);
 					});
 			}
 		} else {
 			// Inform the user of the download being unnecessary.
-			alerts.warn(texts.localized(`settings_filters_update_stop`));
+			logging.warn(texts.localized(`settings_filters_update_stop`));
 		}
 
 		// Regardless of the download result, update will also mean setting the filters object to whatever is in storage.
@@ -113,7 +113,7 @@ export default class filters {
 			return((await forget([`filters`, URL], -1, false)) ? await forget([`settings`, `filters`, URL], 1, true) : false);
 		} else {
 			// Inform the user of the removal being unnecessary.
-			alerts.warn(texts.localized(`settings_filters_removal_stop`));
+			logging.warn(texts.localized(`settings_filters_removal_stop`));
 			return false;
 		}
 		

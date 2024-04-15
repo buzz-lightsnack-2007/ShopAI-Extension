@@ -1,5 +1,5 @@
 import {read, write, observe} from "/scripts/secretariat.js";
-import alerts from "/gui/scripts/alerts.js"
+import logging from "/scripts/logging.js"
 import texts from "/scripts/strings/read.js";
 
 export function search() {
@@ -134,7 +134,7 @@ export function search() {
                                                                                 write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
                                                                            } catch(err) {
                                                                                 // The JSON isn't valid.
-                                                                                alerts.error(err.name, texts.localized(`JSON_parse_error`), err.stack, false);
+                                                                                logging.error(err.name, texts.localized(`JSON_parse_error`), err.stack, false);
                                                                            };
                                                                       }
                                                                  } else {

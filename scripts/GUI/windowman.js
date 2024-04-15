@@ -43,10 +43,10 @@ export default class windowman {
 						throw new ReferenceError(new texts(`error_msg_fileNotFound`, [UI.CSS[index]]));
 					}
 				} catch(err) {
-					const alerts = (await import(chrome.runtime.getURL(`/gui/scripts/alerts.js`))).default;
+					const logging = (await import(chrome.runtime.getURL(`/scripts/logging.js`))).default;
 					
 					// Raise an alert. 
-					alerts.error(err.name, err.message, err.stack, true, [source]);
+					logging.error(err.name, err.message, err.stack, true, [source]);
 
 					// Stop loading the page when an error has occured; it's not going to work!
 					if (!DEBUG) {
@@ -260,7 +260,7 @@ export default class windowman {
 	async sync() {
 		// Import the module.
 		const secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
-		const alerts = (await import(chrome.runtime.getURL(`/gui/scripts/alerts.js`))).default;
+		const logging = (await import(chrome.runtime.getURL(`/scripts/logging.js`))).default;
 		
 		async function fill() {
 			let input_elements = document.querySelectorAll("[data-store]");
@@ -390,7 +390,7 @@ export default class windowman {
 		
 		/* Enable the searching interface. */
 		async function search() {
-			const search_GUI_manager = (await import(chrome.runtime.getURL(`scripts/gui/windowman.search.js`)));
+			const search_GUI_manager = (await import(chrome.runtime.getURL(`scripts/GUI/windowman.search.js`)));
 			return (search_GUI_manager.search());
 		};
 

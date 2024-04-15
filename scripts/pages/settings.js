@@ -5,10 +5,10 @@
 // Import modules.
 //import { windowman } from "../windowman.js";
 
-async function build() {
-	let secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
-	let windowman = (await import(chrome.runtime.getURL("/scripts/GUI/windowman.js"))).default;
+import {forget} from "/scripts/secretariat.js";
+import windowman from "/scripts/GUI/windowman.js";
 
+async function build() {
 	let window = new windowman();
 	window.sync();
 	
@@ -97,12 +97,11 @@ function events(window) {
 		document
 			.querySelector(`[data-action="storage,clear"]`)
 			.addEventListener(`click`, async () => {
-				secretariat.forget(`sites`);
+				forget(`sites`);
 			});
 	}
 }
 
-//main();
 function load() {
 	build();
 	
