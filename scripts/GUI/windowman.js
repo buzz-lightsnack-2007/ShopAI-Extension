@@ -356,13 +356,11 @@ export default class windowman {
 					input_elements.forEach(async (input_element) => {
 						if (input_element.getAttribute("data-enable")) {
 							// Enable the element.
-							input_element.disabled = !((await secretariat.read(input_element.getAttribute("data-enable"))) != null
+							input_element.disabled = ((await secretariat.read(input_element.getAttribute("data-enable"))) != null
 								? (typeof (await secretariat.read(input_element.getAttribute("data-enable")))).includes(`obj`)
-									? (Object.keys(await secretariat.read(input_element.getAttribute("data-enable")))).length > 0
-									: !!(await secretariat.read(
-											input_element.getAttribute("data-enable"),
-										))
-								: false);
+									? (Object.keys(await secretariat.read(input_element.getAttribute("data-enable")))).length <= 0
+									: !(!!(await secretariat.read(input_element.getAttribute("data-enable"))))
+								: true);
 							(input_element.disabled) ? input_element.classList.add(`disabled`) : input_element.classList.remove(`disabled`);
 
 							// If it is under a list element (usually in navigation bars), then also disable that element too. 
