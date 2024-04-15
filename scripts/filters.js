@@ -4,7 +4,7 @@ Manage filters.
 
 import {read, write, forget, search} from "./secretariat.js";
 import net from "./net.js";
-import texts from "/gui/scripts/read.js";
+import texts from "/scripts/strings/read.js";
 import {Queue} from "./common.js";
 import alerts from "/gui/scripts/alerts.js"
 // const alerts = (await import(chrome.runtime.getURL("gui/scripts/alerts.js"))).default;

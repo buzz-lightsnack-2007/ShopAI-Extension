@@ -2,7 +2,7 @@
 Alert management system.
 */
 
-import texts from "/gui/scripts/read.js";
+import texts from "/scripts/strings/read.js";
 export default class alerts {
 	static async confirm(MESSAGE) {
 		let user_response = confirm(
