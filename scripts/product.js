@@ -3,7 +3,8 @@ Ask product information to Google Gemini. */
 
 // Import the storage management module.
 const secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
-const texts = (await import(chrome.runtime.getURL("scripts/strings/read.js"))).default;
+import hash from "/scripts/strings/hash.js";
+import texts from "/scripts/strings/read.js";
 
 // Don't forget to set the class as export default.
 export default class product {
@@ -38,28 +39,12 @@ export default class product {
 
 	/* Attach the product data to the storage. */
 	async attach() {
-		// First get the hash of this data. 
-		const digest = async (DATA, OPTIONS) => {
-			DATA = {"raw": DATA};
-			DATA[`hashed`] = await(crypto.subtle.digest(((OPTIONS != null && (typeof OPTIONS).includes(`obj`) && !Array.isArray(OPTIONS)) ? OPTIONS[`digestion`] : false) ? OPTIONS[`digestion`] : "SHA-512", (new TextEncoder()).encode(DATA[`raw`])));
-			return (DATA[`hashed`]);	
-		};
-
-		
-		// Compare. 
-		const compare = async(URL, digest) => {
-			let RESULT = await secretariat.read([`sites`, URL, `data`]);
-			
-			return ((RESULT) ? (RESULT == digest) : false);
-		};
-		
-		
 		// Add the data digest. 
-		this.#snip = await digest(this.details, this.#options);
+		this.#snip = (await hash.digest(this.details, {"output": "Number"}));
 		
 		// Add the status about this data. 
 		this.status = {};
-		this.status[`update`] = !compare(this.URL, this.#snip);
+		this.status[`update`] = !secretariat.compare([`sites`, this.URL, `snip`], this.#snip);
 	}
 	
 	async save() {
@@ -67,7 +52,7 @@ export default class product {
 		if (!this.#snip) {throw new ReferenceError((new texts(`error_msg_notattached`)).localized)};
 
 		// Save the data to the storage.
-		await secretariat.write([`sites`, this.URL, `data`], this.#snip, 1);
+		await secretariat.write([`sites`, this.URL, `snip`], this.#snip, 1);
 
 		// Write the analysis data to the storage. 
 		(this[`analysis`]) ? secretariat.write([`sites`, this.URL, `analysis`], this.analysis, 1): false;
@@ -77,7 +62,7 @@ export default class product {
 		// Stop when the data is already analyzed.
 		if (this[`analysis`]) {return(this.analysis)}
 		else if (this.status ? (!this.status.update) : false) {this.analysis = await secretariat.read([`sites`, this.URL, `analysis`]);}
-		if ((this.analysis && this.analysis != null && this.analysis != undefined) ? !((typeof this.analysis).contains(`obj`) && !Array.isArray(this.analysis)) : true) {
+		if ((this.analysis && this.analysis != null && this.analysis != undefined) ? !((typeof this.analysis).includes(`obj`) && !Array.isArray(this.analysis)) : true) {
 			// Analyze the data. 
 			const gemini = (await import(chrome.runtime.getURL("scripts/AI/gemini.js"))).default;
 			let analyzer = new gemini (await secretariat.read([`settings`,`analysis`,`api`,`key`]), `gemini-pro`);
