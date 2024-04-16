@@ -1,22 +1,21 @@
 /* Popup.js
-  Build the interface for popup
+	Build the interface for popup
 */
 
 // Import modules.
+import {read, forget} from "/scripts/secretariat.js";
 import windowman from "/scripts/GUI/windowman.js";
-let secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
+import Page from "/scripts/pages/page.js";
 
-function start() {
-  windowman.prepare();
-}
-/* Populate the strings on the page. */
-function say(element) {
-  // document.title
-}
+class Page_Popup extends Page {
+	constructor() {
+		super();
+		(this.events) ? this.events() : false;
+	}
 
-function main() {
-  let tab = start();
-  say(tab);
+	events() {
+
+	}
 }
 
-main();
+new Page_Popup();
