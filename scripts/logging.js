@@ -14,7 +14,12 @@ export default class logging {
 		return user_response;
 	}
 
-	constructor(TITLE, MESSAGE) {
+	/* Create a new message. 
+
+	@param {string} TITLE the title
+	@param {string} MESSAGE the message
+	@param {bool} PRIORITY automatically dismiss other, older messages */
+	constructor(TITLE, MESSAGE, PRIORITY = true) {
 		// Set this message's properties. 
 		if (MESSAGE == null) {
 			this.message = TITLE;
@@ -22,6 +27,8 @@ export default class logging {
 			this.title = TITLE;
 			this.message = MESSAGE;
 		}
+
+		(PRIORITY) ? this.clear() : false;
 
 		// Display the message.
 		console.log((MESSAGE ? (this.title).concat(`\n`) : ``).concat(this.message));
@@ -76,4 +83,15 @@ export default class logging {
 			} catch (err) {};
 		};
 	}
+
+	/* Clear the current message. */
+	clear() {
+		try {
+			var toastElement = document.querySelectorAll('.toast');
+			(toastElement) ? (
+			toastElement.forEach((element) => {
+				element.style.display = "none";
+			})) : false;
+		} catch(err) {};
+	};
 }

@@ -3,6 +3,7 @@ Manage the local cache.
 */
 
 import logging from "/scripts/logging.js";
+import texts from "/scripts/strings/read.js";
 
 /* Read all stored data in the browser cache.
 
@@ -207,6 +208,9 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = 0, OPTION
 export async function write(PATH, DATA, CLOUD = -1) {
 	let DATA_INJECTED = {};
 
+	// Inform the user that saving is in progress. 
+	let notification = new logging ((new texts(`saving_current`)).localized, (new texts(`saving_current_message`)).localized, false);
+
 	/* Forcibly write the data to chrome database
 
 	@param {object} DATA the data
@@ -271,6 +275,9 @@ export async function write(PATH, DATA, CLOUD = -1) {
 
 	// Write!
 	write_database(DATA_INJECTED, CLOUD);
+
+	// Inform the user that the saving operation is completed. 
+	notification = new logging ((new texts(`saving_done`)).localized);
 }
 
 /* Dangerous: Resets all data or a domain's data.
