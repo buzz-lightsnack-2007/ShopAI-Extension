@@ -2,7 +2,7 @@
 This does not stand for "FamiCom" but instead on Finalization and Completion. This script provides installation run scripts.
 */
 
-import { init, read, write } from "./secretariat.js";
+import { init, read, write, observe } from "./secretariat.js";
 import filters from "./filters.js";
 let config = chrome.runtime.getURL("config/config.json");
 
@@ -32,12 +32,10 @@ export default class fc {
     fetch(config)
       .then((response) => response.json())
       .then(async (jsonData) => {
-        // const secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
-
         let configuration = jsonData;
 
         // Run the storage initialization.
-        // secretariat.init(configuration);
+        init(configuration);
       })
       .catch((error) => {
         console.error(error);
@@ -85,10 +83,23 @@ export default class fc {
   
         // Provide a way to cancel the interval. 
         let updater_cancel = (updater) => {
-  
+          clearInterval(updater);
         };
 
-        
+        let UPDATER = updater_set();
+
+        let updater_interval = async () => {
+          
+          if ((await read([`settings`, `sync`, `duration`])) ? (await read([`settings`, `sync`, `duration`] * (60 ** 2) * 1000 != DURATION_PREFERENCES[`duration`])) : false) {
+            DURATION_PREFERENCES[`duration`] = await read([`settings`, `sync`, `duration`]) * (60 ** 2) * 1000;
+
+            // Reset the updater. 
+            updater_cancel(UPDATER);
+            UPDATER = updater_set();
+          }
+        };
+
+        observe(updater_cancel);
       };
     })
 
