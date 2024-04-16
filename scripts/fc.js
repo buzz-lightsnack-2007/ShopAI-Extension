@@ -33,9 +33,13 @@ export default class fc {
       .then((response) => response.json())
       .then(async (jsonData) => {
         let configuration = jsonData;
-
+        
         // Run the storage initialization.
+        delete configuration[`OOBE`];
         init(configuration);
+
+        // Update the filters to sync with synchronized storage data. 
+        (new filters).update();
       })
       .catch((error) => {
         console.error(error);
@@ -44,9 +48,7 @@ export default class fc {
 
   static trigger() {
     chrome.runtime.onInstalled.addListener(function (details) {
-      if (details.reason == chrome.runtime.OnInstalledReason.INSTALL) {
-        fc.hello();
-      }
+      (details.reason == chrome.runtime.OnInstalledReason.INSTALL) ? fc.hello() : null;
       fc.setup();
     });
   }
@@ -71,13 +73,13 @@ export default class fc {
       if (((typeof DURATION_PREFERENCES).includes(`obj`) && DURATION_PREFERENCES != null && !Array.isArray(DURATION_PREFERENCES)) ? ((DURATION_PREFERENCES[`duration`]) ? (DURATION_PREFERENCES[`duration`] > 0) : false) : false) {
         // Convert DURATION_PREFERENCES[`duration`]) from hrs to milliseconds.
         DURATION_PREFERENCES[`duration`] = DURATION_PREFERENCES[`duration`] * (60 ** 2) * 1000;
-        let FILTERS = new filters;
+        let filter = new filters;
   
         // Now, set the interval. 
         let updater_set = () => {
           setInterval(async () => {
             // Update the filters. 
-            filters.update();
+            filter.update();
           }, DURATION_PREFERENCES[`duration`]);
         };
   
