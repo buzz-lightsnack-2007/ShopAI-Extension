@@ -4,6 +4,7 @@ Manage the local cache.
 
 import logging from "/scripts/logging.js";
 import texts from "/scripts/strings/read.js";
+import hash from "/scripts/strings/hash.js";
 
 /* Read all stored data in the browser cache.
 
@@ -109,6 +110,7 @@ export async function read(DATA_NAME, CLOUD = 0) {
 			CLOUD = (CLOUD > 0) ? 1 : -1;
 			DATA = await read_database(CLOUD);
 			DATA_RETURNED = (DATA_NAME) ? find_data(DATA, DATA_NAME) : DATA;
+
 			return(DATA_RETURNED);
 			break;
 	}
@@ -216,14 +218,9 @@ export async function write(PATH, DATA, CLOUD = -1) {
 	@param {object} DATA the data
 	@param {number} CLOUD the storage
 	*/
-	function write_database(DATA, CLOUD = 0) {
+	const write_database = async (DATA, CLOUD = 0) => {
 		// If CLOUD is set to 0, it should automatically determine where the previous source of data was taken from.
-
-		if (CLOUD > 0) {
-			chrome.storage.sync.set(DATA);
-		} else if (CLOUD < 0) {
-			chrome.storage.local.set(DATA);
-		}
+		return((CLOUD > 0) ? chrome.storage.sync.set(DATA) : chrome.storage.local.set(DATA));
 	}
 
 	/* Appropriately nest and merge the data.
@@ -245,16 +242,25 @@ export async function write(PATH, DATA, CLOUD = -1) {
 			if (DATABASE[PATH[`current`]] == null) {
 				DATABASE[PATH[`current`]] = {};
 			}
-			DATABASE[PATH[`current`]] = nest(
-				DATABASE[PATH[`current`]],
-				PATH[`target`],
-				VALUE,
-			);
+			DATABASE[PATH[`current`]] = nest(DATABASE[PATH[`current`]], PATH[`target`], VALUE);
 		} else {
 			DATABASE[PATH[`current`]] = VALUE;
 		}
 		// Return the value.
 		return DATABASE;
+	}
+
+	const verify = async () => {
+		let DATA_CHECK = {};
+		
+		// Verify the presence of the data. 
+		DATA_CHECK[`state`] = await compare([...PATH], DATA);
+
+		if (!DATA_CHECK[`state`]) {logging.error((new texts(`error_msg_save_failed`)).localized, String(PATH), JSON.stringify(DATA))} else {
+			// Inform the user that the saving operation is completed. 
+			notification = new logging (new texts(`saving_done`).localized);
+		};
+		return (DATA_CHECK[`state`]);
 	}
 
 	let DATA_ALL = await read(null, CLOUD);
@@ -276,8 +282,33 @@ export async function write(PATH, DATA, CLOUD = -1) {
 	// Write!
 	write_database(DATA_INJECTED, CLOUD);
 
-	// Inform the user that the saving operation is completed. 
-	notification = new logging ((new texts(`saving_done`)).localized);
+	return (verify());
+}
+
+/* Compare a data against the stored data. Useful when comparing dictionaries. 
+
+@param {string} PATH the name
+@param {object} DATA the data to compare to
+*/
+export async function compare(PATH, DATA) {
+	/* The actual comparison of data. */
+	async function comparison(DATA_ONE, DATA_TWO) {
+		let RESULT = true; 
+
+		// The first round of checking is on the data type. 
+		RESULT = (typeof DATA_ONE == typeof DATA_TWO) ? ((Array.isArray(DATA_TWO) == Array.isArray(DATA_ONE)) && !((DATA_ONE == null && DATA_TWO != null) || (DATA_ONE != null && DATA_TWO == null))) : false;
+		RESULT = await hash.digest(DATA_ONE, {"output": "Number"}) == await hash.digest(DATA_TWO, {"output": "Number"});
+
+		return (RESULT);
+	}
+
+	let COMPARISON = {};
+	COMPARISON[`test`] = (PATH) ? DATA : DATA[1];
+	COMPARISON[`against`] = (PATH) ? (await read(PATH)) : DATA[0];
+	COMPARISON[`result`] = comparison(COMPARISON[`against`], COMPARISON[`test`]);
+
+	// Return the result. 
+	return (COMPARISON[`result`]);
 }
 
 /* Dangerous: Resets all data or a domain's data.
