@@ -25,7 +25,7 @@ export default class product {
 		/* Remove uneeded data or formatting from the URL and the data. */
 		let clean = (URL) => {
 			// Remove the protocol from the URL. 
-			return(URL.replace(/(^\w+:|^)\/\//, ``).split(`?`));
+			return((URL.replace(/(^\w+:|^)\/\//, ``).split(`?`))[0]);
 		}
 
 		// Set this product's details as part of the object's properties. 
@@ -67,7 +67,7 @@ export default class product {
 		if (!this.#snip) {throw new ReferenceError((new texts(`error_msg_notattached`)).localized)};
 
 		// Save the data to the storage.
-		secretariat.write([`sites`, this.URL, `data`], this.#snip, 1);
+		await secretariat.write([`sites`, this.URL, `data`], this.#snip, 1);
 
 		// Write the analysis data to the storage. 
 		(this[`analysis`]) ? secretariat.write([`sites`, this.URL, `analysis`], this.analysis, 1): false;
