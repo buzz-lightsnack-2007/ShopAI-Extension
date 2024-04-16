@@ -34,7 +34,7 @@ let main = (async () => {
 			
 			
 			// Begin only when the page is fully loaded. 
-			window.addEventListener(`load`, (event) => {
+			window.addEventListener(`DOMContentLoaded`, (event) => {
 				// Begin processing. 
 				let PROC = new processor(matches);
 				
