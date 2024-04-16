@@ -2,21 +2,20 @@
 	This script provides network utilities.
 */
 
-/*
-Download a file from the network or locally.
+import texts from "/scripts/strings/read.js";
+import logging from "/scripts/logging.js";
 
-@param {string} URL the URL to download
-@param {string} TYPE the expected TYPE of file
-@param {boolean} VERIFY_ONLY whether to verify the file only, not return its content
-@param {boolean} STRICT strictly follow the file type provided
-@returns {Promise} the downloaded file
-*/
 export default class net {
-	static async download(URL, TYPE, VERIFY_ONLY = false, STRICT = false) {
-		const texts = (await import(chrome.runtime.getURL(`/scripts/strings/read.js`)))
-			.default;
-		const logging = (await import(chrome.runtime.getURL(`/scripts/logging.js`))).default;
+	/*
+	Download a file from the network or locally.
 	
+	@param {string} URL the URL to download
+	@param {string} TYPE the expected TYPE of file
+	@param {boolean} VERIFY_ONLY whether to verify the file only, not return its content
+	@param {boolean} STRICT strictly follow the file type provided
+	@returns {Promise} the downloaded file
+	*/
+	static async download(URL, TYPE, VERIFY_ONLY = false, STRICT = false) {
 		let CONNECT, DATA; 
 	
 		try {
