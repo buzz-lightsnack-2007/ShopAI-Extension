@@ -2,9 +2,9 @@
 Process the information on the website and display it on screen. 
 */
 
-// const inject = ((await import(chrome.runtime.getURL("scripts/external/inject.js"))).default);
-const scraper = (await import(chrome.runtime.getURL("scripts/external/scraper.js"))).default;
-const product = (await import(chrome.runtime.getURL("scripts/product.js"))).default;
+import scraper from "/scripts/external/scraper.js";
+import product from "/scripts/product.js";
+import injection from "/scripts/GUI/inject.js"
 
 export default class processor {
 	#filter; 
