@@ -250,11 +250,11 @@ export async function write(PATH, DATA, CLOUD = -1) {
 		return DATABASE;
 	}
 
-	const verify = async () => {
+	async function verify (NAME, DATA) {
 		let DATA_CHECK = {};
 		
 		// Verify the presence of the data. 
-		DATA_CHECK[`state`] = await compare([...PATH], DATA);
+		DATA_CHECK[`state`] = await compare(NAME, DATA);
 
 		if (!DATA_CHECK[`state`]) {logging.error((new texts(`error_msg_save_failed`)).localized, String(PATH), JSON.stringify(DATA))} else {
 			// Inform the user that the saving operation is completed. 
@@ -266,7 +266,7 @@ export async function write(PATH, DATA, CLOUD = -1) {
 	let DATA_ALL = await read(null, CLOUD);
 	if ((DATA_ALL != null && (typeof DATA_ALL).includes(`obj`)) ? Object.keys(DATA_ALL).length <= 0 : true) {
 		DATA_ALL = {};
-	}
+	};
 
 	let DATA_NAME = PATH;
 
@@ -277,12 +277,11 @@ export async function write(PATH, DATA, CLOUD = -1) {
 	}
 
 	// Merge!
-	DATA_INJECTED = nest(DATA_ALL, DATA_NAME, DATA);
+	DATA_INJECTED = nest(DATA_ALL, [...DATA_NAME], DATA);
 
 	// Write!
 	write_database(DATA_INJECTED, CLOUD);
-
-	return (verify());
+	return (verify(DATA_NAME, DATA));
 }
 
 /* Compare a data against the stored data. Useful when comparing dictionaries. 
@@ -296,15 +295,16 @@ export async function compare(PATH, DATA) {
 		let RESULT = true; 
 
 		// The first round of checking is on the data type. 
-		RESULT = (typeof DATA_ONE == typeof DATA_TWO) ? ((Array.isArray(DATA_TWO) == Array.isArray(DATA_ONE)) && !((DATA_ONE == null && DATA_TWO != null) || (DATA_ONE != null && DATA_TWO == null))) : false;
-		RESULT = await hash.digest(DATA_ONE, {"output": "Number"}) == await hash.digest(DATA_TWO, {"output": "Number"});
+		console.log(DATA_ONE, DATA_TWO);
+		RESULT = ((typeof DATA_ONE == typeof DATA_TWO) ? ((Array.isArray(DATA_TWO) == Array.isArray(DATA_ONE)) && !((DATA_ONE == null && DATA_TWO != null) || (DATA_ONE != null && DATA_TWO == null))) : false) ? ((typeof DATA_ONE).includes(`obj`) ? (await hash.digest(DATA_ONE, {"output": "Number"}) == await hash.digest(DATA_TWO, {"output": "Number"})) : DATA_ONE == DATA_TWO) : false;
 
 		return (RESULT);
 	}
 
+	
 	let COMPARISON = {};
 	COMPARISON[`test`] = (PATH) ? DATA : DATA[1];
-	COMPARISON[`against`] = (PATH) ? (await read(PATH)) : DATA[0];
+	COMPARISON[`against`] = (PATH) ? (await read((Array.isArray(PATH)) ? [...PATH] : PATH)) : DATA[0];
 	COMPARISON[`result`] = comparison(COMPARISON[`against`], COMPARISON[`test`]);
 
 	// Return the result. 
