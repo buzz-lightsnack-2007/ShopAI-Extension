@@ -4,9 +4,6 @@ Window and window content management */
 import texts from "../strings/read.js";
 import net from "../net.js";
 
-// MAKE SURE TO TURN THIS OFF DURING BUILD.
-let DEBUG = true;
-
 export default class windowman {
 	static new(URL, height, width) {
 		this.window = chrome.windows.create({url: (URL.includes(`://`)) ? URL :  chrome.runtime.getURL(URL), type: "popup", width: width ? parseInt(width) : 600, height: height ? parseInt(height) : 600});
@@ -35,16 +32,17 @@ export default class windowman {
 						metadata_element.setAttribute(`href`, source);
 						document.querySelector(`head`).appendChild(metadata_element);
 					} else {
-						throw new ReferenceError(new texts(`error_msg_fileNotFound`, [UI.CSS[index]]));
+						throw new ReferenceError((new texts(`error_msg_fileNotFound`, [source])).localized);
 					}
 				} catch(err) {
+					const secretariat = (await import(chrome.runtime.getURL(`/scripts/secretariat.js`)));
 					const logging = (await import(chrome.runtime.getURL(`/scripts/logging.js`))).default;
 					
 					// Raise an alert. 
 					logging.error(err.name, err.message, err.stack, true, [source]);
 
 					// Stop loading the page when an error has occured; it's not going to work!
-					if (!DEBUG) {
+					if ((await secretariat.read(`debug`, -1) != null) ? await secretariat.read(`debug`, -1) : true) {
 						window.close();
 					};
 				};
