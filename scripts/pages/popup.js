@@ -14,7 +14,9 @@ class Page_Popup extends Page {
 	}
 
 	events() {
-
+		(document.querySelector(`[data-action="open,settings"]`)) ? document.querySelector(`[data-action="open,settings"]`).addEventListener("click", () => {
+			chrome.runtime.openOptionsPage();
+		}) : false;
 	}
 }
 
