@@ -4,11 +4,15 @@
 	"description": "__MSG_extension_description__",
 	"version": "0",
 
-	"permissions": [ "tabs", "activeTab", "storage", "unlimitedStorage"],
+	"minimum_chrome_version": "114",
+	"permissions": [ "tabs", "activeTab", "storage", "unlimitedStorage", "sidePanel"],
 
 	"action": {
-	  "default_icon": "media/icons/logo_no_tiny.png",
-      "default_popup": "pages/open/popup.htm"
+		"default_icon": "media/icons/logo_no_tiny.png",
+		"default_title": "Click to open panel"
+	},
+	"side_panel": {
+		"default_path": "pages/popup.htm"
 	},
 
 	"background": {
