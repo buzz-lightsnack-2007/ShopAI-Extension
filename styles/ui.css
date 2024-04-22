@@ -78,7 +78,6 @@ body {
 	background-color: var(--background-color);
 }
 
-body:has(main.container),
 .background {
 	background: linear-gradient(
 		25deg,
@@ -111,6 +110,11 @@ nav .input-field input[type="search"] {
 
 ul.sidenav-fixed + * {
 	padding-left: 300px;
+}
+
+main.container > * {
+	padding-bottom: .5em;
+	padding-top: .5em;
 }
 
 @media only screen and (max-width: 992px) {
