@@ -10,7 +10,7 @@ export default class windowman {
 	}
 
 	// Prepare the window with its metadata.
-	constructor() {
+	constructor(OPTIONS = {}) {
 		function headers() {
 			let LOAD_STATE = true;
 			let UI = {
@@ -244,10 +244,20 @@ export default class windowman {
 			actions();
 		}
 
+		((OPTIONS != null && (typeof OPTIONS).includes(`obj`) && !Array.isArray(OPTIONS)) ? OPTIONS[`monitor`] : true) ? this.monitor() : null;
+
 		headers();
 		appearance();
 		events();
 	}
+
+	/* Send monitoring events, useful to determining whether the window is opened or closed. 
+	
+	@param {string} MESSAGE_NAME Custom message name
+	*/
+	monitor() {
+		chrome.runtime.connect({name: `view=${window.location.href}`});
+	};
 
 	/* Run this function if you would like to synchronize with data. */
 	async sync() {
