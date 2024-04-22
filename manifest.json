@@ -5,7 +5,7 @@
 	"version": "0",
 
 	"minimum_chrome_version": "114",
-	"permissions": [ "tabs", "activeTab", "storage", "unlimitedStorage", "sidePanel"],
+	"permissions": [ "tabs", "activeTab", "storage", "unlimitedStorage", "sidePanel", "contextMenus"],
 
 	"action": {
 		"default_icon": "media/icons/logo_no_tiny.png",
@@ -37,7 +37,7 @@
 		"512": "media/icons/logo_tiny.png"
 	},
 
-	"options_page": "pages/open/settings.htm",
+	"options_page": "pages/settings.htm",
 
 	"default_locale": "en"
 }
