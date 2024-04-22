@@ -21,18 +21,18 @@
 			</li>
 			<div data-results-list="filters"></div>
 		</ul>
-        <section>
-            <nav class="nav-wrapper" data-result-linked="filters">
-                <ul class="left">
-                    <li><a data-icon="menu" works-sidebar="control"></a></li>
-                </ul>
-                <ul class="right">
-                    <li><a data-icon="trash-can" data-result-enable="filters" data-action="filters,delete,one" accesskey="-"></a></li>
-                    <li><a data-icon="sync" data-result-enable="filters" data-action="filters,update,one"></a></li>
-                </ul>
-            </nav>
-            <section class="container">
-                <article data-result-linked="filters" class="">
+        	<section>
+			<nav id="header" class="nav-wrapper" data-result-linked="filters">
+				<ul class="left">
+					<li><a data-icon="menu" works-sidebar="control"></a></li>
+				</ul>
+				<ul class="right">
+					<li><a data-icon="trash-can" data-result-enable="filters" data-action="filters,delete,one" accesskey="-"></a></li>
+					<li><a data-icon="sync" data-result-enable="filters" data-action="filters,update,one"></a></li>
+				</ul>
+			</nav>
+			<section class="container">
+               	<article data-result-linked="filters" class="">
 					<h2 class="flow-text" data-result-content="*"></h2>
 					<div class="input-field">
 						<input type="text" class="validate" placeholder=" " data-result-store="name">
@@ -72,8 +72,8 @@
 						<label for="settings_filters_target"></label>
 					</div>
 				</article>
-            </section>
-        </section>
+            	</section>
+        	</section>
     </main>
     <footer class="fixed-action-btn">
         <button class="btn-floating btn-large" data-icon="plus" accesskey="+" data-action="filters,add,one"></button>
