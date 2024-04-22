@@ -1,3 +1,25 @@
-<html><head>
-  
-</head></html>
+<html>
+<head>
+	<script src="../styles/external/materialize/js/materialize.js"></script> 
+	<script src="../scripts/pages/popup.js" type="module"></script> 
+</head>
+<body>
+	<main class="container">
+		<summary>
+			<h1 data-active-result-processed="Rating,Score">0.00%</h1>
+			<progress data-active-result="Rating,Score" min="0" max="1" value="0"></progress>
+			<p class="flow-text" data-active-result="Rating,Reason">Reason</p>
+			<p data-active-result="Description,Summary">Summary</p>
+		</summary>
+		<details>
+		</details>
+	</main>
+	<footer class="fixed-action-btn">
+		<button class="btn-floating btn-large" data-icon="refresh" accesskey="r" data-action="analysis,reload"></button>
+		<ul>
+		    <button class="btn-floating" data-icon="cog" accesskey="," data-action="open,settings"></button>
+		</ul>
+	</footer>
+</body>
+
+</html>
