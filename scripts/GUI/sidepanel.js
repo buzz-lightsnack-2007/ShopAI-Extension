@@ -1,5 +1,8 @@
 // Manage the sidepanel. 
 // The sidepanel is what I'll call the Sidebar. 
+
+import Tabs from './tabs.js';
+
 export default class Sidebar {
 	/* 
 	Create a new sidebar. 
@@ -11,7 +14,7 @@ export default class Sidebar {
 		chrome.sidePanel.setOptions({ path: PATH });
 		
 		// Grab the current tab ID. 
-		chrome.tabs.query({ active: true, currentWindow: true }, function ([TAB]) {
+		Tabs.query({ active: true, currentWindow: true }, 0).then((TAB) => {
 			chrome.sidePanel.open({windowId: TAB.id});
 			this.root = PATH;
 		});
