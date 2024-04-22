@@ -110,8 +110,13 @@ export default class windowman {
 						element.prepend(icon_element);
 					}
 
+					function clean() {
+						element.removeAttribute(`data-icon`);
+					};
+
 					swap();
 					iconify();
+					clean();
 				});
 			}
 
@@ -140,6 +145,8 @@ export default class windowman {
 					} else {
 						text_element.innerText = text_inserted;
 					}
+
+					text_element.removeAttribute(`for`);
 				});
 
 				delete text_elements[`content`];
@@ -162,6 +169,7 @@ export default class windowman {
 							}
 
 							text_element.setAttribute(key, text_inserted);
+							text_element.removeAttribute(key.concat(`-for`));
 						});
 					}
 				});
@@ -181,11 +189,16 @@ export default class windowman {
 
 					if (buttons) {
 						buttons.forEach((button) => {
-							let event = function () {
-								// Get the data from the button.
-								let target = {};
-								target[`source`] = this.getAttribute(`href`);
-
+							// Get the data from the button.
+							let target = {};
+							target[`source`] = button.getAttribute(`href`);
+							target[`dimensions`] = {};
+							target[`dimensions`][`height`] = (button.getAttribute(`tab-height`)) ? button.getAttribute(`tab-height`)
+							: null;
+							target[`dimensions`][`width`] = (button.getAttribute(`tab-width`)) ? button.getAttribute(`tab-width`)
+							: null;
+							
+							const event = function () {
 								// Get the correct path.
 								target[`path`] = (
 									!target[`source`].includes(`://`)
@@ -197,17 +210,11 @@ export default class windowman {
 										: ``
 								).concat(target[`source`]);
 
-								windowman.new(
-									target[`path`],
-									this.getAttribute(`tab-height`)
-										? this.getAttribute(`tab-height`)
-										: null,
-									this.getAttribute(`tab-width`)
-										? this.getAttribute(`tab-width`)
-										: null,
-								);
+								windowman.new(target[`path`], target[`dimensions`][`height`], target[`dimensions`][`width`]);
 							};
+
 							button.addEventListener("click", event);
+							button.removeAttribute(`href`);
 						});
 					}
 				}
@@ -296,7 +303,7 @@ export default class windowman {
 						default:
 							input_element.value = value ? value : ``;
 							break;
-					}
+					};
 				});
 			});
 		}
