@@ -1,4 +1,5 @@
 @import url("/styles/fonts/all.article.css");
+@import url("/styles/fonts/all.navbar.css");
 
 .collapsible > li > header {
 	font-weight: bold;

@@ -1,0 +1,13 @@
+.collapsible {
+	border: none !important;
+}
+
+.collapsible > li {
+     border: 1px solid var(--separator-color);
+     border-bottom-width: 0px;
+}
+
+.collapsible > li:last-child {
+     border-bottom-width: 1px;
+}
+

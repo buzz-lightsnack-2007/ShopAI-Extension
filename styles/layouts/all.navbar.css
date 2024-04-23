@@ -1,0 +1,24 @@
+nav .brand-logo {
+     position: relative !important;
+     margin-top: auto !important;
+     margin-bottom: auto !important;
+     display: flex;
+     align-items: center;
+     flex-direction: row;
+	justify-content: space-between;
+}
+
+nav .brand-logo > * {
+     margin-top: auto !important;
+     margin-bottom: auto !important;
+}
+
+nav .brand-logo > * {
+     margin-left: .5em !important;
+}
+
+nav .brand-logo img {
+     --dimension: 1.5rem;
+     height: var(--dimension) !important;
+     width: var(--dimension) !important;
+}

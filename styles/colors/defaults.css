@@ -42,15 +42,24 @@
 		--primary-color-numeric: 255, 134, 57 !important;
 		--primary-color-raised-hover-solid: rgba(252, 162, 133) !important;
 		--primary-color-raised-focus-solid: rgba(221, 106, 59) !important;
+		--primary-color-gradient: linear-gradient(
+			43deg,
+			var(--primary-color-dark) 0%,
+			var(--primary-color) 62%,
+			var(--primary-color-raised-hover-solid) 100%
+		) !important;
 
+		--secondary-color-lighter: rgba(221, 106, 59) !important;
 		--secondary-color: rgba(190, 80, 1) !important;
+		--secondary-color-dark: rgba(159, 55, 0) !important;
 		--secondary-color-hover-solid: rgba(252, 162, 133) !important;
 		--secondary-color-focus-solid: rgba(159, 55, 0) !important;
 		--font-on-secondary-container-color: rgba(255, 255, 255) !important;
 
-		--hover-color: rgba(255, 255, 255, 0.04) !important;
+		--hover-color: rgba(255, 255, 255, 0.3) !important;
 		--focus-color: rgba(255, 134, 57,.4) !important;
 		--focus-color-solid: #424242 !important;
+		--active-color: rgba(255, 134, 57,.7) !important;
 
 		--background-color-disabled: rgba(255, 255, 255, 0.12) !important;
 		--background-color-level-4dp: rgba(255, 255, 255, 0.09) !important;
@@ -64,8 +73,6 @@
 		--input-color: rgba(255, 255, 255, 0.12) !important;
 		--slider-track-color: rgba(255, 255, 255, 0.26) !important;
 		--switch-thumb-off-color: #bababa !important;
-
-		
 
 		--secondary-container-color: rgba(221, 106, 59) !important;
 

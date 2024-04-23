@@ -1,4 +1,6 @@
 @import url("/styles/layouts/all.inputs.css");
+@import url("/styles/layouts/all.collapsible.css");
+@import url("/styles/layouts/all.navbar.css");
 
 fieldset {
 	padding: 2em !important;

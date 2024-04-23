@@ -1,9 +1,9 @@
-.collapsible {
-	border: none;
-}
-
 .collapsible .collapsible-header, .collapsible .collapsible-body {
 	background-color: var(--background-color-card);
+};
+
+.collapsible > li {
+	border-color: var(--separator-color) !important;
 };
 
 /* Active events */
@@ -11,12 +11,15 @@
 	background-color: var(--surface-color);
 }
 
+.collapsible .collapsible-header:hover {
+	background-color: var(--hover-color);
+	
+}
+
 .collapsible .active .collapsible-header {
-	background-color: none;
-	background: linear-gradient(
-		25deg,
-		var(--primary-color-dark) 0%,
-		var(--primary-color) 62%,
-		var(--primary-color-raised-hover-solid) 100%
-	) !important;
+	background: var(--primary-color-gradient) !important;
+}
+
+.collapsible > li:has(.collapsible-header:hover) {
+	border: 1px solid var(--hover-color);
 }
