@@ -1,0 +1,78 @@
+@import url("/styles/layouts/all.inputs.css");
+
+fieldset {
+	padding: 2em !important;
+	border-radius: 4px;
+}
+fieldset > legend {
+	padding: 0.5em !important;
+}
+fieldset > ul {
+	margin-top: 0em !important;
+}
+
+fieldset > ul li {
+	padding-top: 0em !important;
+}
+
+summary {
+	list-style-type: none;
+}
+
+progress {
+	width: 100%;
+}
+
+main.container > * {
+	padding-bottom: .5em;
+	padding-top: .5em;
+}
+
+.field-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.dual > * > *:not(nav) {
+	margin: 1em;
+}
+
+.dual .container {
+	width: 90% !important;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+nav .input-field label {
+	left: auto !important;
+}
+
+.input-field > button:not(:last-child) {
+	margin-right: 0.5em;
+}
+
+.nav-wrapper {
+	position: sticky;
+	z-index: 10;
+}
+
+nav ul:not(.dropdown-content) > li > a {
+	height: 100%;
+}
+
+@media only screen and (min-width: 601px) {
+	.dual .container {
+		width: 80% !important;
+	}
+}
+
+@media only screen and (min-width: 992px) {
+	body:has(.sidenav-fixed) [works-sidebar] {
+		display: none;
+	}
+
+	ul.sidenav-fixed + * {
+		padding-left: 300px;
+	}
+}

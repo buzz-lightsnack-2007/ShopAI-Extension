@@ -1,0 +1,41 @@
+@import url("/styles/colors/defaults.css");
+
+body {
+	color: var(--font-color-main);
+	background-color: var(--background-color);
+}
+
+.background {
+	background: linear-gradient(
+		25deg,
+		var(--primary-color-dark) 0%,
+		var(--primary-color) 62%,
+		var(--primary-color-raised-hover-solid) 100%
+	);
+}
+
+main.container {
+	background-color: var(--background-color);
+}
+
+nav {
+	background-color: var(--background-color) !important;
+}
+
+nav#header {
+	background: linear-gradient(
+		335deg,
+		var(--primary-color-dark) 0%,
+		var(--primary-color) 62%,
+		var(--primary-color-raised-hover-solid) 100%
+	);
+}
+
+nav .input-field input[type="search"], textarea {
+	color: var(--font-color-main) !important;
+}
+
+.transparent {
+	background-color: transparent !important;
+	background: none !important;
+}

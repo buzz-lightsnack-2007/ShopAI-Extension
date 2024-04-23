@@ -1,0 +1,69 @@
+:root {
+	--font-color-main: rgba(0, 0, 0) !important;
+	--font-color-medium: rgba(25, 25, 25) !important;
+	--font-color-disabled: rgba(63, 63, 63) !important;
+
+	--error-color: #cf6679 !important;
+
+	--primary-color: rgba(255, 134, 57) !important;
+	--primary-color-dark: rgba(221, 106, 59) !important;
+	--primary-color-numeric: 255, 134, 57 !important;
+	--primary-color-raised-hover-solid: rgba(252, 162, 133) !important;
+	--primary-color-raised-focus-solid: rgba(221, 106, 59) !important;
+
+	--background-color-level-16dp-solid: rgba(255, 238, 235) !important;
+
+	--secondary-color: rgba(221, 106, 59, 1) !important;
+	--secondary-color-hover-solid: rgba(252, 162, 133) !important;
+	--secondary-color-focus-solid: rgba(221, 106, 59) !important;
+
+	--secondary-container-color: rgba(252, 162, 133) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--background-color: #000 !important;
+		--surface-color: #000000 !important;
+
+		--font-color-main: rgba(255, 255, 255) !important;
+		--font-color-medium: rgba(200, 200, 200) !important;
+		--font-color-disabled: rgba(255, 255, 255) !important;
+
+		--font-on-primary-color-main: rgba(255, 255, 255) !important;
+		--font-on-primary-color-dark-main: rgba(255, 255, 255) !important;
+		--font-on-primary-color-dark-medium: rgba(255, 255, 255) !important;
+		--font-on-primary-color-medium: rgba(0, 0, 0, 0.56) !important;
+		--font-on-primary-color-disabled: rgba(0, 0, 0, 0.38) !important;
+
+		--hover-color: rgba(255, 255, 255, 0.04) !important;
+		--focus-color: rgba(255, 255, 255, 0.12) !important;
+		--focus-color-solid: #424242 !important;
+
+		--background-color-disabled: rgba(255, 255, 255, 0.12) !important;
+		--background-color-level-4dp: rgba(255, 255, 255, 0.09) !important;
+		--background-color-level-16dp-solid: #262626 !important;
+		--background-color-card: var(--surface-color) !important;
+		--background-color-slight-emphasis: rgba(255, 255, 255, 0.05) !important;
+
+		--separator-color: #424242 !important;
+		--error-color: #cf6679 !important;
+
+		--slider-track-color: rgba(255, 255, 255, 0.26) !important;
+		--switch-thumb-off-color: #bababa !important;
+
+		--primary-color: rgba(255, 134, 57) !important;
+		--primary-color-dark: rgba(221, 106, 59) !important;
+		--primary-color-numeric: 255, 134, 57 !important;
+		--primary-color-raised-hover-solid: rgba(252, 162, 133) !important;
+		--primary-color-raised-focus-solid: rgba(221, 106, 59) !important;
+
+		--secondary-color: rgba(221, 106, 59) !important;
+		--secondary-color-hover-solid: rgba(252, 162, 133) !important;
+		--secondary-color-focus-solid: rgba(221, 106, 59) !important;
+		--font-on-secondary-container-color: rgba(255, 255, 255) !important;
+
+		--secondary-container-color: rgba(221, 106, 59) !important;
+
+		--md_sys_color_on-surface: 230, 225, 229 !important;
+	}
+}

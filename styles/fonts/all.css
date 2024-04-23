@@ -1,0 +1,5 @@
+@import url("/styles/fonts/all.article.css");
+
+.collapsible > li > header {
+	font-weight: bold;
+}

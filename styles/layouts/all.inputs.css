@@ -1,0 +1,45 @@
+
+form ul > li:has(input[type="checkbox"]),
+ul.input-field > li {
+	list-style-type: none;
+}
+
+form ul:has(li input[type="checkbox"]),
+ul.input-field {
+	padding-left: 0;
+}
+
+.input-group {
+	margin-block-start: 1em !important;
+	margin-block-end: 1em !important;
+}
+
+.input-group:not(:has(input)) {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.input-group side:not(:has(input)) {
+	display: flex;
+	flex-direction: row;
+	justify-content: end;
+	align-items: center;
+}
+
+textarea {
+	resize: vertical;
+}
+
+textarea:focus {
+	outline: none;
+}
+
+textarea[type="code"] {
+	font-family: monospace !important;
+}
+
+.input-field {
+	margin-bottom: .25em;
+}
+
