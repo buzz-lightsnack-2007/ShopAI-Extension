@@ -47,7 +47,13 @@ export default class Sidebar {
 			await chrome.sidePanel.setOptions({enabled: false});
 
 			// Then, re-enable it. 
-			await chrome.sidePanel.setOptions({enabled: true});
+			chrome.sidePanel.setOptions({enabled: true});
 		};
 	};
+
+	// Set the options. 
+	// @param {object} options the options
+	async setOptions(options) {
+		await chrome.sidePanel.setOptions(options);
+	}
 }
