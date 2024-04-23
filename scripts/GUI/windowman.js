@@ -3,6 +3,7 @@ Window and window content management */
 
 import texts from "../strings/read.js";
 import net from "../net.js";
+import Window from "./window.js";
 
 export default class windowman {
 	static new(URL, height, width) {
@@ -14,7 +15,7 @@ export default class windowman {
 		function headers(OPTIONS) {
 			let LOAD_STATE = true;
 			let UI = {
-				CSS: [chrome.runtime.getURL("/styles/external/fonts/materialdesignicons.min.css"), chrome.runtime.getURL("/styles/external/materialize/css/materialize.css"), chrome.runtime.getURL("/styles/ui.css")]
+				CSS: ["/styles/external/fonts/materialdesignicons.min.css", "/styles/external/materialize/css/materialize.css", "/styles/ui.css"]
 			};
 
 			// Add additional sources. 
@@ -213,7 +214,7 @@ export default class windowman {
 										: ``
 								).concat(target[`source`]);
 
-								windowman.new(target[`path`], target[`dimensions`][`height`], target[`dimensions`][`width`]);
+								new Window(target[`path`], null, target[`dimensions`]);
 							};
 
 							button.addEventListener("click", event);
