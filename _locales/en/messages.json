@@ -83,6 +83,9 @@
 	"term_enable": {
 		"message": "Enable"
 	},
+	"term_refresh": {
+		"message": "Refresh"
+	},
 
 	"settings_general_showApplicable": {
 		"message": "Show product's ratings in this extension's icon"
@@ -247,5 +250,35 @@
 	},
 	"message_external_supported": {
 		"message": "ShopAI works here! Click on the button in the toolbar or website to start."
+	}, 
+	"message_loading_1": {
+		"message": "Gathering information for that product."
+	},
+	"message_loading_2": {
+		"message": "Working diligently to retrieve your data."
+	},
+	"message_loading_3": {
+		"message": "Writing the analysis; please wait."
+	},
+	"message_loading_4": {
+		"message": "Optimizing your experience for a moment."
+	},
+	"message_loading_5": {
+		"message": "Almost there! Just a few more seconds."
+	},
+	"message_loading_6": {
+		"message": "Wrangling digital sheep... almost done!"
+	},
+	"message_loading_7": {
+		"message": "Hang tight, building a time machine to fetch your data."
+	},
+	"message_loading_8": {
+		"message": "Coffee brewing... (also working on your request)."
+	},
+	"message_loading_9": {
+		"message": "Unicorns are galloping to your rescue..."
+	},
+	"message_loading_10": {
+		"message": "Just making sure the internet doesn't break."
 	}
 }
