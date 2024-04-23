@@ -7,6 +7,7 @@
 
 import {read, forget} from "/scripts/secretariat.js";
 import Page from "/scripts/pages/page.js";
+import texts from "/scripts/strings/read.js";
 
 class Page_Settings extends Page {
 	constructor() {
@@ -36,9 +37,6 @@ class Page_Settings extends Page {
 				.querySelector(`[data-action="filters,add,one"]`)
 				.addEventListener(`click`, async () => {
 					// Import the filters module.
-					const texts = (
-						await import(chrome.runtime.getURL(`/scripts/strings/read.js`))
-					).default;
 					let filters = new (
 						await import(chrome.runtime.getURL(`scripts/filters.js`))
 					).default();
@@ -76,9 +74,6 @@ class Page_Settings extends Page {
 				.querySelector(`[data-action="filters,delete,one"]`)
 				.addEventListener(`click`, async () => {
 					// Import the filters module.
-					let texts = (
-						await import(chrome.runtime.getURL(`/scripts/strings/read.js`))
-					).default;
 					let filters = new (
 						await import(chrome.runtime.getURL(`scripts/filters.js`))
 					).default();
@@ -99,6 +94,10 @@ class Page_Settings extends Page {
 					console.log(await read(null, 1), await read(null, -1));
 				});
 		}
+
+		(document.querySelectorAll(`[data-action]`)).forEach((ELEMENT) => {
+			ELEMENT.removeAttribute(`data-action`);
+		})
 	}
 }
 
