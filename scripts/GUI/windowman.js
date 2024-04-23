@@ -149,8 +149,6 @@ export default class windowman {
 					} else {
 						text_element.innerText = text_inserted;
 					}
-
-					text_element.removeAttribute(`for`);
 				});
 
 				delete text_elements[`content`];
