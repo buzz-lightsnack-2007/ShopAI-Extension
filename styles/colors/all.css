@@ -41,3 +41,12 @@ nav .input-field input[type="search"], textarea {
 	background-color: transparent !important;
 	background: none !important;
 }
+
+progress {
+	background-color: #88888888;
+	height: 2px;
+}
+
+progress::-webkit-progress-value {
+	background-color: white;
+}
