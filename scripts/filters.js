@@ -22,19 +22,27 @@ export default class filters {
 
 	@param {string} URL the current URL
 	*/
-	async select(URL = window.location.href) {
-		let SELECTED = await (async () => {
-			// Get the filters.
-			let filter = await search(`filters`, URL, `URL`, 0.5, {"cloud": -1});
-
-			// If there are filters, then filter the URL.
-			return filter;
-		})();
-		
-		if ((SELECTED && SELECTED != null && (typeof SELECTED).includes(`obj`)) ? (Object.keys(SELECTED)).length > 0 : false) {
-			this.one = (Object.entries(SELECTED))[0][1];
-			return (this.one);
+	async select(URL) {
+		if (!URL) {
+			try {
+				URL = window.location.href;
+			} catch(err) {}
 		};
+
+		if (URL) {
+			let SELECTED = await (async () => {
+				// Get the filters.
+				let filter = await search(`filters`, URL, `URL`, 0.5, {"cloud": -1});
+	
+				// If there are filters, then filter the URL.
+				return filter;
+			})();
+			
+			if ((SELECTED && SELECTED != null && (typeof SELECTED).includes(`obj`)) ? (Object.keys(SELECTED)).length > 0 : false) {
+				this.one = (Object.entries(SELECTED))[0][1];
+				return (this.one);
+			};
+		}
 	};
 
 	/* Update all filters or just one.
