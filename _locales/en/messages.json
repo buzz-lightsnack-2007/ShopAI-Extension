@@ -189,6 +189,9 @@
 	"saving_done": {
 		"message": "Saved!"
 	},
+	"entry_contextMenu": {
+		"message": "Open in ShopAI..."
+	},
 	
 	"JSON_parse_error": {
 		"message": "There is a mistake in your JSON formatting. Please correct the error before saving."
