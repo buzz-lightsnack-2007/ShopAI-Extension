@@ -1,4 +1,10 @@
 nav .brand-logo {
-     font-size: 1.25rem !important;
-     font-weight: bold;
+	font-size: 1.25rem !important;
+	font-weight: bold;
+}
+
+nav > span {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 }

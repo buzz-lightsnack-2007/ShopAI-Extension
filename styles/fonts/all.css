@@ -3,4 +3,7 @@
 
 .collapsible > li > header {
 	font-weight: bold;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 }
