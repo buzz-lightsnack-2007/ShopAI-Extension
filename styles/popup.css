@@ -1,3 +1,14 @@
 #summary {
-     font-weight: bold;
+	font-weight: bold;
+}
+
+
+
+#score {
+	background-color: #88888888;
+	height: 2px;
+}
+
+#score::-webkit-progress-value {
+	background-color: #ffF;    
 }
