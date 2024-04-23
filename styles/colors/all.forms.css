@@ -1,0 +1,11 @@
+.input-field input, .input-field textarea {
+     background-color: var(--input-color);    
+}
+
+.btn {
+     background-color: var(--secondary-color) !important;
+}
+
+.btn[role="primary"], .btn-floating {
+     background-color: var(--primary-color) !important;
+}

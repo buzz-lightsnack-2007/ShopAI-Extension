@@ -1,4 +1,6 @@
 @import url("/styles/colors/defaults.css");
+@import url("/styles/colors/all.forms.css");
+@import url("/styles/colors/all.backgrounds.collapsible.css");
 
 body {
 	color: var(--font-color-main);
@@ -14,7 +16,7 @@ body {
 	);
 }
 
-main.container {
+main.container:not(:has(.collapsible)) {
 	background-color: var(--background-color);
 }
 

@@ -1,0 +1,22 @@
+.collapsible {
+	border: none;
+}
+
+.collapsible .collapsible-header, .collapsible .collapsible-body {
+	background-color: var(--background-color-card);
+};
+
+/* Active events */
+.collapsible .collapsible-header:focus, .collapsible .collapsible-header:active {
+	background-color: var(--surface-color);
+}
+
+.collapsible .active .collapsible-header {
+	background-color: none;
+	background: linear-gradient(
+		25deg,
+		var(--primary-color-dark) 0%,
+		var(--primary-color) 62%,
+		var(--primary-color-raised-hover-solid) 100%
+	) !important;
+}
