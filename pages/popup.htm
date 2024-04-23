@@ -5,23 +5,21 @@
 	<link href="/styles/popup.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-	<nav id="header" class="nav-wrapper transparent" data-result-linked="filters">
-		<ul class="left">
-			
+	<header>
+		<nav id="header" class="nav-wrapper transparent">
+			<ul class="right">
+				<li><a class="dropdown-trigger" data-target="dropdown_more" data-icon="menu"></a></li>
+			</ul>
+		</nav>
+		<ul id="dropdown_more" class="dropdown-content">
+			<li><a accesskey="r" data-action="analysis,reload" for="refresh"></a></li>
+			<li class="divider"></li>
+			<li><a accesskey="," data-action="open,settings" for="preferences"></a></li>
+			<li><a accesskey="?" data-action="open,help" for="help"></a></li>
 		</ul>
-		<ul class="right">
-			<li><a data-icon="cog" accesskey="," data-action="open,settings"></a></li>
-			<li><a data-icon="refresh" accesskey="r" data-action="analysis,reload"></a></li>
-		</ul>
-	</nav>
+	</header>
 	<main class="container">
-		<summary>
-			<p data-active-result="Description,Summary">Summary</p>
-			<p id="summary" class="flow-text" data-active-result="Rating,Reason">Reason</p>
-			<progress data-active-result="Rating,Score" min="0" max="1" value="0"></progress>
-		</summary>
-		<details>
-		</details>
+		<iframe src="popup/load.htm" class="viewer"></iframe>
 	</main>
 </body>
 
