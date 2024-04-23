@@ -10,12 +10,15 @@ export default class windowman {
 	}
 
 	// Prepare the window with its metadata.
-	constructor(OPTIONS = {}) {
-		function headers() {
+	constructor(OPTIONS) {
+		function headers(OPTIONS) {
 			let LOAD_STATE = true;
 			let UI = {
 				CSS: [chrome.runtime.getURL("/styles/external/fonts/materialdesignicons.min.css"), chrome.runtime.getURL("/styles/external/materialize/css/materialize.css"), chrome.runtime.getURL("/styles/ui.css")]
 			};
+
+			// Add additional sources. 
+			(OPTIONS[`CSS`] != null) ? ((Array.isArray(OPTIONS[`CSS`])) ? UI[`CSS`] = UI[`CSS`].concat(OPTIONS[`CSS`]) : UI[`CSS`].push(OPTIONS[`CSS`])) : null;
 
 			(UI[`CSS`]).forEach(async (source) => {
 				try {
@@ -250,10 +253,9 @@ export default class windowman {
 			
 			actions();
 		}
-
+		
 		((OPTIONS != null && (typeof OPTIONS).includes(`obj`) && !Array.isArray(OPTIONS)) ? OPTIONS[`monitor`] : true) ? this.monitor() : null;
-
-		headers();
+		headers(((OPTIONS != null && typeof OPTIONS == `object`) ? OPTIONS[`headers`] : false)? OPTIONS[`headers`] : {});
 		appearance();
 		events();
 	}
