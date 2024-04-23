@@ -29,13 +29,17 @@ export default class Menu {
           };
           (this.icon) ? this.#options.icon = this.icon : null;
 
-          chrome.contextMenus.create(this.#options);
+          if (!this.#options.hidden) {this.show(); delete this.#options.hidden;};
           delete this.#options.id;
      };
 
      remove() {
           chrome.contextMenus.remove(this.ID);
      };
+
+     show() {
+          chrome.contextMenus.create(this.#options);
+     }
 
      /* Update the context menu. 
      
