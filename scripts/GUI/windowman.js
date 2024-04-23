@@ -18,7 +18,7 @@ export default class windowman {
 			};
 
 			// Add additional sources. 
-			(OPTIONS[`CSS`] != null) ? ((Array.isArray(OPTIONS[`CSS`])) ? UI[`CSS`] = UI[`CSS`].concat(OPTIONS[`CSS`]) : UI[`CSS`].push(OPTIONS[`CSS`])) : null;
+			(OPTIONS) ? ((OPTIONS[`CSS`] != null) ? ((Array.isArray(OPTIONS[`CSS`])) ? UI[`CSS`] = UI[`CSS`].concat(OPTIONS[`CSS`]) : UI[`CSS`].push(OPTIONS[`CSS`])) : null) : null;
 
 			(UI[`CSS`]).forEach(async (source) => {
 				try {
@@ -254,19 +254,10 @@ export default class windowman {
 			actions();
 		}
 		
-		((OPTIONS != null && (typeof OPTIONS).includes(`obj`) && !Array.isArray(OPTIONS)) ? OPTIONS[`monitor`] : true) ? this.monitor() : null;
-		headers(((OPTIONS != null && typeof OPTIONS == `object`) ? OPTIONS[`headers`] : false)? OPTIONS[`headers`] : {});
+		headers(((OPTIONS != null && typeof OPTIONS == `object`) ? OPTIONS[`headers`] : false)? OPTIONS[`headers`] : null);
 		appearance();
 		events();
 	}
-
-	/* Send monitoring events, useful to determining whether the window is opened or closed. 
-	
-	@param {string} MESSAGE_NAME Custom message name
-	*/
-	monitor() {
-		chrome.runtime.connect({name: `view=${window.location.href}`});
-	};
 
 	/* Run this function if you would like to synchronize with data. */
 	async sync() {
