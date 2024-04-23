@@ -117,6 +117,11 @@ main.container > * {
 	padding-top: .5em;
 }
 
+.transparent {
+	background-color: transparent !important;
+	background: none !important;
+}
+
 @media only screen and (max-width: 992px) {
 	ul.sidenav-fixed + * {
 		padding-left: 0;
@@ -238,4 +243,12 @@ fieldset > ul li {
 
 .input-field {
 	margin-bottom: .25em;
+}
+
+summary {
+	list-style-type: none;
+}
+
+progress {
+	width: 100%;
 }
