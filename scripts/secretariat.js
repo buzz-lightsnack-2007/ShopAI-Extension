@@ -218,7 +218,7 @@ export async function write(PATH, DATA, CLOUD = -1) {
 	@param {object} DATA the data
 	@param {number} CLOUD the storage
 	*/
-	const write_database = async (DATA, CLOUD = 0) => {
+	const store = async (DATA, CLOUD = 0) => {
 		// If CLOUD is set to 0, it should automatically determine where the previous source of data was taken from.
 		return((CLOUD > 0) ? chrome.storage.sync.set(DATA) : chrome.storage.local.set(DATA));
 	}
@@ -280,8 +280,106 @@ export async function write(PATH, DATA, CLOUD = -1) {
 	DATA_INJECTED = nest(DATA_ALL, [...DATA_NAME], DATA);
 
 	// Write!
-	write_database(DATA_INJECTED, CLOUD);
+	store(DATA_INJECTED, CLOUD);
 	return (verify(DATA_NAME, DATA));
+}
+
+class session {
+	/* Recall session storage data. */
+	static read(PATH) {
+		/* Recursively find through each data, returning either that value or null when the object is not found.
+
+		@param {dictionary} DATA_ALL the data
+		@param {object} DATA_PATH the path of the data
+		@return {object} the data
+		*/
+		function find_data(DATA_ALL, DATA_PATH) {
+			let DATA = DATA_ALL;
+
+			// Pull the data out.
+			if (DATA_ALL != null && (Array.isArray(DATA_PATH) && DATA_PATH != null) ? DATA_PATH.length > 0 : false) {
+				let DATA_PATH_SELECTED = String(DATA_PATH.shift()).trim();
+
+				// Get the selected data.
+				DATA = DATA_ALL[DATA_PATH_SELECTED];
+
+				// must run if there is actually a parameter to test
+				if (DATA_PATH.length > 0) {
+					// Recursively run to make use of the existing data.
+					DATA = find_data(DATA, DATA_PATH);
+				};
+			} else {
+				return null;
+			}
+
+			// Now return the data.
+			return DATA;
+		}
+
+		let DATA = {};
+		DATA[`all`] = chrome.storage.local.get(null);
+		(DATA[`all`]) ? DATA[`selected`] = find_data(DATA[`all`], PATH) : false;
+
+		return (DATA[`selected`]);
+	}
+
+	static async write(PATH, DATA) {		
+		/* Appropriately nest and merge the data.
+
+		@param {object} EXISTING the original data
+		@param {object} PATH the subpath
+		@param {object} VALUE the value
+		@return {object} the updated data
+		*/
+		function nest(EXISTING, SUBPATH, VALUE) {
+			let DATABASE = EXISTING;
+			
+			// Get the current path.
+			let PATH = {};
+			PATH[`current`] = String(SUBPATH.shift()).trim();
+			PATH[`target`] = SUBPATH;
+
+			if (PATH[`target`].length > 0) {
+				(DATABASE[PATH[`current`]] == null) ? DATABASE[PATH[`current`]] = {} : false;
+				DATABASE[PATH[`current`]] = nest(DATABASE[PATH[`current`]], PATH[`target`], VALUE);
+			} else {
+				DATABASE[PATH[`current`]] = VALUE;
+			}
+			// Return the value.
+			return DATABASE;
+		}
+		
+		/* Forcibly write the data to chrome database
+
+		@param {object} DATA the data
+		*/
+		const store = async (DATA) => {
+			return(chrome.storage.session.set(DATA));
+		}
+
+		DATA = {"write": DATA};
+		DATA[`all`] = await session.read(null, CLOUD);
+		if ((DATA[`all`] != null && (typeof DATA[`all`]).includes(`obj`)) ? Object.keys(DATA[`all`]).length <= 0 : true) {
+			DATA[`all`] = {};
+		};
+
+		let TARGET = (!(typeof PATH).includes(`obj`)) ? String(PATH).trim().split(",") : PATH;
+
+		// Merge!
+		DATA[`inject`] = nest(DATA[`all`], [...TARGET], DATA[`write`]);
+
+		// Write!
+		store(DATA[`inject`]);		
+	}
+}
+
+/* Temporarily hold data in browser session storage. 
+
+@param {string} PATH the name
+@param {object} DATA the data to hold
+*/
+export async function dump(PATH, DATA) {
+	
 }
 
 /* Compare a data against the stored data. Useful when comparing dictionaries. 
@@ -440,3 +538,5 @@ export function observe(reaction) {
 		reaction(changes, namespace);
 	});
 }
+
+export {session}
