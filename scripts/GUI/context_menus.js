@@ -4,7 +4,9 @@ export default class Menu {
      #options;
 
      constructor (ID, title, contexts, event, type, icon) {
-          if ((typeof ID).includes(`obj`) && !Array.isArray(ID) && ID.hasOwnProperty(`ID`)) {
+          if ((typeof ID).includes(`obj`) && !Array.isArray(ID)) {
+               ID.ID = ((ID.hasOwnProperty(`ID`)) ? ID.ID : false) ? ID.ID : String(Math.random() / Math.random() * 100);
+
                (Object.keys(ID)).forEach((key) => {
                     this[key] = ID[key];
                })
@@ -28,16 +30,16 @@ export default class Menu {
                onclick: this.event
           };
           (this.icon) ? this.#options.icon = this.icon : null;
-
-          if (!this.#options.hidden) {this.show(); delete this.#options.hidden;};
-          delete this.#options.id;
+          ((this.hidden != null) ? (!this.hidden) : true) ? this.show() : null;
      };
 
      remove() {
+          this.hidden = true;
           chrome.contextMenus.remove(this.ID);
      };
 
      show() {
+          this.hidden = false;
           chrome.contextMenus.create(this.#options);
      }
 
