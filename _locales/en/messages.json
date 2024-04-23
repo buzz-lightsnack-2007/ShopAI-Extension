@@ -93,6 +93,9 @@
 	"settings_general_injectToPage": {
 		"message": "Inject a quick access button"
 	},
+	"settings_general_autoOpen": {
+		"message": "Automatically open the side panel"
+	},
 	"settings_behavior_autoRun": {
 		"message": "Automatically run this extension on a supported page"
 	},
