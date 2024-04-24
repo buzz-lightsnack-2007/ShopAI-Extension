@@ -11,16 +11,17 @@ export default class EntryManager {
      constructor () {
           this.instances = {};
           this.instances.menu = new MenuEntry();
-          Tabs.addActionListener(`onActivated`, (data) => {this.check(data)});
+          Tabs.addActionListener(`onActivated`, (data) => {this.check()});
      }
 
-     async check(data) {
-          console.error(JSON.stringify(data));
-          ((data != null && (typeof data).includes(`obj`)) ? ((data.tab) ? data.tab.url : false) : false) 
-			? (!!await ((new filters).select(data.tab.url)))
-				? (this.enable())
-				: (this.disable())
-			: false;
+     async check() {
+          const DATA = await Tabs.query(null, 0)
+
+          if (DATA.url) {
+               (!!await ((new filters).select(DATA.url)))
+                    ? (this.enable())
+                    : (this.disable())
+          };
      }
 
      /* 
