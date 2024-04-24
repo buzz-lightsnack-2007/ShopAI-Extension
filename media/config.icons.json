@@ -1,0 +1,18 @@
+{
+     "default": {
+          "512": "media/icons/logo_tiny.png",
+          "1024": "media/icons/logo.png"
+     },
+     "disabled": {
+          "512": "media/icons/logo_no_tiny.png",
+          "1024": "media/icons/logo_no.png"
+     },
+     "good": {
+          "512": "media/icons/good_tiny.png",
+          "1024": "media/icons/good.png"
+     }, 
+     "bad": {
+          "512": "media/icons/bad_tiny.png",
+          "1024": "media/icons/bad.png"
+     }
+}
