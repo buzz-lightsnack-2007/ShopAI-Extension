@@ -34,23 +34,25 @@ export default class Menu {
 	};
 
 	remove() {
+		(!this.hidden) ? chrome.contextMenus.remove(this.ID) : false;
 		this.hidden = true;
-		chrome.contextMenus.remove(this.ID);
 	};
 
 	show() {
-		this.hidden = false;
-		this.ID = chrome.contextMenus.create(this.#options);
-
-		if (((this.events && (typeof this.events).includes(`obj`) && !Array.isArray(this.events))) ? Object.keys(events) > 0 : false) {
-			(Object.keys(this.events)).forEach((EVENT) => {
-				chrome.contextMenus[EVENT].addListener((info, tab) => {
-					((info.menuItemId) ? info.menuItemId == this.ID : false)
-						? this.events[EVENT](info, tab)
-						: false;
-				})
-			});
-		};
+		if (this.hidden || this.hidden == null) {
+			this.hidden = false;
+			this.ID = chrome.contextMenus.create(this.#options);
+	
+			if (((this.events && (typeof this.events).includes(`obj`) && !Array.isArray(this.events))) ? Object.keys(events) > 0 : false) {
+				(Object.keys(this.events)).forEach((EVENT) => {
+					chrome.contextMenus[EVENT].addListener((info, tab) => {
+						((info.menuItemId) ? info.menuItemId == this.ID : false)
+							? this.events[EVENT](info, tab)
+							: false;
+					})
+				});
+			};
+		}
 	}
 
 	/* Update the context menu. 
@@ -71,7 +73,7 @@ export default class Menu {
 		};
 		(this.icon) ? this.#options.icon = this.icon : null;
 
-		chrome.contextMenus.update(this.ID, this.#options);
+		(!this.hidden) ? chrome.contextMenus.update(this.ID, this.#options) : false;
 
 		(((this.events && (typeof this.events).includes(`obj`) && !Array.isArray(this.events))) ? Object.keys(events) > 0 : false) 
 			? (Object.keys(this.events)).forEach((EVENT) => {
