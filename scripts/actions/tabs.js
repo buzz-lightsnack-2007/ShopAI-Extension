@@ -1,14 +1,12 @@
 import Tabs from "/scripts/GUI/tabs.js";
-import Entry from "/scripts/external/entry.js"
+import Entry_Manager from "/scripts/external/entries/manager.js"
 
 export default class Watcher_Tabs {
      constructor () {
+          new Entry_Manager();
           Tabs.addActionListener(`update`, this.check);
      };
 
      check(data) {
-          if ((data.tab) ? data.tab.url : false) {
-               Entry.manage(data.tab);
-          }
      }
 }
