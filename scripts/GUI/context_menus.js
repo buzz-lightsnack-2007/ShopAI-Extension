@@ -43,14 +43,14 @@ export default class Menu {
 		this.ID = chrome.contextMenus.create(this.#options);
 
 		if (((this.events && (typeof this.events).includes(`obj`) && !Array.isArray(this.events))) ? Object.keys(events) > 0 : false) {
-			(this.events.onClicked) 
-				? chrome.contextMenus.onClicked.addListener((info, tab) => {
+			(Object.keys(this.events)).forEach((EVENT) => {
+				chrome.contextMenus[EVENT].addListener((info, tab) => {
 					((info.menuItemId) ? info.menuItemId == this.ID : false)
-						? this.events.onClicked(info, tab)
+						? this.events[EVENT](info, tab)
 						: false;
 				})
-				: false;
-		}
+			});
+		};
 	}
 
 	/* Update the context menu. 
@@ -73,15 +73,15 @@ export default class Menu {
 
 		chrome.contextMenus.update(this.ID, this.#options);
 
-		(((this.events && (typeof this.events).includes(`obj`) && !Array.isArray(this.events))) ? Object.keys(events) > 0 : false)
-			? ((this.events.onClicked) 
-				? chrome.contextMenus.onClicked.addListener((info, tab) => {
+		(((this.events && (typeof this.events).includes(`obj`) && !Array.isArray(this.events))) ? Object.keys(events) > 0 : false) 
+			? (Object.keys(this.events)).forEach((EVENT) => {
+				chrome.contextMenus[EVENT].addListener((info, tab) => {
 					((info.menuItemId) ? info.menuItemId == this.ID : false)
-						? this.events.onClicked(info, tab)
+						? this.events[EVENT](info, tab)
 						: false;
 				})
-				: false)
-			: false;	
+			})
+			: false;
 	}
 
 	/* Run a new function when triggered. */
