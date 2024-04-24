@@ -16,7 +16,7 @@
 	},
 
 	"background": {
-		"service_worker": "scripts/shopAI.js", "type": "module"
+		"service_worker": "scripts/background/shopAI.js", "type": "module"
 	},
 
 	"content_scripts": [
