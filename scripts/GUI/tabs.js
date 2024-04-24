@@ -1,8 +1,19 @@
 export default class Tabs {
+     /* Add an action listener. 
+     
+     @param {string} event The event to listen for
+     @param {function} callback The callback function
+     */
      static addActionListener(event, callback) {
-		(event.toLowerCase().includes(`update`)) ? chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {callback({"tabId": tabId, "info": info, "tab": tab})}) : false;
+          chrome.tabs[event].addListener((tabId, info, tab) => {callback({"tabId": tabId, "info": info, "tab": tab})})
 	};
 
+     /* Create a new tab.
+
+     @param {string} URL The URL to open
+     @param {number} index The index of the tab
+     @param {boolean} pinned Whether the tab is pinned
+     */
      static create(URL, index, pinned = false) {
           ((typeof index).includes(`obj`) && index != null && !Array.isArray(index))
           // Set the options. 
@@ -19,7 +30,7 @@ export default class Tabs {
      @param {number} index the tab number to return
      */
      static async query(filters, index) {
-          filters = ((typeof filters).includes(`obj`)) ? filters : { active: true, currentWindow: true};
+          filters = ((typeof filters).includes(`obj`) && filters != null) ? filters : { active: true, currentWindow: true};
           let TABS = {};
 
           TABS.all = await chrome.tabs.query(filters);
