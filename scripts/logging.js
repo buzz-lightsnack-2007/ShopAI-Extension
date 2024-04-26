@@ -53,13 +53,9 @@ export default class logging {
 	*/
 	static warn(message, critical = false) {
 		console.warn(message);
-		if (critical) {
-			alert(message);
-		} else {
-			try {
-				M.toast({ text: message });
-			} catch (err) {}
-		}
+		try {
+			(critical) ? alert(message) : M.toast({ text: message });
+		} catch(err) {};
 	}
 	
 	/*
@@ -72,13 +68,9 @@ export default class logging {
 	static async error(ERROR_CODE, ERROR_MESSAGE, ERROR_STACK, critical = true) {
 		// Display the error message.
 		console.error(texts.localized(`error_msg`, false, [ERROR_CODE, ERROR_MESSAGE, ERROR_STACK]));
-		if (critical) {
-			alert(texts.localized(`error_msg_GUI`, false, [String(ERROR_CODE), ERROR_MESSAGE]));
-		} else {
-			try {
-				M.toast({ text: ERROR_MESSAGE });
-			} catch (err) {};
-		};
+		try {
+			(critical) ? alert(texts.localized(`error_msg_GUI`, false, [String(ERROR_CODE), ERROR_MESSAGE])) : M.toast({ text: ERROR_MESSAGE });
+		} catch(err) {};
 	}
 
 	/* Clear the current message. */
