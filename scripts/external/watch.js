@@ -2,25 +2,13 @@
 Be sensitive to changes and update the state.
 */
 
-import filters from "/scripts/filters.js";
+import check from "/scripts/external/check.js";
 import processor from "/scripts/external/processor.js";
 import logging from "/scripts/logging.js";
 import texts from "/scripts/mapping/read.js";
 
 
 export default class watchman {
-	/* Check the current URL.
-
-		@param {string} URL the page URL; default value is the current webpage
-		@return {dictionary} the filter to follow
-		*/
-	static async observe(URL = window.location.href) {
-		// Create the variable to determine the corresponding key.
-		let activity = await (new filters).select(URL);
-
-		return activity;
-	}
-
 	/* Act on the page.
 
 	@param {dictionary} filters the filter to work with
@@ -48,10 +36,11 @@ export default class watchman {
 		// Set the icon to indicate that it's not active. 
 	}
 
-	static async job() {
+	static job() {
 		/* The main action. */
 
-		(watchman.observe()).then((RULES) => {
+		(check.platform()).then((RULES) => {
+			console.log(RULES);
 			if (RULES && Object.keys(RULES).length !== 0) {
 				watchman.act(RULES);
 			} else {

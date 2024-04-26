@@ -5,20 +5,20 @@ import Tabs from "/scripts/GUI/tabs.js";
 import MenuEntry from "./menu.js";
 import ManagedSidebar from "./sidebar.js";
 import IconIndicator from "./icons.js";
-import filters from '../../filters.js';
+import check from "/scripts/external/check.js";
 
 export default class EntryManager {
      constructor () {
           this.instances = {};
           this.instances.menu = new MenuEntry();
-          Tabs.addActionListener(`onActivated`, (data) => {this.check()});
+          Tabs.addActionListener(`onActivated`, (data) => {this.onRefresh()});
      }
 
-     async check() {
+     async onRefresh() {
           const DATA = await Tabs.query(null, 0)
 
           if (DATA.url) {
-               (!!await ((new filters).select(DATA.url)))
+               (!!await check.platform(DATA.url))
                     ? (this.enable())
                     : (this.disable())
           };
