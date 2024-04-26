@@ -11,16 +11,16 @@ export default class Sidebar {
 	*/
 	constructor (PATH) {
 		// Set side panel's URL. 
-		chrome.sidePanel.setOptions({ path: PATH });
+		chrome.sidePanel.setOptions(((typeof PATH).includes(`str`)) ? { path: PATH } : PATH);
 		
 		// Grab the current tab ID. 
 		Tabs.query({ active: true, currentWindow: true }, 0).then((TAB) => {
 			chrome.sidePanel.open({windowId: TAB.id});
-			this.root = PATH;
+			this.root = ((typeof PATH).includes(`str`)) ? PATH : chrome.sidePanel.getOptions(TAB.id).path;
 		});
 
 		chrome.runtime.onConnect.addListener((CONNECTION) => {
-			if ((CONNECTION.name).includes(`view=${PATH}`)) {
+			if ((CONNECTION.name).includes(`view=${this.root}`)) {
 				this.focus(TRUE);
 				CONNECTION.onDisconnect.addListener(async () => {
 					this.focus(FALSE);
