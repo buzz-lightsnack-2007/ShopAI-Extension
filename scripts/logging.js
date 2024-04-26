@@ -2,7 +2,7 @@
 Alert management system.
 */
 
-import texts from "/scripts/strings/read.js";
+import texts from "/scripts/mapping/read.js";
 
 export default class logging {
 	static async confirm(MESSAGE) {

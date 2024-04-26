@@ -1,4 +1,4 @@
-import texts from "/scripts/strings/read.js";
+import texts from "/scripts/mapping/read.js";
 
 export default class Loader {
      /* Link a loading screen. 

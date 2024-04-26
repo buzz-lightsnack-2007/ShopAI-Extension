@@ -3,7 +3,7 @@ Manage the local cache.
 */
 
 import logging from "/scripts/logging.js";
-import texts from "/scripts/strings/read.js";
+import texts from "/scripts/mapping/read.js";
 import hash from "/scripts/utils/hash.js";
 
 /* Read all stored data in the browser cache.

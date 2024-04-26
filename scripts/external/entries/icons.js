@@ -1,5 +1,5 @@
 import BrowserIcon from '/scripts/GUI/browser.icon.js';
-import Image from '/scripts/strings/image.js';
+import Image from '/scripts/mapping/image.js';
 
 class IconIndicator {
      static async enable() {

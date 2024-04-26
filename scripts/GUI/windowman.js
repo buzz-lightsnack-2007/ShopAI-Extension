@@ -1,8 +1,8 @@
 /* windowman
 Window and window content management */
 
-import texts from "../strings/read.js";
-import net from "../net.js";
+import texts from "../mapping/read.js";
+import net from "/scripts/utils/net.js";
 import Window from "./window.js";
 
 export default class windowman {

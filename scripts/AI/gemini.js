@@ -2,7 +2,7 @@
 // Import the file module.
 // import file from `./net.js`;
 
-const texts = (await import(chrome.runtime.getURL("scripts/strings/read.js"))).default;
+const texts = (await import(chrome.runtime.getURL("scripts/mapping/read.js"))).default;
 
 // Don't forget to set the class as export default.
 export default class gemini {

@@ -1,5 +1,5 @@
 import Menu from '/scripts/GUI/context_menus.js';
-import texts from "/scripts/strings/read.js";
+import texts from "/scripts/mapping/read.js";
 import ManagedSidebar from "./sidebar.js";
 
 export default class MenuEntry {

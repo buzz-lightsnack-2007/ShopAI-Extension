@@ -4,7 +4,7 @@ Ask product information to Google Gemini. */
 // Import the storage management module.
 const secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
 import hash from "/scripts/utils/hash.js";
-import texts from "/scripts/strings/read.js";
+import texts from "/scripts/mapping/read.js";
 
 // Don't forget to set the class as export default.
 export default class product {

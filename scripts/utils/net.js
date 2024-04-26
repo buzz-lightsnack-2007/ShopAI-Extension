@@ -2,7 +2,7 @@
 	This script provides network utilities.
 */
 
-import texts from "/scripts/strings/read.js";
+import texts from "/scripts/mapping/read.js";
 import logging from "/scripts/logging.js";
 
 export default class net {

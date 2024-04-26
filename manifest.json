@@ -22,7 +22,7 @@
 	"content_scripts": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
-			"js": ["scripts/external/watch.js"]
+			"js": ["scripts/external/content.js"]
 		}
 	],
 	"web_accessible_resources": [

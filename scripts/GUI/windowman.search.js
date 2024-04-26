@@ -1,6 +1,6 @@
 import {read, write, search, observe} from "/scripts/secretariat.js";
 import logging from "/scripts/logging.js"
-import texts from "/scripts/strings/read.js";
+import texts from "/scripts/mapping/read.js";
 
 
 export default class UI {

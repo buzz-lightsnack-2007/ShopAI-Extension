@@ -7,7 +7,7 @@
 
 import {read, forget} from "/scripts/secretariat.js";
 import Page from "/scripts/pages/page.js";
-import texts from "/scripts/strings/read.js";
+import texts from "/scripts/mapping/read.js";
 
 class Page_Settings extends Page {
 	constructor() {
@@ -55,7 +55,7 @@ class Page_Settings extends Page {
 				.addEventListener(`click`, async () => {
 					// Import the filters module.
 					const texts = (
-						await import(chrome.runtime.getURL(`/scripts/strings/read.js`))
+						await import(chrome.runtime.getURL(`/scripts/mapping/read.js`))
 					).default;
 					let filters = new (
 						await import(chrome.runtime.getURL(`scripts/filters.js`))
