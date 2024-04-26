@@ -4,7 +4,7 @@ Manage the local cache.
 
 import logging from "/scripts/logging.js";
 import texts from "/scripts/strings/read.js";
-import hash from "/scripts/strings/hash.js";
+import hash from "/scripts/utils/hash.js";
 
 /* Read all stored data in the browser cache.
 
@@ -18,7 +18,7 @@ export async function read(DATA_NAME, CLOUD = 0) {
 	let DATA, DATA_RETURNED;
 
 	/*
-	Get all storage values. 
+	Get all storage values.
 
 	@param {number} SOURCE the data source
 	*/
@@ -94,7 +94,7 @@ export async function read(DATA_NAME, CLOUD = 0) {
 	}
 
 	switch (CLOUD) {
-		case 0: 
+		case 0:
 			DATA = {}; DATA_RETURNED = {};
 
 			DATA[`sync`] = await read((DATA_NAME) ? [...DATA_NAME] : null, 1);
@@ -106,7 +106,7 @@ export async function read(DATA_NAME, CLOUD = 0) {
 
 			return DATA_RETURNED[`value`];
 			break;
-		default: 
+		default:
 			CLOUD = (CLOUD > 0) ? 1 : -1;
 			DATA = await read_database(CLOUD);
 			DATA_RETURNED = (DATA_NAME) ? find_data(DATA, DATA_NAME) : DATA;
@@ -138,7 +138,7 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = 0, OPTION
 					RESULTS[DATA_NAME] = DATA[DATA_NAME];
 				}
 			});
-			
+
 			// Then, get the additional places.
 			if ((ADDITIONAL_PLACES != null ? Array.isArray(ADDITIONAL_PLACES) : false) ? ADDITIONAL_PLACES.length > 0 : false) {
 				for (let PARAMETER_PRIORITY_NUMBER = 0; PARAMETER_PRIORITY_NUMBER < ADDITIONAL_PLACES.length; PARAMETER_PRIORITY_NUMBER++) {
@@ -147,15 +147,15 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = 0, OPTION
 				};
 			}
 		} else if (((typeof ADDITIONAL_PLACES).includes(`str`) && (ADDITIONAL_PLACES)) ? ADDITIONAL_PLACES.trim() : false) {
-			// Perform a sequential search on the data. 
+			// Perform a sequential search on the data.
 			if ((typeof DATA).includes(`obj`) && !Array.isArray(DATA) && SOURCE != null) {
 				let VALUE = {};
-				
+
 				for (let DICTIONARY_INDEX = 0; DICTIONARY_INDEX < (Object.keys(DATA)).length; DICTIONARY_INDEX++) {
 					VALUE[`parent`] = DATA[(Object.keys(DATA))[DICTIONARY_INDEX]];
-					
-					/* Test for a valid RegEx. 
-					
+
+					/* Test for a valid RegEx.
+
 					@param {string} item the item to test
 					*/
 					function isRegEx(item) {
@@ -174,7 +174,7 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = 0, OPTION
 					}
 
 					if (VALUE[`current`] ? ((STRICT >= 1) ? VALUE[`current`] == TERM : (((STRICT < 0.5) ? (VALUE[`current`].includes(TERM)) : false) || TERM.includes(VALUE[`current`]) || (isRegEx(VALUE[`current`]) ? (new RegExp(VALUE[`current`])).test(TERM) : false))) : false) {
-						// Add the data. 
+						// Add the data.
 						RESULTS[(Object.keys(DATA))[DICTIONARY_INDEX]] = (Object.entries(DATA))[DICTIONARY_INDEX][1];
 					};
 				};
@@ -183,7 +183,7 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = 0, OPTION
 					if (
 						((STRICT || (typeof DATA[ELEMENT_INDEX]).includes(`num`)) && DATA[ELEMENT_INDEX] == TERM) ||
 						((!STRICT && !((typeof DATA[ELEMENT_INDEX]).includes(`num`)))
-							? (TERM.includes(DATA[ELEMENT_INDEX]) || DATA[ELEMENT_INDEX].includes(TERM) || 
+							? (TERM.includes(DATA[ELEMENT_INDEX]) || DATA[ELEMENT_INDEX].includes(TERM) ||
 								(typeof(DATA[ELEMENT_INDEX])).includes(`str`)
 									? new RegExp(DATA[ELEMENT_INDEX]).test(TERM)
 									: false
@@ -197,7 +197,7 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = 0, OPTION
 			}
 		}
 	}
-	
+
 	return RESULTS;
 }
 
@@ -210,7 +210,7 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = 0, OPTION
 export async function write(PATH, DATA, CLOUD = -1) {
 	let DATA_INJECTED = {};
 
-	// Inform the user that saving is in progress. 
+	// Inform the user that saving is in progress.
 	let notification = new logging ((new texts(`saving_current`)).localized, (new texts(`saving_current_message`)).localized, false);
 
 	/* Forcibly write the data to chrome database
@@ -252,12 +252,12 @@ export async function write(PATH, DATA, CLOUD = -1) {
 
 	async function verify (NAME, DATA) {
 		let DATA_CHECK = {};
-		
-		// Verify the presence of the data. 
+
+		// Verify the presence of the data.
 		DATA_CHECK[`state`] = await compare(NAME, DATA);
 
 		if (!DATA_CHECK[`state`]) {logging.error((new texts(`error_msg_save_failed`)).localized, String(PATH), JSON.stringify(DATA))} else {
-			// Inform the user that the saving operation is completed. 
+			// Inform the user that the saving operation is completed.
 			notification = new logging (new texts(`saving_done`).localized);
 		};
 		return (DATA_CHECK[`state`]);
@@ -323,7 +323,7 @@ class session {
 		return (DATA[`selected`]);
 	}
 
-	static async write(PATH, DATA) {		
+	static async write(PATH, DATA) {
 		/* Appropriately nest and merge the data.
 
 		@param {object} EXISTING the original data
@@ -333,7 +333,7 @@ class session {
 		*/
 		function nest(EXISTING, SUBPATH, VALUE) {
 			let DATABASE = EXISTING;
-			
+
 			// Get the current path.
 			let PATH = {};
 			PATH[`current`] = String(SUBPATH.shift()).trim();
@@ -348,7 +348,7 @@ class session {
 			// Return the value.
 			return DATABASE;
 		}
-		
+
 		/* Forcibly write the data to chrome database
 
 		@param {object} DATA the data
@@ -369,20 +369,20 @@ class session {
 		DATA[`inject`] = nest(DATA[`all`], [...TARGET], DATA[`write`]);
 
 		// Write!
-		store(DATA[`inject`]);		
+		store(DATA[`inject`]);
 	}
 }
 
-/* Temporarily hold data in browser session storage. 
+/* Temporarily hold data in browser session storage.
 
 @param {string} PATH the name
 @param {object} DATA the data to hold
 */
 export async function dump(PATH, DATA) {
-	
+
 }
 
-/* Compare a data against the stored data. Useful when comparing dictionaries. 
+/* Compare a data against the stored data. Useful when comparing dictionaries.
 
 @param {string} PATH the name
 @param {object} DATA the data to compare to
@@ -390,22 +390,22 @@ export async function dump(PATH, DATA) {
 export async function compare(PATH, DATA) {
 	/* The actual comparison of data. */
 	async function comparison(DATA_ONE, DATA_TWO) {
-		let RESULT = true; 
+		let RESULT = true;
 
-		// The first round of checking is on the data type. 
+		// The first round of checking is on the data type.
 		console.log(DATA_ONE, DATA_TWO);
 		RESULT = ((typeof DATA_ONE == typeof DATA_TWO) ? ((Array.isArray(DATA_TWO) == Array.isArray(DATA_ONE)) && !((DATA_ONE == null && DATA_TWO != null) || (DATA_ONE != null && DATA_TWO == null))) : false) ? ((typeof DATA_ONE).includes(`obj`) ? (await hash.digest(DATA_ONE, {"output": "Number"}) == await hash.digest(DATA_TWO, {"output": "Number"})) : DATA_ONE == DATA_TWO) : false;
 
 		return (RESULT);
 	}
 
-	
+
 	let COMPARISON = {};
 	COMPARISON[`test`] = (PATH) ? DATA : DATA[1];
 	COMPARISON[`against`] = (PATH) ? (await read((Array.isArray(PATH)) ? [...PATH] : PATH)) : DATA[0];
 	COMPARISON[`result`] = comparison(COMPARISON[`against`], COMPARISON[`test`]);
 
-	// Return the result. 
+	// Return the result.
 	return (COMPARISON[`result`]);
 }
 
@@ -426,13 +426,13 @@ export async function forget(preference, CLOUD = 0, override = false) {
 				if (!(Array.isArray(preference))) {
 					preference = String(preference).trim().split(",");
 				};
-				
+
 				let DATA = await read((preference.length > 1) ? [...preference.slice(0,-1)] : null, CLOUD);
-	
+
 				if (((((typeof (DATA)).includes(`obj`) && !Array.isArray(DATA) && DATA != null) ? Object.keys(DATA) : false) ? Object.keys(DATA).includes((preference.slice(-1))[0]) : false)) {
 					delete DATA[preference.slice(-1)];
 				};
-				
+
 				await write(preference.slice(0,-1), DATA, CLOUD);
 			};
 
