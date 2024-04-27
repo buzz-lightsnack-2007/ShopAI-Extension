@@ -23,7 +23,7 @@ class Popup {
 		})
 
 		// Set the popup path.
-		chrome.browserAction.setPopup(this.options);
+		chrome.action.setPopup(this.options);
 
 		// Set the popup state.
 		this[(this.enabled) ? `enable` : `disable`]();
@@ -39,7 +39,7 @@ class Popup {
 	show () {
 		if (this.enabled) {
 			// Set the options if in case it was previously overwritten.  
-			chrome.browserAction.setPopup(this.options);
+			chrome.action.setPopup(this.options);
 	
 			// Open the pop-up. 
 			chrome.action.openPopup();
@@ -72,7 +72,7 @@ class Popup {
 		options = Object.assign(this.options, options);
 
 		// Set the options. 
-		chrome.browserAction.setPopup(options);
+		chrome.action.setPopup(options);
 	}
 }
 

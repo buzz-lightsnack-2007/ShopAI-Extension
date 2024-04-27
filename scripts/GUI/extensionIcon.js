@@ -35,7 +35,7 @@ class BrowserIcon {
 			return (parameters);
 		}
 
-		return (chrome.browserAction[`get`.concat(detail)](((parameters) ? format(parameters) : null)));
+		return (chrome.action[`get`.concat(detail)](((parameters) ? format(parameters) : null)));
 	}
 };
 
