@@ -29,15 +29,12 @@ export default class Tabs {
 	@param {Object} filters The filters on tab search
 	@param {number} index the tab number to return
 	*/
-	static async query(filters, index) {
+	static query(filters, index) {
 		filters = ((typeof filters).includes(`obj`) && filters != null) ? filters : { active: true, currentWindow: true};
-		let TABS = {};
-
-		TABS.all = await chrome.tabs.query(filters);
-		TABS.result = (index != null)
-			? TABS.all[Math.abs(parseFloat(index))]
-			: TABS.all;
-
-		return (TABS.result);
+		return ((chrome.tabs.query(filters)).then((TABS_ALL) => {
+			return ((index != null)
+				? TABS_ALL[Math.abs(parseFloat(index))]
+				: TABS_ALL);
+		}));
 	}
 }
