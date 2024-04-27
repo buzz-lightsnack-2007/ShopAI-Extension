@@ -6,45 +6,39 @@ import check from "/scripts/external/check.js";
 import processor from "/scripts/external/processor.js";
 import logging from "/scripts/logging.js";
 import texts from "/scripts/mapping/read.js";
-
+import {read} from "/scripts/secretariat.js";
 
 export default class watchman {
-	/* Act on the page.
-
-	@param {dictionary} filters the filter to work with
-	@return {boolean} the state
+	/* Open relevant graphical user interfaces. 
 	*/
-	static act(matches) {
-		// Let user know that the website is supported, if ever they have opened the console. 
-		new logging((new texts(`message_external_supported`)).localized);
-		// Show loading screen while the load is incomplete. 
-		
-		
-		// Begin only when the page is fully loaded. 
-		window.addEventListener(`DOMContentLoaded`, (event) => {
-			// Begin processing. 
-			let PROC = new processor(matches);
-			
-			// Remove the loading screen. 
-			
+	static callGUI() {
+		// Open the side panel if set by default. 
+		read([`settings`,`behavior`,`autoOpen`]).then((result) => {
+			if (result) {chrome.runtime.sendMessage('sidebar_open')};
 		});
 	}
 
-	/* Set the program to standby utnil next load.
-		*/
-	static standby() {
-		// Set the icon to indicate that it's not active. 
+	/* Act on the page.
+
+	@param {dictionary} filter the filter to work with
+	*/
+	static process(filter) {
+		// Let user know that the website is supported, if ever they have opened the console. 
+		new logging((new texts(`message_external_supported`)).localized);
+
+		// Begin only when the page is fully loaded. 
+		window.addEventListener(`DOMContentLoaded`, (event) => {
+			// Begin processing. 
+			let PROC = new processor(filter);
+		});
 	}
 
 	static job() {
 		/* The main action. */
-
 		(check.platform()).then((RULES) => {
-			console.log(RULES);
-			if (RULES && Object.keys(RULES).length !== 0) {
-				watchman.act(RULES);
-			} else {
-				watchman.standby();
+			if (RULES && Object.keys(RULES).length > 0) {
+				watchman.process(RULES);
+				watchman.callGUI();
 			}
 		});
 	}
