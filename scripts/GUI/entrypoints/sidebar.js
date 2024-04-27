@@ -4,7 +4,7 @@ export default class ManagedSidebar {
 	static manage() {
 		chrome.runtime.onMessage.addListener(
 			function(request, sender, sendResponse) {
-				if (request.action.includes("sidebar_open")) {
+				if (request.action == "sidebar_open") {
 					ManagedSidebar.enable();
 				}
 			}
