@@ -1,6 +1,5 @@
 // Manage all entries. 
 
-import {read} from '../../secretariat.js';
 import Tabs from "/scripts/GUI/tabs.js";
 import MenuEntry from "./menu.js";
 import ManagedSidebar from "./sidebar.js";
@@ -9,9 +8,21 @@ import check from "/scripts/external/check.js";
 
 export default class EntryManager {
      constructor () {
+          // Initialize the entries. 
           this.instances = {};
           this.instances.menu = new MenuEntry();
+          
+          // Initialize the managed sidebar to be called. 
+          ManagedSidebar.manage();
+
+          // Add the action listeners.
+          this.#listen();
+     }
+
+     /* Add the action listeners when running this. */
+     #listen() {
           Tabs.addActionListener(`onActivated`, (data) => {this.onRefresh()});
+          Tabs.addActionListener(`onUpdated`, (data) => {this.onRefresh()});
      }
 
      async onRefresh() {
@@ -30,14 +41,6 @@ export default class EntryManager {
      enable () {
           this.instances.menu.enable();
           IconIndicator.enable();
-
-          // Open the side panel, if supported. 
-		read([`settings`,`behavior`,`autoOpen`]).then((result) => {
-			result = (result == null) ? false : result;
-			if (result) {
-				new ManagedSidebar();
-			}
-		});
      }
 
      /* 
