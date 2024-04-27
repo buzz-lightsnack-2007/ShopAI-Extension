@@ -1,9 +1,9 @@
 /* windowman
 Window and window content management */
 
-import texts from "../mapping/read.js";
+import texts from "../../mapping/read.js";
 import net from "/scripts/utils/net.js";
-import Window from "./window.js";
+import Window from "../window.js";
 
 export default class windowman {
 	static new(URL, height, width) {
@@ -390,7 +390,7 @@ export default class windowman {
 		
 		/* Enable the searching interface. */
 		async function search() {
-			const search_GUI_manager = (await import(chrome.runtime.getURL(`scripts/GUI/windowman.search.js`))).default;
+			const search_GUI_manager = (await import(chrome.runtime.getURL(`scripts/GUI/builder/windowman.search.js`))).default;
 			return (search_GUI_manager.Search());
 		};
 

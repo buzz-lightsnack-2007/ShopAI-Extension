@@ -2,7 +2,7 @@
 Construct an internal page. 
 */
 
-import windowman from "/scripts/GUI/windowman.js";
+import windowman from "/scripts/GUI/builder/windowman.js";
 
 export default class Page {
      constructor () {
