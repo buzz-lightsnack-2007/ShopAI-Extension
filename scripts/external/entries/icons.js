@@ -1,4 +1,4 @@
-import BrowserIcon from '/scripts/GUI/browser.icon.js';
+import BrowserIcon from '/scripts/GUI/extensionIcon.js';
 import Image from '/scripts/mapping/image.js';
 
 class IconIndicator {

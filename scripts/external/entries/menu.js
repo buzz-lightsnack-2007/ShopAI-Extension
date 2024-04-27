@@ -1,4 +1,4 @@
-import Menu from '/scripts/GUI/context_menus.js';
+import Menu from '/scripts/GUI/menus.js';
 import texts from "/scripts/mapping/read.js";
 import ManagedSidebar from "./sidebar.js";
 
