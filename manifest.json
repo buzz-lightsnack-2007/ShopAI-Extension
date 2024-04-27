@@ -5,11 +5,11 @@
 	"version": "0",
 
 	"minimum_chrome_version": "114",
-	"permissions": [ "tabs", "activeTab", "storage", "unlimitedStorage", "sidePanel", "contextMenus"],
+	"permissions": ["tabs", "storage", "unlimitedStorage", "contextMenus"],
 
 	"action": {
 		"default_icon": "media/icons/logo_no_tiny.png",
-		"default_title": "Click to open panel"
+		"default_popup": "pages/popup.htm"
 	},
 	"side_panel": {
 		"default_path": "pages/popup.htm"

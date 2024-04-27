@@ -3,8 +3,6 @@ import EntryManager from "/scripts/GUI/entrypoints/manager.js"
 
 export default class user_actions {
 	static init() {
-		chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch((error) => console.error(error));
-
 		user_actions.tabs();
 	};
 
