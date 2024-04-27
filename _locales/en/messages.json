@@ -177,6 +177,9 @@
 	"settings_update_duration_description": {
 		"message": "Update Check"
 	},
+	"settings_behavior_autoOpen": {
+		"message": "Automatically open the side panel"
+	},
 	"settings_filters_target": {
 		"message": "Injection Target"
 	},
