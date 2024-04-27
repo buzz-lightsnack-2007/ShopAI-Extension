@@ -1,6 +1,5 @@
 import Menu from '/scripts/GUI/menus.js';
 import texts from "/scripts/mapping/read.js";
-import ManagedSidebar from "./sidebar.js";
 
 export default class MenuEntry {
      /* Create all entries. */
@@ -16,12 +15,18 @@ export default class MenuEntry {
 		this.menu.show();
 	}
 
-	/* Disable. */
+	/*
+	Disable.
+	*/
 	disable () {
 		this.menu.remove();
 	}
 
+	/*
+	The onclick event
+	*/
 	static onclick() {
-		ManagedSidebar.enable();
+		// Send the message to open the side panel. 
+		chrome.runtime.sendMessage({"action": "popup_open"});
 	};
 }
