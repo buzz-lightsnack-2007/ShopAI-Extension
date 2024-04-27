@@ -27,14 +27,14 @@ export default class EntryManager {
           Window.addActionListener(`onFocusChanged`, (data) => {this.onRefresh()});
      }
 
-     async onRefresh() {
-          const DATA = await Tabs.query(null, 0)
-
-          if (DATA.url) {
-               (!!await check.platform(DATA.url))
-                    ? (this.enable())
-                    : (this.disable())
-          };
+     onRefresh() {
+          (Tabs.query(null, 0)).then((DATA) => {
+               if (DATA ? (DATA.url) : false) {
+                    (check.platform(DATA.url)).then((result) => {
+                         (result) ? (this.enable()) : (this.disable())
+                    });
+               };
+          })
      }
 
      /* 
