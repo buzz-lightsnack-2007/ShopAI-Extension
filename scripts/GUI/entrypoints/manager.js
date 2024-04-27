@@ -3,18 +3,17 @@
 import Tabs from "/scripts/GUI/tabs.js";
 import Window from "/scripts/GUI/window.js";
 import MenuEntry from "./menu.js";
-import ManagedSidebar from "./sidebar.js";
+import ManagedPopup from "./popup.js";
 import IconIndicator from "./icons.js";
 import check from "/scripts/external/check.js";
+import {read} from "/scripts/secretariat.js";
 
 export default class EntryManager {
      constructor () {
           // Initialize the entries. 
           this.instances = {};
+          this.instances.popup = new ManagedPopup();
           this.instances.menu = new MenuEntry();
-          
-          // Initialize the managed sidebar to be called. 
-          ManagedSidebar.manage();
 
           // Add the action listeners.
           this.#listen();
@@ -43,6 +42,7 @@ export default class EntryManager {
      enable () {
           this.instances.menu.enable();
           IconIndicator.enable();
+          this.instances.popup.enable();
      }
 
      /* 
@@ -50,6 +50,7 @@ export default class EntryManager {
      */
      disable () {
           this.instances.menu.disable();
+          this.instances.popup.disable();
           IconIndicator.disable();
      }
 }
