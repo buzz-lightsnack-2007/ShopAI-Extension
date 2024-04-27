@@ -15,7 +15,7 @@ export default class Menu {
 			this.ID = String((ID) ? ID : (Math.random() / Math.random() * 100));
 			this.title = (title) ? title : `Menu`;
 			this.contexts = (Array.isArray(contexts)) ? contexts : [`all`];
-			this.events = (event) ? event : {"onClicked" : function() {}};
+			this.events = (events) ? events : {"onClicked" : function() {}};
 			this.type = (((typeof type).includes(`str`) && type) ? type.trim() : false) ? type : `normal`;
 
 			if (icon) {
@@ -43,7 +43,7 @@ export default class Menu {
 			this.hidden = false;
 			this.ID = chrome.contextMenus.create(this.#options);
 	
-			if (((this.events && (typeof this.events).includes(`obj`) && !Array.isArray(this.events))) ? Object.keys(events) > 0 : false) {
+			if (((this.events && (typeof this.events).includes(`obj`) && !Array.isArray(this.events))) ? Object.keys(this.events) > 0 : false) {
 				(Object.keys(this.events)).forEach((EVENT) => {
 					chrome.contextMenus[EVENT].addListener((info, tab) => {
 						((info.menuItemId) ? info.menuItemId == this.ID : false)

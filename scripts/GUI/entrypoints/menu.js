@@ -6,7 +6,7 @@ export default class MenuEntry {
      /* Create all entries. */
 	constructor() {
 		// Add the context menu.
-		this.menu = new Menu({title: (new texts(`entry_contextMenu`)).localized, contexts: [`all`], event: {"onClicked": MenuEntry.onclick}, hidden: true});
+		this.menu = new Menu({title: (new texts(`entry_contextMenu`)).localized, contexts: [`all`], events: {"onClicked": MenuEntry.onclick}, hidden: true});
 	};
 
      /* 
@@ -22,6 +22,6 @@ export default class MenuEntry {
 	}
 
 	static onclick() {
-		new ManagedSidebar();
+		ManagedSidebar.enable();
 	};
 }
