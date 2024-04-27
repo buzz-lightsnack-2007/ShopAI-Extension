@@ -3,7 +3,7 @@
 export default class Menu {
 	#options;
 
-	constructor (ID, title, contexts, event, type, icon) {
+	constructor (ID, title, contexts, events, type, icon) {
 		if ((typeof ID).includes(`obj`) && !Array.isArray(ID)) {
 			// Create the ID if it doesn't exist. 
 			ID.ID = ((ID.hasOwnProperty(`ID`)) ? ID.ID : false) ? ID.ID : String(Math.random() / Math.random() * 100);
@@ -41,14 +41,15 @@ export default class Menu {
 	show() {
 		if (this.hidden || this.hidden == null) {
 			this.hidden = false;
-			this.ID = chrome.contextMenus.create(this.#options);
-	
-			if (((this.events && (typeof this.events).includes(`obj`) && !Array.isArray(this.events))) ? Object.keys(this.events) > 0 : false) {
+			this.ID = chrome.contextMenus.create(this.#options);		
+
+			console.log(Object.keys(this.events));
+			if (((this.events && (typeof this.events).includes(`obj`) && !Array.isArray(this.events))) ? Object.keys(this.events).length > 0 : false) {
 				(Object.keys(this.events)).forEach((EVENT) => {
 					chrome.contextMenus[EVENT].addListener((info, tab) => {
-						((info.menuItemId) ? info.menuItemId == this.ID : false)
-							? this.events[EVENT](info, tab)
-							: false;
+						if (info.menuItemId == this.ID) {
+							this.events[EVENT](info, tab)
+						}
 					})
 				});
 			};
