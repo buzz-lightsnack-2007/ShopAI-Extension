@@ -15,7 +15,7 @@ export default class Sidebar {
 		
 		// Grab the current tab ID. 
 		Tabs.query({ active: true, currentWindow: true }, 0).then((TAB) => {
-			chrome.sidePanel.open({windowId: TAB.id});
+			chrome.sidePanel.open({"tabId": TAB.id});
 			this.root = ((typeof PATH).includes(`str`)) ? PATH : chrome.sidePanel.getOptions(TAB.id).path;
 		});
 
