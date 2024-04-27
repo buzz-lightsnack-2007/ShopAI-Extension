@@ -1,6 +1,7 @@
 // Manage all entries. 
 
 import Tabs from "/scripts/GUI/tabs.js";
+import Window from "/scripts/GUI/window.js";
 import MenuEntry from "./menu.js";
 import ManagedSidebar from "./sidebar.js";
 import IconIndicator from "./icons.js";
@@ -23,6 +24,7 @@ export default class EntryManager {
      #listen() {
           Tabs.addActionListener(`onActivated`, (data) => {this.onRefresh()});
           Tabs.addActionListener(`onUpdated`, (data) => {this.onRefresh()});
+          Window.addActionListener(`onFocusChanged`, (data) => {this.onRefresh()});
      }
 
      async onRefresh() {
