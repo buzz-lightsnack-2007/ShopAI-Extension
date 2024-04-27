@@ -14,10 +14,9 @@ class BrowserIcon {
 			return ((parameters) ? Object.assign(option, parameters) : option);
 		}
 
-		(options.Icon) ? chrome.browserAction.setIcon(format({"path": path}, parameters)) : null;
-		(options.BadgeText) ? chrome.browserAction.setBadgeText(format({"text": String(options.text)}, parameters)) : null;
-		(options.BadgeBackgroundColor) ? chrome.browserAction.setBadgeBackgroundColor(format({"color": color}, parameters)) : null; 
-		(options.Popup) ? chrome.browserAction.setPopup(format({"popup": popup}, parameters)) : null;
+		(options.Icon) ? chrome.action.setIcon(format({"path": path}, parameters)) : null;
+		(options.BadgeText) ? chrome.action.setBadgeText(format({"text": String(options.text).trim()}, parameters)) : null;
+		(options.BadgeBackgroundColor) ? chrome.action.setBadgeBackgroundColor(format({"color": color}, parameters)) : null; 
 	};
 
 	/* 
