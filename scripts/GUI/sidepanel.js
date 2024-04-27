@@ -4,56 +4,66 @@
 import Tabs from './tabs.js';
 
 export default class Sidebar {
+	options; // The options for the sidebar
+	path; // The URL of the sidebar
+	focused; // The focused state of the sidebar. 
+	hidden; // The hidden state of the sidebar.
+
 	/* 
 	Create a new sidebar. 
 
 	@param {string} PATH the path of the file to be displayed by the sidebar
 	*/
 	constructor (PATH) {
-		// Set side panel's URL. 
-		chrome.sidePanel.setOptions(((typeof PATH).includes(`str`)) ? { path: PATH } : PATH);
-		
+		// Set the side panel options. 
+		this.options = ((typeof PATH).includes(`str`)) ? { "path": PATH } : PATH;
+	
+		// Determine whether the sidebar is open. 
+		this.hidden = (Object.keys(this.options).length > 0 ? (this.options.hidden != null) : false) ? this.options.hidden : false;
+		delete this.options.hidden;
+
 		// Grab the current tab ID. 
 		Tabs.query({ active: true, currentWindow: true }, 0).then((TAB) => {
-			chrome.sidePanel.open({"tabId": TAB.id});
-			this.root = ((typeof PATH).includes(`str`)) ? PATH : chrome.sidePanel.getOptions(TAB.id).path;
+			this.path = chrome.sidePanel.getOptions({"tabId": TAB.id}).path;
+			(!this.hidden) ? this.show(TAB.id) : this.hide();
 		});
-
-		chrome.runtime.onConnect.addListener((CONNECTION) => {
-			if ((CONNECTION.name).includes(`view=${this.root}`)) {
-				this.focus(TRUE);
-				CONNECTION.onDisconnect.addListener(async () => {
-					this.focus(FALSE);
-				});
-			}
-		});
-	}
-
-	/* 
-	Set the focused state of the side panel. 
-
-	@param {boolean} STATE the focused state
-	*/
-	focus(STATE) {
-		if (STATE != null && (typeof STATE).includes(`bool`)) {this.state = STATE;}
-		else {chrome.sidePanel.setOptions({ path: this.root });} 
 	}
 
 	// Close the side panel. 
-	async close() {
+	hide () {
 		// Make sure that the panel is still active. 
 		if (this.state) {
 			// First, disable it to close it. 
-			await chrome.sidePanel.setOptions({enabled: false});
-
-			// Then, re-enable it. 
-			chrome.sidePanel.setOptions({enabled: true});
+			chrome.sidePanel.setOptions({enabled: false});
 		};
 	};
 
-	// Set the options. 
-	// @param {object} options the options
-	async setOptions(options) {
-		await chrome.sidePanel.setOptions(options);
+	/* 
+	Open the side panel. 
+
+	@param {string} tab_ID the tab ID to open the side panel in
+	*/
+	show (tab_ID) {
+		// Set the options. Make sure that it is enabled. 
+		chrome.sidePanel.setOptions(Object.assign(this.options, {enabled: true}));
+
+		if (tab_ID) {chrome.sidePanel.open({"tabId": tab_ID});}
+		else {
+			Tabs.query({ active: true, currentWindow: true }, 0).then((TAB) => {
+				chrome.sidePanel.open({"tabId": TAB.id});
+			});
+		};
+	}
+
+	/* Set the options. 
+	
+	@param {object} options the options
+	*/
+	setOptions(options) {
+		// Merge the options. 
+		options = Object.assign(this.options, options);
+
+		// Set the options. 
+		chrome.sidePanel.setOptions(options);
 	}
 }
