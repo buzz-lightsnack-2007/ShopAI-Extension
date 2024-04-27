@@ -25,4 +25,17 @@ export default class Window {
      show() {
           this.window = window.open(this.url, this.name, this.options);
      };
+
+     /* Create an action listener. 
+
+     @param {string} event the event to listen for
+     @param {function} callback the callback function
+     */
+     static addActionListener(event, callback) {
+          // Correct possible syntax error on "on" prefix.
+          event = (!event.includes(`on`)) ? `on${event}` : event;
+
+          // Add the event. 
+          chrome.windows[event].addListener(callback);
+     }
 };
