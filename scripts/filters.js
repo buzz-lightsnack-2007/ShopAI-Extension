@@ -87,8 +87,8 @@ export default class filters {
 						// Only work when the filter is valid.
 						if (result) {
 							// Write the filter to storage.
-							await write(["filters", filter_URL], result, -1);
-							logging.log(texts.localized(`settings_filters_update_status_complete`,null,[filter_URL]));
+							await write(["filters", filter_URL], result, -1, {"silent": true});
+							new logging(texts.localized(`settings_filters_update_status_complete`,null,[filter_URL]));
                             
 							// Add the filter to the sync list.
 							if ((await read(["settings", `filters`])) ? !((Object.keys(await read(["settings", `filters`]))).includes(filter_URL)) : true) {
