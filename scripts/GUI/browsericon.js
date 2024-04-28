@@ -45,7 +45,7 @@ class BrowserIcon {
 	@param {function} callback the function to be run
 	*/
 	static addActionListener(event, callback) {
-		chrome.browserAction[event].addListener(callback); 
+		chrome.action[event].addListener(callback); 
 	};
 	
 	/*
@@ -55,7 +55,7 @@ class BrowserIcon {
 	@param {function} callback the function to be removed
 	*/
 	static removeActionListener(event, callback) {
-		chrome.browserAction[event].removeListener(callback); 
+		chrome.action[event].removeListener(callback); 
 	};
 	
 	/*
