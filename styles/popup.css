@@ -12,3 +12,7 @@
 #score::-webkit-progress-value {
 	background-color: #ffF;    
 }
+
+body[role="window"] {
+	width: 250pt;
+}
