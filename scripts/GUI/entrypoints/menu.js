@@ -2,13 +2,13 @@ import Menu from '/scripts/GUI/menus.js';
 import texts from "/scripts/mapping/read.js";
 
 export default class MenuEntry {
-     /* Create all entries. */
+	/* Create all entries. */
 	constructor() {
 		// Add the context menu.
-		this.menu = new Menu({title: (new texts(`entry_contextMenu`)).localized, contexts: [`all`], events: {"onClicked": MenuEntry.onclick}, hidden: true});
+		this.menu = new Menu({title: (new texts(`entry_contextMenu`)).localized, contexts: [`all`], events: {"onClicked": this.onclick}, hidden: true});
 	};
 
-     /* 
+    /* 
 	Enable the sidebar. 
 	*/
 	enable () {
@@ -25,8 +25,7 @@ export default class MenuEntry {
 	/*
 	The onclick event
 	*/
-	static onclick() {
-		// Send the message to open the side panel. 
-		chrome.runtime.sendMessage({"action": "popup_open"});
+	onclick() { 
+		this.menu.trigger();
 	};
 }
