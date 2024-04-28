@@ -3,8 +3,7 @@
 	"name": "__MSG_extension_name__",
 	"description": "__MSG_extension_description__",
 	"version": "0",
-
-	"minimum_chrome_version": "114",
+	
 	"permissions": ["tabs", "storage", "unlimitedStorage", "contextMenus"],
 
 	"action": {
