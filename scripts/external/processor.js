@@ -4,7 +4,7 @@ Process the information on the website and display it on screen.
 
 import scraper from "/scripts/external/scraper.js";
 import product from "/scripts/product.js";
-import injection from "/scripts/GUI/inject.js"
+import injection from "/scripts/GUI/entrypoints/inject.js"
 
 export default class processor {
 	#filter; 

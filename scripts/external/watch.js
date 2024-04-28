@@ -12,10 +12,7 @@ export default class watch {
 	/* Open relevant graphical user interfaces. 
 	*/
 	static callGUI() {
-		// Open the side panel if set by default. 
-		read([`settings`,`behavior`,`autoOpen`]).then((result) => {
-			if (result) {chrome.runtime.sendMessage('sidebar_open')};
-		});
+		
 	}
 
 	/* Act on the page.
@@ -29,6 +26,7 @@ export default class watch {
 		// Begin only when the page is fully loaded. 
 		window.addEventListener(`DOMContentLoaded`, (event) => {
 			// Begin processing. 
+			console.log(`processing...`);
 			let PROC = new processor(filter);
 		});
 	}
@@ -37,8 +35,8 @@ export default class watch {
 		/* The main action. */
 		(check.platform()).then((RULES) => {
 			if (RULES && Object.keys(RULES).length > 0) {
-				watchman.process(RULES);
-				watchman.callGUI();
+				watch.process(RULES);
+				watch.callGUI();
 			}
 		});
 	}
