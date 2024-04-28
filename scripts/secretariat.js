@@ -206,12 +206,15 @@ export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = 0, OPTION
 @param {string} PATH the preference name
 @param {object} DATA the new data to be written
 @param {int} CLOUD store in the cloud; otherwise set to automatic
+@param {object} OPTIONS the options
 */
-export async function write(PATH, DATA, CLOUD = -1) {
+export async function write(PATH, DATA, CLOUD = -1, OPTIONS = {}) {
 	let DATA_INJECTED = {};
 
 	// Inform the user that saving is in progress.
-	let notification = new logging ((new texts(`saving_current`)).localized, (new texts(`saving_current_message`)).localized, false);
+	if (((typeof OPTIONS).includes(`obj`) && OPTIONS != null) ? (!(!!OPTIONS[`silent`])) : true) {
+		new logging ((new texts(`saving_current`)).localized, (new texts(`saving_current_message`)).localized, false)
+	};
 
 	/* Forcibly write the data to chrome database
 
@@ -256,10 +259,12 @@ export async function write(PATH, DATA, CLOUD = -1) {
 		// Verify the presence of the data.
 		DATA_CHECK[`state`] = await compare(NAME, DATA);
 
-		if (!DATA_CHECK[`state`]) {logging.error((new texts(`error_msg_save_failed`)).localized, String(PATH), JSON.stringify(DATA))} else {
-			// Inform the user that the saving operation is completed.
-			notification = new logging (new texts(`saving_done`).localized);
-		};
+		(!DATA_CHECK[`state`])
+			? logging.error((new texts(`error_msg_save_failed`)).localized, String(PATH), JSON.stringify(DATA))
+			: ((((typeof OPTIONS).includes(`obj`) && OPTIONS != null) ? (!(!!OPTIONS[`silent`])) : true)
+				? new logging (new texts(`saving_done`).localized)
+				: false);
+		
 		return (DATA_CHECK[`state`]);
 	}
 
@@ -373,15 +378,6 @@ class session {
 	}
 }
 
-/* Temporarily hold data in browser session storage.
-
-@param {string} PATH the name
-@param {object} DATA the data to hold
-*/
-export async function dump(PATH, DATA) {
-
-}
-
 /* Compare a data against the stored data. Useful when comparing dictionaries.
 
 @param {string} PATH the name
@@ -393,7 +389,6 @@ export async function compare(PATH, DATA) {
 		let RESULT = true;
 
 		// The first round of checking is on the data type.
-		console.log(DATA_ONE, DATA_TWO);
 		RESULT = ((typeof DATA_ONE == typeof DATA_TWO) ? ((Array.isArray(DATA_TWO) == Array.isArray(DATA_ONE)) && !((DATA_ONE == null && DATA_TWO != null) || (DATA_ONE != null && DATA_TWO == null))) : false) ? ((typeof DATA_ONE).includes(`obj`) ? (await hash.digest(DATA_ONE, {"output": "Number"}) == await hash.digest(DATA_TWO, {"output": "Number"})) : DATA_ONE == DATA_TWO) : false;
 
 		return (RESULT);
