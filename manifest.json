@@ -6,10 +6,6 @@
 	
 	"permissions": ["tabs", "storage", "unlimitedStorage", "contextMenus"],
 
-	"action": {
-		"default_popup": "pages/popup.htm"
-	},
-
 	"background": {
 		"service_worker": "scripts/background/shopAI.js", "type": "module"
 	},
@@ -23,7 +19,7 @@
 	"web_accessible_resources": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
-			"resources": ["media/config.symbols.json", "scripts/*.js", "scripts/external/*.js", "scripts/mapping/*.js", "scripts/utils/*.js", "config/*.json"]
+			"resources": ["media/config.symbols.json", "scripts/*.js", "scripts/external/*.js", "scripts/mapping/*.js", "scripts/utils/*.js", "scripts/AI/*.js", "config/*.json"]
 		}
 	],
 
