@@ -37,6 +37,40 @@ class BrowserIcon {
 
 		return (chrome.action[`get`.concat(detail)](((parameters) ? format(parameters) : null)));
 	}
+	
+	/*
+	Add an action listener to the browser icon. 
+	
+	@param {string} event the event name
+	@param {function} callback the function to be run
+	*/
+	static addActionListener(event, callback) {
+		chrome.browserAction[event].addListener(callback); 
+	};
+	
+	/*
+	Remove an action listener to the browser icon. 
+	
+	@param {string} event the event name
+	@param {function} callback the function to be removed
+	*/
+	static removeActionListener(event, callback) {
+		chrome.browserAction[event].removeListener(callback); 
+	};
+	
+	/*
+	Enable the action event. 
+	*/
+	static enable() {
+		chrome.action.enable();
+	};
+	
+	/*
+	Disable the action event. 
+	*/
+	static disable() {
+		chrome.action.disable();
+	};
 };
 
 export {BrowserIcon as default};
