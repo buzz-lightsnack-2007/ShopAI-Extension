@@ -15,15 +15,22 @@ export default class Window {
 	Check this window's state. 
 	*/
 	#check() {
+		const deactivate = () => {
+			delete this.ID;
+			this.hidden = true;
+		};
+
 		// Determine if this window is still open. 
-		(this.ID)
-			? chrome.windows.get(this.ID, (window) => {
-				if (window == null) {
-					delete this.ID;
-					this.hidden = true;
-				}
-			})
-			: false;
+		try {
+			(this.ID)
+				? chrome.windows.get(this.ID, (window) => {
+					(window == null) ? deactivate() : false;
+				})
+				: false;
+		} catch(err) {
+			deactivate();
+		}
+		
 	}
 
 	/*
@@ -32,12 +39,12 @@ export default class Window {
 	show() {
 		this.#check();
 
-		(this.hidden || this.hidden == null || !(this.ID))
-			? chrome.windows.create(this.#options, (window) => {
+		if (!this.ID) {
+			chrome.windows.create(this.#options, (window) => {
 				this.hidden = false;
 				this.ID = window.id;
 			})
-			: false;
+		};
 	};
 
 
