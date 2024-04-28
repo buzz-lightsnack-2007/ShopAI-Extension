@@ -2,11 +2,10 @@
 
 import Tabs from "/scripts/GUI/tabs.js";
 import Window from "/scripts/GUI/window.js";
-import MenuEntry from "./menu.js";
+import MenuEntry from "./menuentry.js";
 import ManagedWindow from "./ManagedWindow.js";
-import IconIndicator from "./icons.js";
+import IconIndicator from "./iconindicator.js";
 import check from "/scripts/external/check.js";
-import {read} from "/scripts/secretariat.js";
 
 export default class EntryManager {
 	constructor () {
@@ -26,7 +25,7 @@ export default class EntryManager {
 		Window.addActionListener(`onFocusChanged`, (data) => {this.onRefresh()});
 		
 		// Add the context menu event. 
-		IconIndicator.set(this.instances.popup.show());
+		IconIndicator.set(this.instances.popup.show);
 		this.instances.menu.menu.onclick(() => {this.instances.popup.show()});
 	}
 
