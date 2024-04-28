@@ -43,7 +43,7 @@ export default class Menu {
 	show() {
 		if (this.hidden || this.hidden == null) {
 			this.hidden = false;
-			this.ID = chrome.contextMenus.create(this.#options);		
+			this.ID = chrome.contextMenus.create(this.#options);	
 
 			if (((this.events && (typeof this.events).includes(`obj`) && !Array.isArray(this.events))) ? Object.keys(this.events).length > 0 : false) {
 				(Object.keys(this.events)).forEach((EVENT) => {
@@ -69,6 +69,7 @@ export default class Menu {
 		}
 
 		this.#options = {
+			id: this.ID,
 			title: this.title,
 			contexts: this.contexts,
 			type: this.type
@@ -77,7 +78,7 @@ export default class Menu {
 
 		(!this.hidden) ? chrome.contextMenus.update(this.ID, this.#options) : false;
 
-		(((this.events && (typeof this.events).includes(`obj`) && !Array.isArray(this.events))) ? Object.keys(events) > 0 : false) 
+		(((this.events && (typeof this.events).includes(`obj`) && !Array.isArray(this.events))) ? Object.keys(this.events) > 0 : false) 
 			? (Object.keys(this.events)).forEach((EVENT) => {
 				chrome.contextMenus[EVENT].addListener((info, tab) => {
 					((info.menuItemId) ? info.menuItemId == this.ID : false)
