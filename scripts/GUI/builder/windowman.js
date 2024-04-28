@@ -195,24 +195,21 @@ export default class windowman {
 							let target = {};
 							target[`source`] = button.getAttribute(`href`);
 							target[`dimensions`] = {};
-							target[`dimensions`][`height`] = (button.getAttribute(`tab-height`)) ? button.getAttribute(`tab-height`)
+							target[`dimensions`][`height`] = (button.getAttribute(`tab-height`)) ? parseInt(button.getAttribute(`tab-height`))
 							: null;
-							target[`dimensions`][`width`] = (button.getAttribute(`tab-width`)) ? button.getAttribute(`tab-width`)
+							target[`dimensions`][`width`] = (button.getAttribute(`tab-width`)) ? parseInt(button.getAttribute(`tab-width`))
 							: null;
 							
 							const event = function () {
 								// Get the correct path.
 								target[`path`] = (
 									!target[`source`].includes(`://`)
-										? window.location.pathname
-												.split(`/`)
-												.slice(0, -1)
-												.join(`/`)
-												.concat(`/`)
+										? window.location.pathname.split(`/`).slice(0, -1).join(`/`).concat(`/`)
 										: ``
 								).concat(target[`source`]);
 
-								new Window(target[`path`], null, target[`dimensions`]);
+								// Open the window as a popup. 
+								new Window(target[`path`], Object.assign(target[`dimensions`], {"type": "popup"}));
 							};
 
 							button.addEventListener("click", event);
