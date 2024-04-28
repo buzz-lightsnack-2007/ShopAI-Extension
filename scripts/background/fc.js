@@ -67,7 +67,7 @@ export default class fc {
 				DURATION_PREFERENCES[`duration`] = 24;
 	
 				// Write it. 
-				await write([`settings`, `sync`], DURATION_PREFERENCES, -1);
+				await write([`settings`, `sync`], DURATION_PREFERENCES, -1, {"silent": true});
 			};
 	
 			if (((typeof DURATION_PREFERENCES).includes(`obj`) && DURATION_PREFERENCES != null && !Array.isArray(DURATION_PREFERENCES)) ? ((DURATION_PREFERENCES[`duration`]) ? (DURATION_PREFERENCES[`duration`] > 0) : false) : false) {
