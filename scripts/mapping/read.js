@@ -1,53 +1,64 @@
 /* read_universal
-  Read a file stored in the universal strings. */
-
-let messages = {};
-let message = "";
+	Read a file stored in the universal strings. */
 
 export default class texts {
-  /* This reads the message from its source. This is a fallback for the content scripts, who doesn't appear to read classes.
+	/* This reads the message from its source. This is a fallback for the content scripts, who doesn't appear to read classes.
 
-  @param {string} message the message name
-  @param {boolean} autofill fill in the message with the template name when not found
-  @param {list} params the parameters
-  @return {string} the message
-  */
+	@param {string} message the message name
+	@param {boolean} autofill fill in the message with the template name when not found
+	@param {list} params the parameters
+	@return {string} the message
+	*/
 
-  constructor(message_name, autofill = false, params = []) {
-    if (params && (params ? params.length > 0 : false)) {
-      this.localized = chrome.i18n.getMessage(message_name, params);
-    } else {
-      this.localized = chrome.i18n.getMessage(message_name);
-    }
+	constructor(message_name, autofill = false, params = []) {
+		[`localized`, `symbol`].forEach((SOURCE) => {
+			this[SOURCE] = texts[SOURCE](message_name, autofill, params);
+			
+			// When the message is not found, return the temporary text.
+			(!this[SOURCE] && !autofill) ? delete this[SOURCE] : false;
+		});
+		
+	}
 
-    // When the message is not found, return the temporary text.
-    if (!this.localized && autofill) {
-      this.localized = message_name;
-    } else if (!this.localized && !autofill) {
-      delete this.localized;
-    };
-  }
+	static localized(message_name, autofill = false, params = []) {
+		let MESSAGE = (params && (params ? params.length > 0 : false))
+			? chrome.i18n.getMessage(message_name, params)
+			: chrome.i18n.getMessage(message_name);
 
-  static localized(message_name, autofill = false, params = []) {
-    if (params && (params ? params.length > 0 : false)) {
-      message = chrome.i18n.getMessage(message_name, params);
-    } else {
-      message = chrome.i18n.getMessage(message_name);
-    }
+		// When the message is not found, return the temporary text.
+		(!MESSAGE && autofill) 
+			? MESSAGE = message_name
+			: false;
 
-    // When the message is not found, return the temporary text.
-    if (!message && autofill) {
-      message = message_name;
-    }
-
-    return message;
-  }
+		return (MESSAGE);
+	}
+	
+	/*
+	Look for a symbol. 
+	
+	@param {string} message_name the symbol name
+	@param {bool} autofill use the message name if the message is not found
+	@param {object} params the parameters
+	*/
+	static symbol(message_name, autofill = false, params = []) {
+		const CONFIG = chrome.runtime.getURL("media/config.symbols.json");
+		return (fetch(CONFIG)
+			.then((response) => response.json())
+			.then((jsonData) => {
+				let SYMBOL = (autofill) ? message_name : null;
+				
+				(jsonData[message_name])
+					? SYMBOL = jsonData[message_name][`symbol`]
+					: false;
+				
+				return (SYMBOL);
+			})
+			.catch((error) => {
+				console.error(error);
+			}));
+	};
 }
 
 export function read(message_name, autofill, params) {
-  let message;
-
-  message = texts.localized(message_name, autofill, params);
-
-  return message;
+	return (texts.localized(message_name, autofill, params));
 }
