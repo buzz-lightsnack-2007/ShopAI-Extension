@@ -21,11 +21,4 @@ export default class MenuEntry {
 	disable () {
 		this.menu.remove();
 	}
-
-	/*
-	The onclick event
-	*/
-	onclick() { 
-		this.menu.trigger();
-	};
 }
