@@ -92,7 +92,7 @@ export default class filters {
                             
 							// Add the filter to the sync list.
 							if ((await read(["settings", `filters`])) ? !((Object.keys(await read(["settings", `filters`]))).includes(filter_URL)) : true) {
-								write(["settings", `filters`, filter_URL], true, 1);
+								write(["settings", `filters`, filter_URL], true, 1, {"silent": true});
 							}
 						}
 					})
