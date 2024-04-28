@@ -26,7 +26,6 @@ export default class watch {
 		// Begin only when the page is fully loaded. 
 		window.addEventListener(`DOMContentLoaded`, (event) => {
 			// Begin processing. 
-			console.log(`processing...`);
 			let PROC = new processor(filter);
 		});
 	}
