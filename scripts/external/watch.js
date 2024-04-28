@@ -8,7 +8,7 @@ import logging from "/scripts/logging.js";
 import texts from "/scripts/mapping/read.js";
 import {read} from "/scripts/secretariat.js";
 
-export default class watchman {
+export default class watch {
 	/* Open relevant graphical user interfaces. 
 	*/
 	static callGUI() {
@@ -33,7 +33,7 @@ export default class watchman {
 		});
 	}
 
-	static job() {
+	static main() {
 		/* The main action. */
 		(check.platform()).then((RULES) => {
 			if (RULES && Object.keys(RULES).length > 0) {

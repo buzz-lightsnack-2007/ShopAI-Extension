@@ -8,11 +8,7 @@
 	"permissions": ["tabs", "storage", "unlimitedStorage", "contextMenus"],
 
 	"action": {
-		"default_icon": "media/icons/logo_no_tiny.png",
 		"default_popup": "pages/popup.htm"
-	},
-	"side_panel": {
-		"default_path": "pages/popup.htm"
 	},
 
 	"background": {
@@ -22,7 +18,7 @@
 	"content_scripts": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
-			"js": ["scripts/external/content.js"]
+			"js": ["scripts/external/background.js"]
 		}
 	],
 	"web_accessible_resources": [
