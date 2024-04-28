@@ -9,7 +9,7 @@
 	"background": {
 		"service_worker": "scripts/background/shopAI.js", "type": "module"
 	},
-
+	"action": {},
 	"content_scripts": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
