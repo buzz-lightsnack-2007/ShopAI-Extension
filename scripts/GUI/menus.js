@@ -1,4 +1,6 @@
-/* context_menus.js */
+/* context_menus.js
+Context menu management
+*/
 
 export default class Menu {
 	#options;
@@ -43,7 +45,6 @@ export default class Menu {
 			this.hidden = false;
 			this.ID = chrome.contextMenus.create(this.#options);		
 
-			console.log(Object.keys(this.events));
 			if (((this.events && (typeof this.events).includes(`obj`) && !Array.isArray(this.events))) ? Object.keys(this.events).length > 0 : false) {
 				(Object.keys(this.events)).forEach((EVENT) => {
 					chrome.contextMenus[EVENT].addListener((info, tab) => {
@@ -87,9 +88,24 @@ export default class Menu {
 			: false;
 	}
 
-	/* Run a new function when triggered. */
+	/*
+	Run a new function when triggered.
+	
+	@param {function} callback the function to run
+	*/
 	onclick(callback) {
-		this.event = {"onClicked": callback};
-		this.update();
+		this.addActionListener("onClicked", callback);
 	}
+	
+	/*
+	Run an event following an action. 
+	
+	@param {string} event the event
+	@param {function} callback the function to run
+	*/
+	addActionListener(event, callback) {
+		this.events = (this.events == null) ? {} : this.events;
+		this.events[event] = callback;
+		this.update();
+	};
 }
