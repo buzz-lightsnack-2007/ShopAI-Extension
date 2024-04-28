@@ -2,7 +2,7 @@ import Window from "/scripts/GUI/window.js";
 
 export default class ManagedWindow {
 	constructor () {
-		this.instance = new Window("/pages/popup.htm", {"width": "120", "height": "200", "type": "popup", "hidden": true});
+		this.instance = new Window("/pages/popup.htm", {"width": "500", "height": "500", "type": "popup", "hidden": true});
 	}
 	
 	/*
