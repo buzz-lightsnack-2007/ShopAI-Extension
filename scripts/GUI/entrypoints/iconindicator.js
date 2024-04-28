@@ -1,4 +1,4 @@
-import BrowserIcon from '/scripts/GUI/extensionIcon.js';
+import BrowserIcon from '/scripts/GUI/browsericon.js';
 import Image from '/scripts/mapping/image.js';
 import Tabs from '/scripts/GUI/tabs.js';
 import texts from "/scripts/mapping/read.js";
@@ -39,7 +39,7 @@ class IconIndicator {
 	@param {function} callback the function to run.
 	*/
 	static set(callback) {
-		BrowserIcon.addEventListener("onClicked", callback);
+		BrowserIcon.addActionListener("onClicked", callback);
 	}
 }
 
