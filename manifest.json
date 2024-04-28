@@ -23,7 +23,7 @@
 	"web_accessible_resources": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
-			"resources": ["scripts/*.js", "scripts/external/*.js", "scripts/mapping/*.js", "scripts/utils/*.js", "config/*.json"]
+			"resources": ["media/config.symbols.json", "scripts/*.js", "scripts/external/*.js", "scripts/mapping/*.js", "scripts/utils/*.js", "config/*.json"]
 		}
 	],
 
