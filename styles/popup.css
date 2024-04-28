@@ -3,7 +3,6 @@
 }
 
 
-
 #score {
 	background-color: #88888888;
 	height: 2px;
@@ -11,8 +10,4 @@
 
 #score::-webkit-progress-value {
 	background-color: #ffF;    
-}
-
-body[role="window"] {
-	width: 250pt;
 }
