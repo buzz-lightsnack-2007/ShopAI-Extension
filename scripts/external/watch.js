@@ -24,19 +24,28 @@ export default class watch {
 		new logging((new texts(`message_external_supported`)).localized);
 
 		// Begin only when the page is fully loaded. 
-		window.addEventListener(`DOMContentLoaded`, (event) => {
-			// Begin processing. 
-			let PROC = new processor(filter);
-		});
+		document.onreadystatechange = () => {
+			if (document.readyState == 'complete') {
+				let PROC = new processor(filter);
+			}
+		};
 	}
 
 	static main() {
-		/* The main action. */
-		(check.platform()).then((RULES) => {
-			if (RULES && Object.keys(RULES).length > 0) {
-				watch.process(RULES);
+		(check.platform()).then((FILTER_RESULT) => {
+			if (FILTER_RESULT && Object.keys(FILTER_RESULT).length > 0) {
+				watch.process(FILTER_RESULT);
 				watch.callGUI();
+				
+				// Create a listener for messages indicating re-processing. 
+				chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+					// Get the tabId where this content script is running. 
+					
+
+					(((typeof message).includes(`obj`) && !Array.isArray(message)) ? message[`refresh`] : false) ? watch.process(FILTER_RESULT) : false;
+				});
 			}
 		});
+
 	}
 }
