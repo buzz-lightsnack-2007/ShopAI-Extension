@@ -3,7 +3,9 @@ Shop wisely with AI!
 */
 
 import fc from './fc.js';
-import user_actions from "../actions.js";
+import EntryManager from "/scripts/GUI/entrypoints/manager.js"
+import link from "../link.js";
 
 fc.run();
-user_actions.init();
+new EntryManager();
+new link();
