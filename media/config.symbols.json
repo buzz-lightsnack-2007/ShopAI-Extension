@@ -1,0 +1,20 @@
+{
+	"extensionIcon_product_bad": {
+		"symbol": "👎"
+	},
+	"extensionIcon_product_OK": {
+		"symbol": "🆗"
+	},
+	"extensionIcon_product_good": {
+		"symbol": "👍"
+	},
+	"extensionIcon_product_trusted": {
+		"symbol": "★"
+	},
+	"extensionIcon_website_unsupported": {
+		"symbol": "✕"
+	},
+	"extensionIcon_website_loading": {
+		"symbol": "..."
+	}
+}
