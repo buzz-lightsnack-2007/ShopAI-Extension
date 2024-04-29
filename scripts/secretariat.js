@@ -376,6 +376,32 @@ class session {
 		// Write!
 		store(DATA[`inject`]);
 	}
+
+	/* Compare a data against the stored data. Useful when comparing dictionaries.
+
+	@param {string} PATH the name
+	@param {object} DATA the data to compare to
+	*/
+	static async compare(PATH, DATA) {
+		/* The actual comparison of data. */
+		async function comparison(DATA_ONE, DATA_TWO) {
+			let RESULT = true;
+
+			// The first round of checking is on the data type.
+			RESULT = ((typeof DATA_ONE == typeof DATA_TWO) ? ((Array.isArray(DATA_TWO) == Array.isArray(DATA_ONE)) && !((DATA_ONE == null && DATA_TWO != null) || (DATA_ONE != null && DATA_TWO == null))) : false) ? ((typeof DATA_ONE).includes(`obj`) ? (await hash.digest(DATA_ONE, {"output": "Number"}) == await hash.digest(DATA_TWO, {"output": "Number"})) : DATA_ONE == DATA_TWO) : false;
+
+			return (RESULT);
+		}
+
+
+		let COMPARISON = {};
+		COMPARISON[`test`] = (PATH) ? DATA : DATA[1];
+		COMPARISON[`against`] = (PATH) ? (await session.read((Array.isArray(PATH)) ? [...PATH] : PATH)) : DATA[0];
+		COMPARISON[`result`] = comparison(COMPARISON[`against`], COMPARISON[`test`]);
+
+		// Return the result.
+		return (COMPARISON[`result`]);
+	}
 }
 
 /* Compare a data against the stored data. Useful when comparing dictionaries.
