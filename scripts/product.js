@@ -40,22 +40,30 @@ export default class product {
 	/* Attach the product data to the storage. */
 	async attach() {
 		// Add the data digest.
-		this.#snip = (await hash.digest(this.details, {"output": "Number"}));
+		this.#snip = (await hash.digest(this.details, {"output": "Array"}));
 
 		// Add the status about this data.
 		this.status = {};
-		this.status[`update`] = !secretariat.compare([`sites`, this.URL, `snip`], this.#snip);
+		this.status[`update`] = !(await (secretariat.compare([`sites`, this.URL, `snip`], this.#snip)));
 	}
 
 	async save() {
 		// Stop when not attached (basically, not entirely initialized).
 		if (!this.#snip) {throw new ReferenceError((new texts(`error_msg_notattached`)).localized)};
 
-		// Save the data to the storage.
-		await secretariat.write([`sites`, this.URL, `snip`], this.#snip, 1);
+		// Write the data to the session storage, indicating that it is the last edited. 
+		await secretariat.session.write([`sites`, this.URL, `snip`], this.#snip, 1);
+		await secretariat.session.write([`last`], this.URL);
 
-		// Write the analysis data to the storage.
-		(this[`analysis`]) ? secretariat.write([`sites`, this.URL, `analysis`], this.analysis, 1): false;
+		// There is only a need to save the data if an update is needed. 
+		if (this.status[`update`]) {
+			// Save the data to the storage.
+			await secretariat.write([`sites`, this.URL, `snip`], this.#snip, 1);
+	
+			// Write the analysis data to the storage.
+			(this[`analysis`]) ? secretariat.write([`sites`, this.URL, `analysis`], this.analysis, 1): false;
+		}
+
 	};
 
 	async analyze() {
