@@ -363,10 +363,10 @@ class session {
 		}
 
 		DATA = {"write": DATA};
-		DATA[`all`] = await session.read(null, CLOUD);
-		if ((DATA[`all`] != null && (typeof DATA[`all`]).includes(`obj`)) ? Object.keys(DATA[`all`]).length <= 0 : true) {
-			DATA[`all`] = {};
-		};
+		DATA[`all`] = await session.read(null);
+		((DATA[`all`] != null && (typeof DATA[`all`]).includes(`obj`)) ? Object.keys(DATA[`all`]).length <= 0 : true)
+			? DATA[`all`] = {}
+			: false;
 
 		let TARGET = (!(typeof PATH).includes(`obj`)) ? String(PATH).trim().split(",") : PATH;
 
