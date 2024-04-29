@@ -3,7 +3,9 @@ Shop wisely with AI!
 */
 
 import fc from './fc.js';
-import user_actions from "../actions.js";
+import BackgroundCheck from "./background.check.js";
+import BackgroundMessaging from "./background.messaging.js";
 
 fc.run();
-user_actions.init();
+BackgroundCheck.init();
+new BackgroundMessaging();
