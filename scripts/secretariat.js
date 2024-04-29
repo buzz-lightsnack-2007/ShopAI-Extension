@@ -377,10 +377,11 @@ class session {
 		store(DATA[`inject`]);
 	}
 
-	/* Compare a data against the stored data. Useful when comparing dictionaries.
+	/* Compare a data against the stored data. Useful when comparing dictionaries. 
 
 	@param {string} PATH the name
 	@param {object} DATA the data to compare to
+	@return {boolean} the result: true is when the data is the same, false otherwise
 	*/
 	static async compare(PATH, DATA) {
 		/* The actual comparison of data. */
@@ -404,13 +405,21 @@ class session {
 	}
 }
 
-/* Compare a data against the stored data. Useful when comparing dictionaries.
+/*
+Compare a data against the stored data. Useful when comparing dictionaries.
 
 @param {string} PATH the name
 @param {object} DATA the data to compare to
+@return {boolean} the result: true is when the data is the same, false otherwise
 */
 export async function compare(PATH, DATA) {
-	/* The actual comparison of data. */
+	/*
+	Compare the data.
+
+	@param {object} DATA_ONE the first data
+	@param {object} DATA_TWO the second data
+	@return {boolean} the result
+	*/
 	async function comparison(DATA_ONE, DATA_TWO) {
 		let RESULT = true;
 
