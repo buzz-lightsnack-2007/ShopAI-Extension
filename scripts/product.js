@@ -2,7 +2,7 @@
 Ask product information to Google Gemini. */
 
 // Import the storage management module.
-const secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
+import {global, session, compare} from "/scripts/secretariat.js";
 import hash from "/scripts/utils/hash.js";
 import texts from "/scripts/mapping/read.js";
 
@@ -44,7 +44,7 @@ export default class product {
 
 		// Add the status about this data.
 		this.status = {};
-		this.status[`update`] = !(await (secretariat.compare([`sites`, this.URL, `snip`], this.#snip)));
+		this.status[`update`] = !(await (compare([`sites`, this.URL, `snip`], this.#snip)));
 	}
 
 	async save() {
@@ -52,16 +52,16 @@ export default class product {
 		if (!this.#snip) {throw new ReferenceError((new texts(`error_msg_notattached`)).localized)};
 
 		// Write the data to the session storage, indicating that it is the last edited. 
-		await secretariat.session.write([`sites`, this.URL, `snip`], this.#snip, 1);
-		await secretariat.session.write([`last`], this.URL);
+		await session.write([`sites`, this.URL, `snip`], this.#snip, 1);
+		await session.write([`last`], this.URL);
 
 		// There is only a need to save the data if an update is needed. 
 		if (this.status[`update`]) {
 			// Save the data to the storage.
-			await secretariat.write([`sites`, this.URL, `snip`], this.#snip, 1);
+			await global.write([`sites`, this.URL, `snip`], this.#snip, 1);
 	
 			// Write the analysis data to the storage.
-			(this[`analysis`]) ? secretariat.write([`sites`, this.URL, `analysis`], this.analysis, 1): false;
+			(this[`analysis`]) ? global.write([`sites`, this.URL, `analysis`], this.analysis, 1): false;
 		}
 
 	};
@@ -69,11 +69,11 @@ export default class product {
 	async analyze() {
 		// Stop when the data is already analyzed.
 		if (this[`analysis`]) {return(this.analysis)}
-		else if (this.status ? (!this.status.update) : false) {this.analysis = await secretariat.read([`sites`, this.URL, `analysis`]);}
+		else if (this.status ? (!this.status.update) : false) {this.analysis = await global.read([`sites`, this.URL, `analysis`]);}
 		if ((this.analysis && this.analysis != null && this.analysis != undefined) ? !((typeof this.analysis).includes(`obj`) && !Array.isArray(this.analysis)) : true) {
 			// Analyze the data.
 			const gemini = (await import(chrome.runtime.getURL("scripts/AI/gemini.js"))).default;
-			let analyzer = new gemini (await secretariat.read([`settings`,`analysis`,`api`,`key`]), `gemini-pro`);
+			let analyzer = new gemini (await global.read([`settings`,`analysis`,`api`,`key`]), `gemini-pro`);
 
 			// Analyze the data.
 			let PROMPT = [];
