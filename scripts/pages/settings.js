@@ -5,7 +5,7 @@
 // Import modules.
 //import { windowman } from "../windowman.js";
 
-import {read, forget} from "/scripts/secretariat.js";
+import {global} from "/scripts/secretariat.js";
 import Page from "/scripts/pages/page.js";
 import texts from "/scripts/mapping/read.js";
 
@@ -90,8 +90,8 @@ class Page_Settings extends Page {
 			document
 				.querySelector(`[data-action="storage,clear"]`)
 				.addEventListener(`click`, async () => {
-					await forget(`sites`);
-					console.log(await read(null, 1), await read(null, -1));
+					await global.forget(`sites`);
+					console.log(await global.read(null, 1), await global.read(null, -1));
 				});
 		}
 
