@@ -1,5 +1,5 @@
 import Sidebar from '../GUI/sidebar.js';
-import {read, write} from '../secretariat.js';
+import {global} from '../secretariat.js';
 
 class sidebar_handler extends Page {
      constructor () {
@@ -7,6 +7,6 @@ class sidebar_handler extends Page {
      }
 
      async activate () {
-          await read(`settings,behavior,autoRun`)
+          await global.read(`settings,behavior,autoRun`)
      }
 }
