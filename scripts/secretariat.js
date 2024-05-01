@@ -30,9 +30,10 @@ class global {
 		Find a data given its path. 
 
 		@param {object} DATA_ALL the data
-		@param {object} DATA_PATH the path of the data
+		@param {object} path the path of the data
 		*/
-		function find(DATA_ALL, DATA_PATH) {
+		function find(DATA_ALL, path) {
+			let DATA_PATH = path;
 			let DATA = DATA_ALL;
 
 			// Pull the data out.
@@ -188,11 +189,6 @@ class global {
 	static async write(path, data, CLOUD = -1, OPTIONS = {}) {
 		let DATA_INJECTED = {};
 
-		// Inform the user that saving is in progress.
-		(((typeof OPTIONS).includes(`obj`) && OPTIONS != null) ? (!(!!OPTIONS[`silent`])) : true) 
-			? new logging ((new texts(`saving_current`)).localized, (new texts(`saving_current_message`)).localized, false)
-			: false;
-
 		/* Appropriately nest and merge the data.
 
 		@param {object} EXISTING the original data
@@ -201,24 +197,28 @@ class global {
 		@param {boolean} STRICT determines whether data is to be overridden or merged
 		@return {object} the updated data
 		*/
-		function nest(EXISTING, SUBPATH, VALUE, STRICT = false) {
-			let DATABASE = EXISTING;
-
+		function nest(existing, path, value, strict = false) {
+			let DATABASE = existing, SUBPATH = path;
+			
 			// Get the current path.
 			let PATH = {};
-			PATH[`current`] = String(SUBPATH.shift()).trim();
+			PATH[`current`] = (SUBPATH.length) ? String(SUBPATH.shift()).trim() : null;
 			PATH[`target`] = SUBPATH;
 
-			if (PATH[`target`].length > 0) {
+			if (PATH[`target`].length > 0 && PATH[`current`] != undefined && PATH[`current`] != null) {
 				DATABASE[PATH[`current`]] = (DATABASE[PATH[`current`]] == null)
 					? {}
 					: DATABASE[PATH[`current`]];
-				DATABASE[PATH[`current`]] = nest(DATABASE[PATH[`current`]], PATH[`target`], VALUE, STRICT);
-			} else {
+				DATABASE[PATH[`current`]] = nest(DATABASE[PATH[`current`]], PATH[`target`], value, strict);
+			} else if (PATH[`current`]  != undefined && PATH[`current`] != null) {
 				// If not strict and the data selected is a dictionary, then merge them. 
-				DATABASE[PATH[`current`]] = (((DATABASE[PATH[`current`]]) ? ((typeof DATABASE[PATH[`current`]]).includes(`obj`) && !Array.isArray(DATABASE[PATH[`current`]])) : false) && !STRICT)
-					? Object.assign(DATABASE[PATH[`current`]], VALUE)
-					: VALUE;
+				DATABASE[PATH[`current`]] = (((DATABASE[PATH[`current`]]) ? ((typeof DATABASE[PATH[`current`]]).includes(`obj`) && !Array.isArray(DATABASE[PATH[`current`]])) : false) && !strict)
+					? Object.assign(DATABASE[PATH[`current`]], value)
+					: value;
+			} else {
+				DATABASE = (DATABASE == null || DATABASE == undefined) ? {} : DATABASE;
+
+				DATABASE = (((typeof DATABASE).includes(`obj`) && !Array.isArray(DATABASE) && !strict) ? Object.assign(DATABASE, value) : value);
 			}
 
 			// Return the value.
@@ -242,19 +242,24 @@ class global {
 
 		let DATA_ALL;
 
+		// Inform the user that saving is in progress.
+		(((typeof OPTIONS).includes(`obj`) && OPTIONS != null) ? (!(!!OPTIONS[`silent`])) : true) 
+			? new logging ((new texts(`saving_current`)).localized, (new texts(`saving_current_message`)).localized, false)
+			: false;
+
 		// Get all data and set a blank value if it doesn't exist yet. 
 		DATA_ALL = await global.read(null, CLOUD);
-		DATA_ALL = ((DATA_ALL != null && (typeof DATA_ALL).includes(`obj`)) ? Object.keys(DATA_ALL).length <= 0 : true) 
+		DATA_ALL = ((DATA_ALL != null && DATA_ALL != undefined && (typeof DATA_ALL).includes(`obj`)) ? Object.keys(DATA_ALL).length <= 0 : true) 
 			? {}
 			: DATA_ALL;
 
 		// Set the data name. 
-		let DATA_NAME = (!(Array.isArray(path)) && path)
+		let DATA_NAME = (!(Array.isArray(path)) && path && path != undefined)
 			? String(path).trim().split(",")
-			: path;
+			: ((path != null) ? path : []) // Ensure that path isn't empty. 
 
 		// Merge!
-		DATA_INJECTED = nest(DATA_ALL, [...DATA_NAME], data, (OPTIONS[`strict`] != null) ? OPTIONS[`strict`] : false);
+		DATA_INJECTED = nest(DATA_ALL, (DATA_NAME != null) ? [...DATA_NAME] : DATA_NAME, data, (OPTIONS[`strict`] != null) ? OPTIONS[`strict`] : false);
 
 		// If cloud is not selected, get where the data is already existent. 
 		(CLOUD == 0 || CLOUD == null)
@@ -267,14 +272,14 @@ class global {
 	}
 
 	/*
-	Dangerous: Resets a particular data. 
+	Removes a particular data. 
 
 	@param {string} preference the preference name to delete
 	@param {string} subpreference the subpreference name to delete
 	@param {int} CLOUD the storage of the data
 	@return {boolean} the user's confirmation
 	*/
-	static async forget(preference, CLOUD = 0, override = false) {
+	static async forget(preference, cloud = 0, override = false) {
 		// Confirm the action.
 		let CONFIRMATION = override ? override : await logging.confirm();
 
@@ -286,28 +291,71 @@ class global {
 				@param {string} name the name of the data
 				@param {int} cloud the usage of cloud storage
 				*/
-				async function erase(name, cloud) {
-					let DATA_NAME = (!(Array.isArray(name))) ? String(name).trim().split(",") : name;
+				async function erase(path, cloud) {
+					/*
+					Securely erase by replacing any existing value with null.
 
-					console.log(DATA_NAME, cloud, [...DATA_NAME.slice(0,-1)]);
+					@param {string} name the name of the data
+					@param {int} cloud the usage of cloud storage
+					*/
+					function secure(name, cloud) {
+						let PATH = name; 
+						// Check if the value already exists. 
+						return(global.read([...PATH], cloud).then(async (DATA) => {
+							return((DATA != null)
+								// Then erase the data. 
+								? await global.write(PATH, null, cloud, {"strict": true})
+								: true);
+						}));
+					};
+					
+					/*
+					Remove the key from existence. 
 
-					let DATA = await global.read((DATA_NAME.length > 1) ? [...DATA_NAME.slice(0,-1)] : null, cloud);
+					@param {string} name the name of the data
+					@param {int} cloud the usage of cloud storage
+					*/
+					async function eliminate(name, cloud) {
+						// Store the variable seperately to avoid overwriting. 
+						let PATH = name;
 
-					console.log(DATA, DATA_NAME, cloud, [...DATA_NAME.slice(0,-1)]);
+						// There are two methods to erase the data. 
+						// The first only occurs when the root is selected and the path is just a direct descendant. 
+						if (PATH.length == 1) {
+							chrome.storage[(cloud > 0) ? `sync` : `local`].remove(PATH[0]);
+						} else {
+							(global.read(((PATH.length > 1) ? [...PATH.slice(0,-1)] : null), cloud)).then((DATA) => {
+								// Move the existing data into a new object to help in identifying.
+								DATA = {"all": DATA};
 
-					(((((typeof (DATA)).includes(`obj`) && !Array.isArray(DATA) && DATA != null) ? Object.keys(DATA) : false) ? Object.keys(DATA).includes(DATA_NAME[DATA_NAME.length - 1]) : false))
-						? delete DATA[DATA_NAME[DATA_NAME.length - 1]]
-						: false;
+								if ((((typeof (DATA[`all`])).includes(`obj`) && !Array.isArray(DATA[`all`])) ? Object.keys(DATA[`all`]) : false) ? Object.hasOwn(DATA[`all`], PATH[PATH.length - 1]) : false) {
+									DATA[`modified`] = DATA[`all`];
+							
+									delete DATA[`modified`][PATH[PATH.length - 1]];
 
-					await global.write(DATA_NAME.slice(0,-1), DATA, CLOUD, {"strict": true});
+									return(global.write(((PATH && Array.isArray(PATH)) ? (PATH.slice(0,-1)) : null), DATA[`modified`], cloud, {"strict": true}));
+								}
+							});
+						}
+
+						
+					};
+
+					// Set the data path. 
+					let DATA_NAME = (!(Array.isArray(path)) && path && path != undefined)
+						? String(path).trim().split(",")
+						: ((path != null) ? path : []) // Ensure that path isn't empty. 
+
+					await secure([...DATA_NAME], cloud);
+					eliminate([...DATA_NAME], cloud);
 				}
 
-				(CLOUD >= 0) ? await erase(preference, 1) : false;
-				(CLOUD <= 0) ? await erase(preference, -1) : false;
+				(cloud >= 0) ? erase(preference, 1) : false;
+				(cloud <= 0) ? erase(preference, -1) : false;
 			} else {
 				// Clear the data storage.
-				(CLOUD >= 0) ? chrome.storage.sync.clear() : false;
-				(CLOUD <= 0) ? chrome.storage.local.clear() : false;
+				(cloud >= 0) ? chrome.storage.sync.clear() : false;
+				(cloud <= 0) ? chrome.storage.local.clear() : false;
 			}
 		}
 
