@@ -86,6 +86,9 @@
 	"term_refresh": {
 		"message": "Refresh"
 	},
+	"page_opening": {
+		"message": "Opening..."
+	},
 
 	"settings_general_showApplicable": {
 		"message": "Show product's ratings in this extension's icon"
