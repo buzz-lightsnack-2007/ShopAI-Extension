@@ -1,5 +1,0 @@
-/*
-browserside.js
-
-Easily switch between Chrome and Firefox APIs. 
-*/
