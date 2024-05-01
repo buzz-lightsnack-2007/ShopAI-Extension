@@ -6,6 +6,17 @@ export default class scraper {
 	constructor(scraper_fields) {
 		let field_content;
 
+		// Quickly scroll down then to where the user already was to get automatically hidden content. 
+		function autoscroll() {
+			let SCROLL = {"x": window.scrollX, "y": window.scrollY};
+
+			[{"top": 0, "left": 0, "behavior": "smooth"}, {"top": document.body.scrollHeight, "left": document.body.scrollWidth, "behavior": "smooth"}, {"top": SCROLL[`y`], "left": SCROLL[`x`], "behavior": "smooth"}].forEach((POSITION) => {
+				window.scrollTo(POSITION);
+			})
+		};
+
+		autoscroll();
+
 		if ((typeof scraper_fields).includes("object") && scraper_fields != null && scraper_fields) {
 
 			/* Read for the particular fields. */
