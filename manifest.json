@@ -7,7 +7,7 @@
 	"permissions": ["tabs", "storage", "unlimitedStorage", "contextMenus"],
 
 	"background": {
-		"service_worker": "scripts/background/shopAI.js", "type": "module"
+		"scripts": ["scripts/background/shopAI.js"]
 	},
 	"action": {},
 	"content_scripts": [
@@ -27,8 +27,16 @@
 		"1024": "media/icons/logo.png",
 		"512": "media/icons/logo_tiny.png"
 	},
-
-	"options_page": "pages/settings.htm",
+	
+	"options_ui": {
+	    "page": "pages/settings.htm"
+	},
+	
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "{db2d6746-5711-4c83-90c7-107057f37732}"
+		}
+	},
 
 	"default_locale": "en"
 }
