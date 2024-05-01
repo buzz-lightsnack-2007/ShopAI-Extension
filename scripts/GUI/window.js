@@ -91,7 +91,7 @@ export default class Window {
 		}
 
 		// Check if the URL starts with a valid protocol. If not, it is most likely an extension page. 
-		(!(this.url.startsWith(`http`) && this.url.contains(`://`)))
+		(!(this.url.indexOf(`://`) > 2))
 			? this.url = chrome.runtime.getURL(this.url)
 			: false;
 		
