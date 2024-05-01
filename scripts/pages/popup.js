@@ -3,7 +3,7 @@
 */
 
 // Import modules.
-import {read, forget} from "/scripts/secretariat.js";
+import {session} from "/scripts/secretariat.js";
 import Window from "/scripts/GUI/window.js";
 import Page from "/scripts/pages/page.js";
 import Loader from "/scripts/GUI/loader.js";
