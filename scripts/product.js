@@ -5,6 +5,7 @@ Ask product information to Google Gemini. */
 import {global, session, compare} from "/scripts/secretariat.js";
 import hash from "/scripts/utils/hash.js";
 import texts from "/scripts/mapping/read.js";
+import logging from "/scripts/logging.js";
 
 // Don't forget to set the class as export default.
 export default class product {
@@ -42,6 +43,9 @@ export default class product {
 		// Add the data digest.
 		this.#snip = (await hash.digest(this.details, {"output": "Array"}));
 
+		// Indicate that this is the last updated. 
+		await session.write([`last`], this.URL);
+
 		// Add the status about this data.
 		this.status = {};
 		this.status[`update`] = !(await (compare([`sites`, this.URL, `snip`], this.#snip)));
@@ -52,8 +56,7 @@ export default class product {
 		if (!this.#snip) {throw new ReferenceError((new texts(`error_msg_notattached`)).localized)};
 
 		// Write the data to the session storage, indicating that it is the last edited. 
-		await session.write([`sites`, this.URL, `snip`], this.#snip, 1);
-		await session.write([`last`], this.URL);
+		(this[`analysis`]) ? await session.write([`sites`, this.URL, `analysis`], this.analysis) : false;
 
 		// There is only a need to save the data if an update is needed. 
 		if (this.status[`update`]) {
@@ -81,13 +84,23 @@ export default class product {
 			// Add the prompt.
 			PROMPT.push({"text": ((new texts(`AI_message_prompt`)).localized).concat(JSON.stringify(this.details))});
 
-			// Run the analysis.
-			await analyzer.generate(PROMPT);
+			try {
+				// Run the analysis.
+				await analyzer.generate(PROMPT);
+	
+				// Raise an error if the product analysis is blocked. 
+				if (analyzer.blocked) {
+					throw new Error((new texts(`error_msg_blocked`)).localized)
+				};
 
-			if (analyzer.candidate) {
-				// Remove all markdown formatting.
-				this.analysis = JSON.parse(analyzer.candidate.replace(/(```json|```|`)/g, ''));
-			};
+				if (analyzer.candidate) {
+					// Remove all markdown formatting.
+					this.analysis = JSON.parse(analyzer.candidate.replace(/(```json|```|`)/g, ''));
+				};
+			} catch(err) {
+				await session.write([`sites`, this.URL, `error`], err, 1);
+				throw err;
+			}
 		};
 
 		return(this.analysis);
