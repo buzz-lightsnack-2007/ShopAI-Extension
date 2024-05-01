@@ -145,10 +145,14 @@ export default class gemini {
         let analyze = (RESPONSE_RAW) => {
             let RESPONSES = [];
 
-            // Check if the prompt has been blocked.
-            while (RESPONSES.length < RESPONSE_RAW[`candidates`].length) {
+            // Delete previous block state, if any. 
+            delete this.blocked;
+
+            while (RESPONSES.length < RESPONSE_RAW[`candidates`].length && !this.blocked) {
+                this.blocked = RESPONSE_RAW[`candidates`][RESPONSES.length][`safetyRatings`][`blocked`];
+
                 // Check if the response is blocked.
-                if (!RESPONSE_RAW[`candidates`][RESPONSES.length][`safetyRatings`][`blocked`] && RESPONSE_RAW[`candidates`][RESPONSES.length][`content`]) {
+                if (!this.blocked && RESPONSE_RAW[`candidates`][RESPONSES.length][`content`]) {
                     let RESPONSE_CURRENT = [];
 
                     let RESPONSES_RAW_ALL = RESPONSE_RAW[`candidates`][RESPONSES.length][`content`][`parts`];
