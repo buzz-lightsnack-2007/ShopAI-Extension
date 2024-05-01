@@ -78,8 +78,8 @@ class global {
 	
 				// Override the data with managed data if available. 
 				if ((NAME != null) ? NAME.length : false) {
-					DATA[`managed`] = await managed.read((NAME) ? [...NAME] : null);
-					DATA_RETURNED[`value`] = (DATA[`managed`] != null) ? DATA[`managed`] : DATA_RETURNED[`value`];
+					// DATA[`managed`] = await managed.read((NAME) ? [...NAME] : null);
+					// DATA_RETURNED[`value`] = (DATA[`managed`] != null) ? DATA[`managed`] : DATA_RETURNED[`value`];
 				};
 
 				return DATA_RETURNED[`value`];
