@@ -122,7 +122,7 @@ export default class UI {
                                                                       
                                                                       ELEMENT[`function`] = function() {
                                                                            DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
-                                                                           globa.write(DATA[`target`], ELEMENT.checked, (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
+                                                                           global.write(DATA[`target`], ELEMENT.checked, (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
                                                                       };
                                                                       break;
                                                                  default:
@@ -133,7 +133,7 @@ export default class UI {
                                                                                 try {
                                                                                      DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
                                                                                      DATA[`value`] = JSON.parse(ELEMENT.value.trim());
-                                                                                     globa.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
+                                                                                     global.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
                                                                                 } catch(err) {
                                                                                      // The JSON isn't valid.
                                                                                      logging.error(err.name, texts.localized(`JSON_parse_error`), err.stack, false);
@@ -144,7 +144,7 @@ export default class UI {
      
                                                                            ELEMENT[`function`] = function() {
                                                                                 DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
-                                                                                globa.write(DATA[`target`], ELEMENT.value.trim(), (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
+                                                                                global.write(DATA[`target`], ELEMENT.value.trim(), (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
                                                                            }
                                                                       }
                                                                       break;
@@ -218,17 +218,16 @@ export default class UI {
                          };
      
                          display(element.getAttribute(`data-result`), SEARCH[element.getAttribute(`data-result`)][`results`], `name`);
-                         
+						 
                          // Make sure it compensates vanished objects and no results detection. 
-                         if (((
-                              !(SEARCH[element.getAttribute(`data-result`)][`selected`])
-                                   || (typeof SEARCH[element.getAttribute(`data-result`)][`results`]).includes(`obj`) && SEARCH[element.getAttribute(`data-result`)][`results`] != null)
+                         if (
+							 ((!(SEARCH[element.getAttribute(`data-result`)][`selected`]) || (typeof SEARCH[element.getAttribute(`data-result`)][`results`]).includes(`obj`) && SEARCH[element.getAttribute(`data-result`)][`results`] != null)
                               ? (((SEARCH[element.getAttribute(`data-result`)][`results`] != null) ? (Object.keys(SEARCH[element.getAttribute(`data-result`)][`results`]).length <= 0) : false)
                                    || !((SEARCH[element.getAttribute(`data-result`)][`selected`])))
                               : true) || 
-                              (SEARCH[element.getAttribute(`data-result`)][`results`] && SEARCH[element.getAttribute(`data-result`)][`selected`])
+                              (((((typeof SEARCH[element.getAttribute(`data-result`)][`results`]).includes(`obj`) && SEARCH[element.getAttribute(`data-result`)][`results`] != undefined && SEARCH[element.getAttribute(`data-result`)][`results`]) ? Object.keys(SEARCH[element.getAttribute(`data-result`)][`results`]).length : false) && SEARCH[element.getAttribute(`data-result`)][`selected`])
                                    ? !(Object.keys(SEARCH[element.getAttribute(`data-result`)][`results`]).includes(SEARCH[element.getAttribute(`data-result`)][`selected`])) 
-                                   : false
+                                   : false)
                          ) {
                               pick(null, null, element.getAttribute(`data-result`));
                          }
