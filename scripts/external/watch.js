@@ -6,7 +6,7 @@ import check from "/scripts/external/check.js";
 import processor from "/scripts/external/processor.js";
 import logging from "/scripts/logging.js";
 import texts from "/scripts/mapping/read.js";
-import {read} from "/scripts/secretariat.js";
+import {global} from "/scripts/secretariat.js";
 
 export default class watch {
 	/* Open relevant graphical user interfaces. 
@@ -19,13 +19,13 @@ export default class watch {
 
 	@param {dictionary} filter the filter to work with
 	*/
-	static process(filter) {
+	static async process(filter) {
 		// Let user know that the website is supported, if ever they have opened the console. 
 		new logging((new texts(`message_external_supported`)).localized);
 
-		// Begin only when the page is fully loaded. 
-		document.onreadystatechange = () => {
-			if (document.readyState == 'complete') {
+		document.onreadystatechange = async () => {
+			if (document.readyState == 'complete' && await global.read([`settings`, `behavior`, `autoRun`])) {
+				console.log(`Loading complete, processing…`);
 				let PROC = new processor(filter);
 			}
 		};
