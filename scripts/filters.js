@@ -2,7 +2,7 @@
 Manage filters.
 */
 
-import {read, write, forget, search} from "./secretariat.js";
+import {global} from "./secretariat.js";
 import net from "/scripts/utils/net.js";
 import texts from "/scripts/mapping/read.js";
 import {Queue} from "/scripts/utils/common.js";
@@ -11,12 +11,15 @@ import logging from "/scripts/logging.js"
 
 export default class filters {
 	constructor() {
-		this.all = async () => {
-			return read(`filters`, -1).then((filters) => {
-				return filters;
-			});
-		};
+		this.refresh();
 	}
+
+	/* 
+	Get all filters. 
+	*/
+	async refresh() {
+		this.all = await global.read(`filters`);
+	};
 
 	/* Select the most appropriate filter based on a URL.
 
@@ -32,7 +35,7 @@ export default class filters {
 		if (URL) {
 			let SELECTED = await (async () => {
 				// Get the filters.
-				let filter = await search(`filters`, URL, `URL`, 0.5, {"cloud": -1});
+				let filter = await global.search(`filters`, URL, `URL`, 0.5, {"cloud": -1});
 	
 				// If there are filters, then filter the URL.
 				return filter;
@@ -62,7 +65,7 @@ export default class filters {
 			}
 		} else {
 			// Add every item to the queue based on what was loaded first.
-			let FILTERS_ALL = await read(["settings", `filters`]);
+			let FILTERS_ALL = await global.read(["settings", `filters`]);
 			if (((typeof (FILTERS_ALL)).includes(`obj`) && !Array.isArray(FILTERS_ALL)) ? Object.keys(FILTERS_ALL).length > 0 : false) {
 				for (let FILTER_URL_INDEX = 0; FILTER_URL_INDEX < Object.keys(FILTERS_ALL).length; FILTER_URL_INDEX++) {
 					let FILTER_URL = (Object.keys(FILTERS_ALL, 1))[FILTER_URL_INDEX];
@@ -87,12 +90,12 @@ export default class filters {
 						// Only work when the filter is valid.
 						if (result) {
 							// Write the filter to storage.
-							await write(["filters", filter_URL], result, -1, {"silent": true});
+							await global.write(["filters", filter_URL], result, -1, {"silent": true});
 							new logging(texts.localized(`settings_filters_update_status_complete`,null,[filter_URL]));
                             
 							// Add the filter to the sync list.
-							if ((await read(["settings", `filters`])) ? !((Object.keys(await read(["settings", `filters`]))).includes(filter_URL)) : true) {
-								write(["settings", `filters`, filter_URL], true, 1, {"silent": true});
+							if ((await global.read(["settings", `filters`])) ? !((Object.keys(await global.read(["settings", `filters`]))).includes(filter_URL)) : true) {
+								global.write(["settings", `filters`, filter_URL], true, 1, {"silent": true});
 							}
 						}
 					})
@@ -107,7 +110,7 @@ export default class filters {
 		}
 
 		// Regardless of the download result, update will also mean setting the filters object to whatever is in storage.
-		this.all = await read(`filters`, -1);
+		this.all = await global.read(`filters`, -1);
 
 		return this.all;
 	}
@@ -118,7 +121,7 @@ export default class filters {
 	*/
 	async remove(URL) {
 		if (URL.includes(`://`)) {
-			return((await forget([`filters`, URL], -1, false)) ? await forget([`settings`, `filters`, URL], 1, true) : false);
+			return((await global.forget([`filters`, URL], -1, false)) ? global.forget([`settings`, `filters`, URL], 1, true) : false);
 		} else {
 			// Inform the user of the removal being unnecessary.
 			logging.warn(texts.localized(`settings_filters_removal_stop`));

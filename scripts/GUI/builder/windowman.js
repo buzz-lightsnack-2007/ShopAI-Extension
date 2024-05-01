@@ -4,6 +4,8 @@ Window and window content management */
 import texts from "../../mapping/read.js";
 import net from "/scripts/utils/net.js";
 import Window from "../window.js";
+import logging from '/scripts/logging.js';
+import {global, observe} from "/scripts/secretariat.js";
 
 export default class windowman {
 	static new(URL, height, width) {
@@ -39,14 +41,11 @@ export default class windowman {
 						throw new ReferenceError((new texts(`error_msg_fileNotFound`, [source])).localized);
 					}
 				} catch(err) {
-					const secretariat = (await import(chrome.runtime.getURL(`/scripts/secretariat.js`)));
-					const logging = (await import(chrome.runtime.getURL(`/scripts/logging.js`))).default;
-					
 					// Raise an alert. 
 					logging.error(err.name, err.message, err.stack, true, [source]);
 
 					// Stop loading the page when an error has occured; it's not going to work!
-					if ((await secretariat.read(`debug`, -1) != null) ? await secretariat.read(`debug`, -1) : true) {
+					if ((await global.read(`debug`, -1) != null) ? await global.read(`debug`, -1) : true) {
 						window.close();
 					};
 				};
@@ -199,14 +198,16 @@ export default class windowman {
 							: null;
 							target[`dimensions`][`width`] = (button.getAttribute(`tab-width`)) ? parseInt(button.getAttribute(`tab-width`))
 							: null;
+							target[`path`] = (
+								!target[`source`].includes(`://`)
+								? window.location.pathname.split(`/`).slice(0, -1).join(`/`).concat(`/`)
+								: ``
+							).concat(target[`source`]);
 							
-							const event = function () {
+							const event = () => {
 								// Get the correct path.
-								target[`path`] = (
-									!target[`source`].includes(`://`)
-										? window.location.pathname.split(`/`).slice(0, -1).join(`/`).concat(`/`)
-										: ``
-								).concat(target[`source`]);
+								
+								new logging((new texts(`page_opening`)).localized, target[`path`]);
 
 								// Open the window as a popup. 
 								new Window(target[`path`], Object.assign(target[`dimensions`], {"type": "popup"}));
@@ -226,12 +227,12 @@ export default class windowman {
 							(document.querySelectorAll(`.sidenav`)).forEach(function (sidebar_element) {
 								if (sidebar_element.getAttribute(`name`)) {
 									document.querySelector(`[works-sidebar="${sidebar_element.getAttribute(`name`)}"]`)
-									.addEventListener(`click`, function () {
+									.addEventListener(`click`, () => {
 										M.Sidenav.getInstance(sidebar_element).open();
 									});
 								} else if (document.querySelector(`[data-action="ui,open,navbar"]`)) {
 									document.querySelector(`[data-action="ui,open,navbar"]`).forEach(function (button_element) {
-										button_element.addEventListener(`click`, function() {
+										button_element.addEventListener(`click`, () => {
 											M.Sidenav.getInstance(sidebar).open();
 										});
 									});
@@ -257,10 +258,6 @@ export default class windowman {
 
 	/* Run this function if you would like to synchronize with data. */
 	async sync() {
-		// Import the module.
-		const secretariat = await import(chrome.runtime.getURL("scripts/secretariat.js"));
-		const logging = (await import(chrome.runtime.getURL(`/scripts/logging.js`))).default;
-		
 		async function fill() {
 			let input_elements = document.querySelectorAll("[data-store]");
 
@@ -270,7 +267,7 @@ export default class windowman {
 				let data = {};
 				data[`source`] = input_element.getAttribute(`data-store`);
 				// data[`origin`] = (input_element.hasAttribute(`data-store-location`)) ? parseInt(input_element.getAttribute(`data-store-location`)) : -1
-				data[`value`] = secretariat.read(data[`source`]);
+				data[`value`] = global.read(data[`source`]);
 
 				data[`value`].then(async function(value) {
 					switch (input_element.getAttribute(`type`).toLowerCase()) {
@@ -315,7 +312,7 @@ export default class windowman {
 							UI_item[`source`] = this.getAttribute(`data-store`);
 							UI_item[`value`] = this.checked;
 							UI_item[`store`] = (this.hasAttribute(`data-store-location`)) ? parseInt(this.getAttribute(`data-store-location`)) : -1;
-							secretariat.write(UI_item[`source`], UI_item[`value`], UI_item[`store`]);
+							global.write(UI_item[`source`], UI_item[`value`], UI_item[`store`]);
 						};
 						break;
 					default:
@@ -337,7 +334,7 @@ export default class windowman {
 									: parseInt(this.value)
 								: this.value;
 							UI_item[`store`] = (this.hasAttribute(`data-store-location`)) ? parseInt(this.getAttribute(`data-store-location`)) : -1;
-							secretariat.write(UI_item[`source`], UI_item[`value`], UI_item[`store`]);
+							global.write(UI_item[`source`], UI_item[`value`], UI_item[`store`]);
 						};
 						break;
 				}
@@ -351,7 +348,7 @@ export default class windowman {
 		*/
 		async function updates() {
 			// Get the storage data.
-			let storage_data = await secretariat.read();
+			let storage_data = await global.read();
 
 			async function enable() {
 				let input_elements = document.querySelectorAll("[data-enable]");
@@ -360,10 +357,10 @@ export default class windowman {
 					input_elements.forEach(async (input_element) => {
 						if (input_element.getAttribute("data-enable")) {
 							// Enable the element.
-							input_element.disabled = ((await secretariat.read(input_element.getAttribute("data-enable"))) != null
-								? (typeof (await secretariat.read(input_element.getAttribute("data-enable")))).includes(`obj`)
-									? (Object.keys(await secretariat.read(input_element.getAttribute("data-enable")))).length <= 0
-									: !(!!(await secretariat.read(input_element.getAttribute("data-enable"))))
+							input_element.disabled = ((await global.read(input_element.getAttribute("data-enable"))) != null
+								? (typeof (await global.read(input_element.getAttribute("data-enable")))).includes(`obj`)
+									? (Object.keys(await global.read(input_element.getAttribute("data-enable")))).length <= 0
+									: !(!!(await global.read(input_element.getAttribute("data-enable"))))
 								: true);
 							(input_element.disabled) ? input_element.classList.add(`disabled`) : input_element.classList.remove(`disabled`);
 
@@ -378,7 +375,7 @@ export default class windowman {
 			}
 
 			// Update the input elements.
-			secretariat.observe((what) => {
+			observe((what) => {
 				enable();
 			});
 

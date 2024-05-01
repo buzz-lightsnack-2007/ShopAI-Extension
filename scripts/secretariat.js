@@ -6,287 +6,361 @@ import logging from "/scripts/logging.js";
 import texts from "/scripts/mapping/read.js";
 import hash from "/scripts/utils/hash.js";
 
-/* Read all stored data in the browser cache.
-
-@param {array} DATA_NAME the data name
-@param {int} CLOUD determine cloud reading, which is otherwise set to automatic (0)
-@param {string} PARAMETER_CHECK Determine which parameter to check via regular expressions.
-@return {object} the data
+/*
+Global data storage, which refers to local and synchronized storage
 */
-export async function read(DATA_NAME, CLOUD = 0) {
-	// Initialize the selected pref data.
-	let DATA, DATA_RETURNED;
-
-	/*
-	Get all storage values.
-
-	@param {number} SOURCE the data source
-	*/
-	async function read_database(SOURCE = -1) {
-		let data, data_returned;
-
-		async function read_database_local() {
-			return new Promise((resolve, reject) => {
-				chrome.storage.local.get(null, function (result) {
-					if (chrome.runtime.lastError) {
-						// Something went wrong
-						reject(new Error(chrome.runtime.lastError));
-					} else {
-						// If the key exists, return the value
-						resolve(result);
-					}
-				});
-			});
-		}
-
-		async function read_database_sync() {
-			return new Promise((resolve, reject) => {
-				chrome.storage.sync.get(null, function (result) {
-					if (chrome.runtime.lastError) {
-						// Something went wrong
-						reject(new Error(chrome.runtime.lastError));
-					} else {
-						// If the key exists, return the value
-						resolve(result);
-					}
-				});
-			});
-		}
-
-		// Return the data.
-		data_returned = (SOURCE > 0) ? read_database_sync() : read_database_local();
-		return data_returned;
-	}
-
-	/* Recursively find through each data, returning either that value or null when the object is not found.
-
-	@param {dictionary} DATA_ALL the data
-	@param {object} DATA_PATH the path of the data
+class global {
+	/* Read all stored data in the browser cache.
+	
+	@param {array} name the data name
+	@param {int} cloud determines cloud reading, which is otherwise set to automatic (0)
 	@return {object} the data
 	*/
-	function find_data(DATA_ALL, DATA_PATH) {
-		let DATA = DATA_ALL;
+	static async read(name, cloud = 0) {
+		/*
+		Get all storage values.
 
-		// Pull the data out.
-		if (DATA_ALL != null && (Array.isArray(DATA_PATH) && DATA_PATH != null) ? DATA_PATH.length > 0 : false) {
-			let DATA_PATH_SELECTED = String(DATA_PATH.shift()).trim();
-
-			// Get the selected data.
-			DATA = DATA_ALL[DATA_PATH_SELECTED];
-
-			// must run if there is actually a parameter to test
-			if (DATA_PATH.length > 0) {
-				// Recursively run to make use of the existing data.
-				DATA = find_data(DATA, DATA_PATH);
-			};
-		} else {
-			return null;
+		@param {number} SOURCE the data source
+		*/
+		function pull(SOURCE = -1) {
+			return (chrome.storage[(SOURCE > 0) ? `sync` : `local`].get(null));
 		}
 
-		// Now return the data.
-		return DATA;
-	}
+		/*
+		Find a data given its path. 
 
-	// Convert the entered prefname to an array if it is not one.
-	if (!Array.isArray(DATA_NAME) && DATA_NAME != null) {
-		// Syntax of splitting is by commas.
-		DATA_NAME = String(DATA_NAME).trim().split(",");
-	}
+		@param {object} DATA_ALL the data
+		@param {object} path the path of the data
+		*/
+		function find(DATA_ALL, path) {
+			let DATA_PATH = path;
+			let DATA = DATA_ALL;
 
-	switch (CLOUD) {
-		case 0:
-			DATA = {}; DATA_RETURNED = {};
+			// Pull the data out.
+			if (DATA_ALL != null && (Array.isArray(DATA_PATH) && DATA_PATH != null) ? DATA_PATH.length > 0 : false) {
+				let DATA_PATH_SELECTED = String(DATA_PATH.shift()).trim();
 
-			DATA[`sync`] = await read((DATA_NAME) ? [...DATA_NAME] : null, 1);
-			DATA[`local`] = await read((DATA_NAME) ? [...DATA_NAME] : null, -1);
+				// Get the selected data.
+				DATA = DATA_ALL[DATA_PATH_SELECTED];
 
-			// Now return the data.
-			DATA_RETURNED[`source`] = (DATA[`sync`] != null) ? `sync` : `local`;
-			DATA_RETURNED[`value`] = DATA[DATA_RETURNED[`source`]];
-
-			return DATA_RETURNED[`value`];
-			break;
-		default:
-			CLOUD = (CLOUD > 0) ? 1 : -1;
-			DATA = await read_database(CLOUD);
-			DATA_RETURNED = (DATA_NAME) ? find_data(DATA, DATA_NAME) : DATA;
-
-			return(DATA_RETURNED);
-			break;
-	}
-}
-
-/* More enhanced searching.
-
-@param {Array} SOURCE the source of the data
-@param {string} TERM the term to search
-@param {Array} ADDITIONAL_PLACES additional places to search
-@param {object} OPTIONS the options
-@return {Array} the results
-*/
-export async function search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = 0, OPTIONS = {}) {
-	let DATA = await read(SOURCE, (OPTIONS[`cloud`] != null) ? OPTIONS[`cloud`] : 0);
-	let RESULTS;
-
-	if (DATA) {
-		RESULTS = {};
-
-		if (TERM && (!(typeof ADDITIONAL_PLACES).includes(`str`) || !ADDITIONAL_PLACES)) {
-			// Sequentially search through the data, first by key.
-			(Object.keys(DATA)).forEach((DATA_NAME) => {
-				if (STRICT ? DATA_NAME == TERM : (DATA_NAME.includes(TERM) || TERM.includes(DATA_NAME))) {
-					RESULTS[DATA_NAME] = DATA[DATA_NAME];
-				}
-			});
-
-			// Then, get the additional places.
-			if ((ADDITIONAL_PLACES != null ? Array.isArray(ADDITIONAL_PLACES) : false) ? ADDITIONAL_PLACES.length > 0 : false) {
-				for (let PARAMETER_PRIORITY_NUMBER = 0; PARAMETER_PRIORITY_NUMBER < ADDITIONAL_PLACES.length; PARAMETER_PRIORITY_NUMBER++) {
-					// Recursively search
-					RESULTS = Object.assign({}, RESULTS, search(SOURCE, TERM, ADDITIONAL_PLACES[PARAMETER_PRIORITY_NUMBER], STRICT));
-				};
-			}
-		} else if (((typeof ADDITIONAL_PLACES).includes(`str`) && (ADDITIONAL_PLACES)) ? ADDITIONAL_PLACES.trim() : false) {
-			// Perform a sequential search on the data.
-			if ((typeof DATA).includes(`obj`) && !Array.isArray(DATA) && SOURCE != null) {
-				let VALUE = {};
-
-				for (let DICTIONARY_INDEX = 0; DICTIONARY_INDEX < (Object.keys(DATA)).length; DICTIONARY_INDEX++) {
-					VALUE[`parent`] = DATA[(Object.keys(DATA))[DICTIONARY_INDEX]];
-
-					/* Test for a valid RegEx.
-
-					@param {string} item the item to test
-					*/
-					function isRegEx(item) {
-						let RESULT = {};
-						RESULT[`state`] = false;
-						try {
-							RESULT[`expression`] = new RegExp(item);
-							RESULT[`state`] = true;
-						} catch(err) {};
-
-						return (RESULT[`state`]);
-					};
-
-					if (((typeof VALUE[`parent`]).includes(`obj`) && !Array.isArray(VALUE[`parent`]) && VALUE[`parent`] != null) ? (Object.keys(VALUE[`parent`])).length > 0 : false) {
-						VALUE[`current`] = VALUE[`parent`][ADDITIONAL_PLACES];
-					}
-
-					if (VALUE[`current`] ? ((STRICT >= 1) ? VALUE[`current`] == TERM : (((STRICT < 0.5) ? (VALUE[`current`].includes(TERM)) : false) || TERM.includes(VALUE[`current`]) || (isRegEx(VALUE[`current`]) ? (new RegExp(VALUE[`current`])).test(TERM) : false))) : false) {
-						// Add the data.
-						RESULTS[(Object.keys(DATA))[DICTIONARY_INDEX]] = (Object.entries(DATA))[DICTIONARY_INDEX][1];
-					};
+				// must run if there is actually a parameter to test
+				if (DATA_PATH.length > 0) {
+					// Recursively run to make use of the existing data.
+					DATA = find(DATA, DATA_PATH);
 				};
 			} else {
-				for (let ELEMENT_INDEX = 0; ELEMENT_INDEX < DATA.length; ELEMENT_INDEX++) {
-					if (
-						((STRICT || (typeof DATA[ELEMENT_INDEX]).includes(`num`)) && DATA[ELEMENT_INDEX] == TERM) ||
-						((!STRICT && !((typeof DATA[ELEMENT_INDEX]).includes(`num`)))
-							? (TERM.includes(DATA[ELEMENT_INDEX]) || DATA[ELEMENT_INDEX].includes(TERM) ||
-								(typeof(DATA[ELEMENT_INDEX])).includes(`str`)
-									? new RegExp(DATA[ELEMENT_INDEX]).test(TERM)
-									: false
-							) : false
-						)
-					) {
-						RESULTS[SOURCE] = DATA;
-						break;
+				return null;
+			}
+
+			// Now return the data.
+			return DATA;
+		};
+
+		// Initialize the selected pref data.
+		let DATA, DATA_RETURNED;
+
+		// Convert the entered prefname to an array if it is not one.
+		let NAME = (!Array.isArray(name) && name != null) 
+			? String(name).trim().split(`,`)
+			: name;
+		
+		
+		switch (cloud) {
+			case 0:
+				DATA = {}; DATA_RETURNED = {};
+
+				DATA[`sync`] = await global.read((NAME) ? [...NAME] : null, 1);
+				DATA[`local`] = await global.read((NAME) ? [...NAME] : null, -1);
+	
+				// Now return the data.
+				DATA_RETURNED[`source`] = (DATA[`sync`] != null) ? `sync` : `local`;
+				DATA_RETURNED[`value`] = DATA[DATA_RETURNED[`source`]];
+	
+				// Override the data with managed data if available. 
+				if ((NAME != null) ? NAME.length : false) {
+					DATA[`managed`] = await managed.read((NAME) ? [...NAME] : null);
+					DATA_RETURNED[`value`] = (DATA[`managed`] != null) ? DATA[`managed`] : DATA_RETURNED[`value`];
+				};
+
+				return DATA_RETURNED[`value`];
+				break;
+			default:
+				cloud = (cloud > 0) ? 1 : -1;
+				DATA = await pull(cloud);
+				DATA_RETURNED = (NAME) ? find(DATA, NAME) : DATA;
+	
+				return(DATA_RETURNED);
+				break;
+		};
+	};
+
+	/* More enhanced searching.
+
+	@param {Array} SOURCE the source of the data
+	@param {string} TERM the term to search
+	@param {Array} ADDITIONAL_PLACES additional places to search
+	@param {object} OPTIONS the options
+	@return {Array} the results
+	*/
+	static async search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = 0, OPTIONS = {}) {
+		let DATA = await global.read(SOURCE, (OPTIONS[`cloud`] != null) ? OPTIONS[`cloud`] : 0);
+		let RESULTS;
+
+		if (DATA) {
+			RESULTS = {};
+
+			if (TERM && (!(typeof ADDITIONAL_PLACES).includes(`str`) || !ADDITIONAL_PLACES)) {
+				// Sequentially search through the data, first by key.
+				(Object.keys(DATA)).forEach((DATA_NAME) => {
+					if (STRICT ? DATA_NAME == TERM : (DATA_NAME.includes(TERM) || TERM.includes(DATA_NAME))) {
+						RESULTS[DATA_NAME] = DATA[DATA_NAME];
+					}
+				});
+
+				// Then, get the additional places.
+				if ((ADDITIONAL_PLACES != null ? Array.isArray(ADDITIONAL_PLACES) : false) ? ADDITIONAL_PLACES.length > 0 : false) {
+					ADDITIONAL_PLACES.forEach((ADDITIONAL_PLACE) => {
+						// Recursively search
+						RESULTS = Object.assign({}, RESULTS, global.search(SOURCE, TERM, ADDITIONAL_PLACE, STRICT));
+					})
+				}
+			} else if (((typeof ADDITIONAL_PLACES).includes(`str`) && (ADDITIONAL_PLACES)) ? ADDITIONAL_PLACES.trim() : false) {
+				// Perform a sequential search on the data.
+				if ((typeof DATA).includes(`obj`) && !Array.isArray(DATA) && SOURCE != null) {
+					let VALUE = {};
+
+					for (let DICTIONARY_INDEX = 0; DICTIONARY_INDEX < (Object.keys(DATA)).length; DICTIONARY_INDEX++) {
+						VALUE[`parent`] = DATA[(Object.keys(DATA))[DICTIONARY_INDEX]];
+
+						/* Test for a valid RegEx.
+
+						@param {string} item the item to test
+						*/
+						function isRegEx(item) {
+							let RESULT = {};
+							RESULT[`state`] = false;
+							try {
+								RESULT[`expression`] = new RegExp(item);
+								RESULT[`state`] = true;
+							} catch(err) {};
+
+							return (RESULT[`state`]);
+						};
+
+						if (((typeof VALUE[`parent`]).includes(`obj`) && !Array.isArray(VALUE[`parent`]) && VALUE[`parent`] != null) ? (Object.keys(VALUE[`parent`])).length > 0 : false) {
+							VALUE[`current`] = VALUE[`parent`][ADDITIONAL_PLACES];
+						}
+
+						if (VALUE[`current`] ? ((STRICT >= 1) ? VALUE[`current`] == TERM : (((STRICT < 0.5) ? (VALUE[`current`].includes(TERM)) : false) || TERM.includes(VALUE[`current`]) || (isRegEx(VALUE[`current`]) ? (new RegExp(VALUE[`current`])).test(TERM) : false))) : false) {
+							// Add the data.
+							RESULTS[(Object.keys(DATA))[DICTIONARY_INDEX]] = (Object.entries(DATA))[DICTIONARY_INDEX][1];
+						};
+					};
+				} else {
+					for (let ELEMENT_INDEX = 0; ELEMENT_INDEX < DATA.length; ELEMENT_INDEX++) {
+						if (
+							((STRICT || (typeof DATA[ELEMENT_INDEX]).includes(`num`)) && DATA[ELEMENT_INDEX] == TERM) ||
+							((!STRICT && !((typeof DATA[ELEMENT_INDEX]).includes(`num`)))
+								? (TERM.includes(DATA[ELEMENT_INDEX]) || DATA[ELEMENT_INDEX].includes(TERM) ||
+									(typeof(DATA[ELEMENT_INDEX])).includes(`str`)
+										? new RegExp(DATA[ELEMENT_INDEX]).test(TERM)
+										: false
+								) : false
+							)
+						) {
+							RESULTS[SOURCE] = DATA;
+							break;
+						}
 					}
 				}
 			}
 		}
-	}
 
-	return RESULTS;
-}
-
-/* Write the data on the selected prefname.
-
-@param {string} PATH the preference name
-@param {object} DATA the new data to be written
-@param {int} CLOUD store in the cloud; otherwise set to automatic
-@param {object} OPTIONS the options
-*/
-export async function write(PATH, DATA, CLOUD = -1, OPTIONS = {}) {
-	let DATA_INJECTED = {};
-
-	// Inform the user that saving is in progress.
-	if (((typeof OPTIONS).includes(`obj`) && OPTIONS != null) ? (!(!!OPTIONS[`silent`])) : true) {
-		new logging ((new texts(`saving_current`)).localized, (new texts(`saving_current_message`)).localized, false)
+		return RESULTS;
 	};
 
-	/* Forcibly write the data to chrome database
+	/* Write the data on the selected prefname.
 
-	@param {object} DATA the data
-	@param {number} CLOUD the storage
+	@param {string} path the preference name
+	@param {object} data the new data to be written
+	@param {int} CLOUD store in the cloud; otherwise set to automatic
+	@param {object} OPTIONS the options
 	*/
-	const store = async (DATA, CLOUD = 0) => {
-		// If CLOUD is set to 0, it should automatically determine where the previous source of data was taken from.
-		return((CLOUD > 0) ? chrome.storage.sync.set(DATA) : chrome.storage.local.set(DATA));
-	}
+	static async write(path, data, CLOUD = -1, OPTIONS = {}) {
+		let DATA_INJECTED = {};
 
-	/* Appropriately nest and merge the data.
+		/* Appropriately nest and merge the data.
 
-	@param {object} EXISTING the original data
-	@param {object} PATH the subpath
-	@param {object} VALUE the value
-	@return {object} the updated data
-	*/
-	function nest(EXISTING, SUBPATH, VALUE) {
-		let DATABASE = EXISTING;
+		@param {object} EXISTING the original data
+		@param {object} PATH the subpath
+		@param {object} VALUE the value
+		@param {boolean} STRICT determines whether data is to be overridden or merged
+		@return {object} the updated data
+		*/
+		function nest(existing, path, value, strict = false) {
+			let DATABASE = existing, SUBPATH = path;
+			
+			// Get the current path.
+			let PATH = {};
+			PATH[`current`] = (SUBPATH.length) ? String(SUBPATH.shift()).trim() : null;
+			PATH[`target`] = SUBPATH;
 
-		// Get the current path.
-		let PATH = {};
-		PATH[`current`] = String(SUBPATH.shift()).trim();
-		PATH[`target`] = SUBPATH;
+			if (PATH[`target`].length > 0 && PATH[`current`] != undefined && PATH[`current`] != null) {
+				DATABASE[PATH[`current`]] = (DATABASE[PATH[`current`]] == null)
+					? {}
+					: DATABASE[PATH[`current`]];
+				DATABASE[PATH[`current`]] = nest(DATABASE[PATH[`current`]], PATH[`target`], value, strict);
+			} else if (PATH[`current`]  != undefined && PATH[`current`] != null) {
+				// If not strict and the data selected is a dictionary, then merge them. 
+				DATABASE[PATH[`current`]] = (((DATABASE[PATH[`current`]]) ? ((typeof DATABASE[PATH[`current`]]).includes(`obj`) && !Array.isArray(DATABASE[PATH[`current`]])) : false) && !strict)
+					? Object.assign(DATABASE[PATH[`current`]], value)
+					: value;
+			} else {
+				DATABASE = (DATABASE == null || DATABASE == undefined) ? {} : DATABASE;
 
-		if (PATH[`target`].length > 0) {
-			if (DATABASE[PATH[`current`]] == null) {
-				DATABASE[PATH[`current`]] = {};
+				DATABASE = (((typeof DATABASE).includes(`obj`) && !Array.isArray(DATABASE) && !strict) ? Object.assign(DATABASE, value) : value);
 			}
-			DATABASE[PATH[`current`]] = nest(DATABASE[PATH[`current`]], PATH[`target`], VALUE);
-		} else {
-			DATABASE[PATH[`current`]] = VALUE;
+
+			// Return the value.
+			return DATABASE;
 		}
-		// Return the value.
-		return DATABASE;
+
+		async function verify (NAME, DATA) {
+			let DATA_CHECK = {};
+
+			// Verify the presence of the data.
+			DATA_CHECK[`state`] = await compare(NAME, DATA);
+
+			(!DATA_CHECK[`state`])
+				? logging.error((new texts(`error_msg_save_failed`)).localized, String(path), JSON.stringify(DATA))
+				: ((((typeof OPTIONS).includes(`obj`) && OPTIONS != null) ? (!(!!OPTIONS[`silent`])) : true)
+					? new logging (new texts(`saving_done`).localized)
+					: false);
+			
+			return (DATA_CHECK[`state`]);
+		}
+
+		let DATA_ALL;
+
+		// Inform the user that saving is in progress.
+		(((typeof OPTIONS).includes(`obj`) && OPTIONS != null) ? (!(!!OPTIONS[`silent`])) : true) 
+			? new logging ((new texts(`saving_current`)).localized, (new texts(`saving_current_message`)).localized, false)
+			: false;
+
+		// Get all data and set a blank value if it doesn't exist yet. 
+		DATA_ALL = await global.read(null, CLOUD);
+		DATA_ALL = ((DATA_ALL != null && DATA_ALL != undefined && (typeof DATA_ALL).includes(`obj`)) ? Object.keys(DATA_ALL).length <= 0 : true) 
+			? {}
+			: DATA_ALL;
+
+		// Set the data name. 
+		let DATA_NAME = (!(Array.isArray(path)) && path && path != undefined)
+			? String(path).trim().split(",")
+			: ((path != null) ? path : []) // Ensure that path isn't empty. 
+
+		// Merge!
+		DATA_INJECTED = nest(DATA_ALL, (DATA_NAME != null) ? [...DATA_NAME] : DATA_NAME, data, (OPTIONS[`strict`] != null) ? OPTIONS[`strict`] : false);
+
+		// If cloud is not selected, get where the data is already existent. 
+		(CLOUD == 0 || CLOUD == null)
+			? (CLOUD = (DATA_ALL[`local`] != null) ? -1 : 1)
+			: false;
+
+		// Write!
+		chrome.storage[(CLOUD > 0) ? `sync` : `local`].set(DATA_INJECTED);
+		return (verify(DATA_NAME, data));
 	}
 
-	async function verify (NAME, DATA) {
-		let DATA_CHECK = {};
+	/*
+	Removes a particular data. 
 
-		// Verify the presence of the data.
-		DATA_CHECK[`state`] = await compare(NAME, DATA);
+	@param {string} preference the preference name to delete
+	@param {string} subpreference the subpreference name to delete
+	@param {int} CLOUD the storage of the data
+	@return {boolean} the user's confirmation
+	*/
+	static async forget(preference, cloud = 0, override = false) {
+		// Confirm the action.
+		let CONFIRMATION = override ? override : await logging.confirm();
 
-		(!DATA_CHECK[`state`])
-			? logging.error((new texts(`error_msg_save_failed`)).localized, String(PATH), JSON.stringify(DATA))
-			: ((((typeof OPTIONS).includes(`obj`) && OPTIONS != null) ? (!(!!OPTIONS[`silent`])) : true)
-				? new logging (new texts(`saving_done`).localized)
-				: false);
-		
-		return (DATA_CHECK[`state`]);
+		if (CONFIRMATION) {
+			if (preference) {
+				/*
+				Erase applicable storage from a provider. 
+
+				@param {string} name the name of the data
+				@param {int} cloud the usage of cloud storage
+				*/
+				async function erase(path, cloud) {
+					/*
+					Securely erase by replacing any existing value with null.
+
+					@param {string} name the name of the data
+					@param {int} cloud the usage of cloud storage
+					*/
+					function secure(name, cloud) {
+						let PATH = name; 
+						// Check if the value already exists. 
+						return(global.read([...PATH], cloud).then(async (DATA) => {
+							return((DATA != null)
+								// Then erase the data. 
+								? await global.write(PATH, null, cloud, {"strict": true})
+								: true);
+						}));
+					};
+					
+					/*
+					Remove the key from existence. 
+
+					@param {string} name the name of the data
+					@param {int} cloud the usage of cloud storage
+					*/
+					async function eliminate(name, cloud) {
+						// Store the variable seperately to avoid overwriting. 
+						let PATH = name;
+
+						// There are two methods to erase the data. 
+						// The first only occurs when the root is selected and the path is just a direct descendant. 
+						if (PATH.length == 1) {
+							chrome.storage[(cloud > 0) ? `sync` : `local`].remove(PATH[0]);
+						} else {
+							(global.read(((PATH.length > 1) ? [...PATH.slice(0,-1)] : null), cloud)).then((DATA) => {
+								// Move the existing data into a new object to help in identifying.
+								DATA = {"all": DATA};
+
+								if ((((typeof (DATA[`all`])).includes(`obj`) && !Array.isArray(DATA[`all`])) ? Object.keys(DATA[`all`]) : false) ? Object.hasOwn(DATA[`all`], PATH[PATH.length - 1]) : false) {
+									DATA[`modified`] = DATA[`all`];
+							
+									delete DATA[`modified`][PATH[PATH.length - 1]];
+
+									return(global.write(((PATH && Array.isArray(PATH)) ? (PATH.slice(0,-1)) : null), DATA[`modified`], cloud, {"strict": true}));
+								}
+							});
+						}
+
+						
+					};
+
+					// Set the data path. 
+					let DATA_NAME = (!(Array.isArray(path)) && path && path != undefined)
+						? String(path).trim().split(",")
+						: ((path != null) ? path : []) // Ensure that path isn't empty. 
+
+					await secure([...DATA_NAME], cloud);
+					eliminate([...DATA_NAME], cloud);
+				}
+
+				(cloud >= 0) ? erase(preference, 1) : false;
+				(cloud <= 0) ? erase(preference, -1) : false;
+			} else {
+				// Clear the data storage.
+				(cloud >= 0) ? chrome.storage.sync.clear() : false;
+				(cloud <= 0) ? chrome.storage.local.clear() : false;
+			}
+		}
+
+		return CONFIRMATION;
 	}
-
-	let DATA_ALL = await read(null, CLOUD);
-	if ((DATA_ALL != null && (typeof DATA_ALL).includes(`obj`)) ? Object.keys(DATA_ALL).length <= 0 : true) {
-		DATA_ALL = {};
-	};
-
-	let DATA_NAME = PATH;
-
-	// Convert the entered prefname to an array if it is not one.
-	if (!(typeof SUBPATH).includes(`object`)) {
-		// Split what is not an object.
-		DATA_NAME = String(PATH).trim().split(",");
-	}
-
-	// Merge!
-	DATA_INJECTED = nest(DATA_ALL, [...DATA_NAME], DATA);
-
-	// Write!
-	store(DATA_INJECTED, CLOUD);
-	return (verify(DATA_NAME, DATA));
 }
 
 class session {
@@ -363,10 +437,10 @@ class session {
 		}
 
 		DATA = {"write": DATA};
-		DATA[`all`] = await session.read(null, CLOUD);
-		if ((DATA[`all`] != null && (typeof DATA[`all`]).includes(`obj`)) ? Object.keys(DATA[`all`]).length <= 0 : true) {
-			DATA[`all`] = {};
-		};
+		DATA[`all`] = await session.read(null);
+		((DATA[`all`] != null && (typeof DATA[`all`]).includes(`obj`)) ? Object.keys(DATA[`all`]).length <= 0 : true)
+			? DATA[`all`] = {}
+			: false;
 
 		let TARGET = (!(typeof PATH).includes(`obj`)) ? String(PATH).trim().split(",") : PATH;
 
@@ -378,13 +452,21 @@ class session {
 	}
 }
 
-/* Compare a data against the stored data. Useful when comparing dictionaries.
+/*
+Compare a data against the stored data. Useful when comparing dictionaries.
 
 @param {string} PATH the name
 @param {object} DATA the data to compare to
+@return {boolean} the result: true is when the data is the same, false otherwise
 */
 export async function compare(PATH, DATA) {
-	/* The actual comparison of data. */
+	/*
+	Compare the data.
+
+	@param {object} DATA_ONE the first data
+	@param {object} DATA_TWO the second data
+	@return {boolean} the result
+	*/
 	async function comparison(DATA_ONE, DATA_TWO) {
 		let RESULT = true;
 
@@ -397,129 +479,131 @@ export async function compare(PATH, DATA) {
 
 	let COMPARISON = {};
 	COMPARISON[`test`] = (PATH) ? DATA : DATA[1];
-	COMPARISON[`against`] = (PATH) ? (await read((Array.isArray(PATH)) ? [...PATH] : PATH)) : DATA[0];
+	COMPARISON[`against`] = (PATH) ? (await global.read((Array.isArray(PATH)) ? [...PATH] : PATH)) : DATA[0];
 	COMPARISON[`result`] = comparison(COMPARISON[`against`], COMPARISON[`test`]);
 
 	// Return the result.
 	return (COMPARISON[`result`]);
 }
 
-/* Dangerous: Resets all data or a domain's data.
+class template {
+	/* Initialize the storage.
+	
+	@param {dictionary} data this build's managed data
+	*/
+	static set(data) {
+		let PREFERENCES = {};
+		PREFERENCES[`all`] = {};
 
-@param {string} preference the preference name to delete
-@param {string} subpreference the subpreference name to delete
-@param {int} CLOUD the storage of the data
-@return {boolean} the user's confirmation
-*/
-export async function forget(preference, CLOUD = 0, override = false) {
-	// Confirm the action.
-	let forget_action = override ? override : await logging.confirm();
+		((typeof data).includes(`obj`) && data != null) ? PREFERENCES[`all`][`build`] = data : false;
 
-	if (forget_action) {
-		if (preference) {
-			let erase = async (CLOUD) => {
-				if (!(Array.isArray(preference))) {
-					preference = String(preference).trim().split(",");
-				};
+		// Read all data. 
+		[`managed`, `local`, `sync`].forEach((SOURCE) => {
+			chrome.storage[SOURCE].get(null, (DATA) => {
+				PREFERENCES[`all`][SOURCE] = DATA;
+			})
+		});
 
-				let DATA = await read((preference.length > 1) ? [...preference.slice(0,-1)] : null, CLOUD);
+		// Merge the data. 
+		// Managed > Synchronized > Imported > Local
+		managed.reinforce();
 
-				if (((((typeof (DATA)).includes(`obj`) && !Array.isArray(DATA) && DATA != null) ? Object.keys(DATA) : false) ? Object.keys(DATA).includes((preference.slice(-1))[0]) : false)) {
-					delete DATA[preference.slice(-1)];
-				};
+		// Set the managed preferences. 
+		if ((PREFERENCES[`all`][`managed`] && (typeof PREFERENCES[`all`][`managed`]).includes(`obj`) && !Array.isArray(PREFERENCES[`all`][`managed`])) ? Object.keys(PREFERENCES[`all`][`managed`]).length > 0 : false) {
+			Object.keys(PREFERENCES[`all`][`managed`]).forEach((item) => {
+				let PREFERENCE = {};
+				PREFERENCE[`name`] = item;
 
-				await write(preference.slice(0,-1), DATA, CLOUD);
-			};
+				// Get if the data already exists. 
+				PREFERENCE[`existing`] = (PREFERENCES[`all`][`sync`] && (typeof PREFERENCES[`all`][`sync`]).includes(`obj`))
+					? PREFERENCES[`all`][`sync`].hasOwnProperty(PREFERENCE[`name`])
+					: false;
 
-			if (CLOUD >= 0) {
-				erase(1);
-			};
-			if (CLOUD <= 0) {
-				erase(-1);
-			};
-		} else {
-			// Clear the data storage.
-			if (CLOUD >= 0) {
-				chrome.storage.sync.clear();
-			}
-			if (CLOUD <= 0) {
-				chrome.storage.local.clear();
-			}
+				if (!PREFERENCE[`existing`]) {
+					// Do not allow synchronized data to interfere with managed data.
+					global.forget(PREFERENCE[`name`], 0, true);
+					global.write(PREFERENCE[`name`], PREFERENCES_ALL[`managed`][PREFERENCE[`name`]]);
+				}
+			});
+		};
+
+		// Import build data
+		if (PREFERENCES[`all`][`build`]) {
+			Object.keys(PREFERENCES[`all`][`build`]).forEach((item) => {
+				let PREFERENCE = { name: item, existing: false };
+
+				PREFERENCE[`existing`] =
+					(PREFERENCES[`all`][`sync`]
+						? PREFERENCES[`all`][`sync`].hasOwnProperty(PREFERENCE[`name`])
+						: false) ||
+					(PREFERENCES[`all`][`managed`]
+						? PREFERENCES[`all`][`managed`].hasOwnProperty(PREFERENCE[`name`])
+						: false) ||
+					(PREFERENCES[`all`][`local`]
+						? PREFERENCES[`all`][`local`].hasOwnProperty(PREFERENCE[`local`])
+						: false);
+
+				(!PREFERENCE[`existing`])
+					? global.write(PREFERENCE[`name`], PREFERENCES[`all`][`build`][PREFERENCE[`name`]], -1)
+					: false;
+			});
 		}
-	}
-
-	return forget_action;
+	};
 }
 
-/* Initialize the storage.
-
-@param {dictionary} data this build's managed data
+/*
+managed data functions
 */
-export function init(data) {
-	let PREFERENCES_ALL = {};
-	PREFERENCES_ALL[`build`] = data;
-
-	// Read all data.
-	chrome.storage.managed.get(null, function (DATA_MANAGED) {
-		PREFERENCES_ALL[`managed`] = DATA_MANAGED;
-	});
-
-	chrome.storage.local.get(null, function (DATA_LOCAL) {
-		PREFERENCES_ALL[`local`] = DATA_LOCAL;
-	});
-
-	chrome.storage.sync.get(null, function (DATA_SYNC) {
-		PREFERENCES_ALL[`sync`] = DATA_SYNC;
-	});
-
-	// Merge data.
-	// Managed > Synchronized > Imported > Local
-
-	if (PREFERENCES_ALL[`managed`]) {
-		Object.keys(PREFERENCES_ALL[`managed`]).forEach((item) => {
-			let PREFERENCE = { name: item, existing: false };
-
-			if (PREFERENCES_ALL[`sync`]) {
-				PREFERENCE[`existing`] = PREFERENCES_ALL[`sync`].hasOwnProperty(
-					PREFERENCE[`name`],
-				);
-			}
-
-			if (!PREFERENCE[`existing`]) {
-				// Do not allow synchronized data to interfere with managed data.
-				forget(PREFERENCE[`name`]);
-				write(
-					PREFERENCE[`name`],
-					PREFERENCES_ALL[`managed`][PREFERENCE[`name`]],
-				);
-			}
+class managed {
+	/*
+	Reinforce managed data. 
+	*/
+	static reinforce() {
+		chrome.storage.managed.get(null, (DATA_MANAGED) => {
+			// Saving the data asynchronously
+			(Object.keys(DATA_MANAGED)).forEach(async (SOURCE) => {
+				await write(SOURCE, DATA_MANAGED[SOURCE], -1, {"strict": false});
+			});
 		});
 	}
 
-	// Import build data
-	if (PREFERENCES_ALL[`build`]) {
-		Object.keys(PREFERENCES_ALL[`build`]).forEach((item) => {
-			let PREFERENCE = { name: item, existing: false };
+	/*
+	Read for any applicable managed data. 
 
-			PREFERENCE[`existing`] =
-				(PREFERENCES_ALL[`sync`]
-					? PREFERENCES_ALL[`sync`].hasOwnProperty(PREFERENCE[`name`])
-					: false) ||
-				(PREFERENCES_ALL[`managed`]
-					? PREFERENCES_ALL[`managed`].hasOwnProperty(PREFERENCE[`name`])
-					: false) ||
-				(PREFERENCES_ALL[`local`]
-					? PREFERENCES_ALL[`local`].hasOwnProperty(PREFERENCE[`local`])
-					: false);
+	@param {string} name the name of the data
+	@return {boolean} the result
+	*/
+	static async read(name) {
+		function find(DATA_ALL, DATA_PATH) {
+			let DATA = DATA_ALL;
 
-			if (!PREFERENCE[`existing`]) {
-				write(
-					PREFERENCE[`name`],
-					PREFERENCES_ALL[`build`][PREFERENCE[`name`]],
-					-1,
-				);
+			// Pull the data out.
+			if (DATA_ALL != null && (Array.isArray(DATA_PATH) && DATA_PATH != null) ? DATA_PATH.length > 0 : false) {
+				let DATA_PATH_SELECTED = String(DATA_PATH.shift()).trim();
+
+				// Get the selected data.
+				DATA = DATA_ALL[DATA_PATH_SELECTED];
+
+				// must run if there is actually a parameter to test
+				if (DATA_PATH.length > 0) {
+					// Recursively run to make use of the existing data.
+					DATA = find(DATA, DATA_PATH);
+				};
+			} else {
+				return null;
 			}
-		});
+
+			// Now return the data.
+			return DATA;
+		}
+
+		let DATA = {};
+		DATA[`all`] = await chrome.storage.managed.get(null);
+		DATA[`selected`] = ((DATA[`all`] && (typeof DATA[`all`]).includes(`obj`) && !Array.isArray(DATA[`all`])) ? Object.keys(DATA[`all`]).length : false)
+			? find(DATA[`all`], name)
+			: null;
+		
+		return (DATA[`selected`]);
 	}
 }
 
@@ -534,4 +618,4 @@ export function observe(reaction) {
 	});
 }
 
-export {session}
+export {global, session, template, managed};

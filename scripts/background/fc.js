@@ -2,7 +2,7 @@
 This script provides installation run scripts.
 */
 
-import { init, read, write, observe } from "../secretariat.js";
+import { template, global, observe } from "../secretariat.js";
 import filters from "../filters.js";
 let config = chrome.runtime.getURL("config/config.json");
 
@@ -36,7 +36,7 @@ export default class fc {
 				
 				// Run the storage initialization.
 				delete configuration[`OOBE`];
-				init(configuration);
+				template.set(configuration);
 
 				// Update the filters to sync with synchronized storage data. 
 				(new filters).update();
@@ -60,14 +60,14 @@ export default class fc {
 	}
 
 	static async every() {
-		read([`settings`,`sync`]).then(async (DURATION_PREFERENCES) => {
+		global.read([`settings`,`sync`]).then(async (DURATION_PREFERENCES) => {
 			// Forcibly create the preference if it doesn't exist. It's required! 
 			if (!(typeof DURATION_PREFERENCES).includes(`obj`) || DURATION_PREFERENCES == null || Array.isArray(DURATION_PREFERENCES)) {
 				DURATION_PREFERENCES = {};
 				DURATION_PREFERENCES[`duration`] = 24;
 	
 				// Write it. 
-				await write([`settings`, `sync`], DURATION_PREFERENCES, -1, {"silent": true});
+				await global.write([`settings`, `sync`], DURATION_PREFERENCES, -1, {"silent": true});
 			};
 	
 			if (((typeof DURATION_PREFERENCES).includes(`obj`) && DURATION_PREFERENCES != null && !Array.isArray(DURATION_PREFERENCES)) ? ((DURATION_PREFERENCES[`duration`]) ? (DURATION_PREFERENCES[`duration`] > 0) : false) : false) {
@@ -92,8 +92,8 @@ export default class fc {
 
 				let updater_interval = async () => {
 					
-					if ((await read([`settings`, `sync`, `duration`])) ? (await read([`settings`, `sync`, `duration`] * (60 ** 2) * 1000 != DURATION_PREFERENCES[`duration`])) : false) {
-						DURATION_PREFERENCES[`duration`] = await read([`settings`, `sync`, `duration`]) * (60 ** 2) * 1000;
+					if ((await global.read([`settings`, `sync`, `duration`])) ? (await global.read([`settings`, `sync`, `duration`] * (60 ** 2) * 1000 != DURATION_PREFERENCES[`duration`])) : false) {
+						DURATION_PREFERENCES[`duration`] = await global.global.read([`settings`, `sync`, `duration`]) * (60 ** 2) * 1000;
 
 						// Reset the updater. 
 						updater_cancel(UPDATER);

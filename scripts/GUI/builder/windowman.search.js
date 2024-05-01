@@ -1,4 +1,4 @@
-import {read, write, search, observe} from "/scripts/secretariat.js";
+import {global, observe} from "/scripts/secretariat.js";
 import logging from "/scripts/logging.js"
 import texts from "/scripts/mapping/read.js";
 
@@ -114,7 +114,7 @@ export default class UI {
                                                             var DATA = {};
      
                                                             DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
-                                                            DATA[`value`] = ((Object.keys(ITEM).includes(ELEMENT.getAttribute(`data-result-store`))) ? ITEM[ELEMENT.getAttribute(`data-result-store`)] : await read(DATA[`target`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1));
+                                                            DATA[`value`] = ((Object.keys(ITEM).includes(ELEMENT.getAttribute(`data-result-store`))) ? ITEM[ELEMENT.getAttribute(`data-result-store`)] : await global.read(DATA[`target`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1));
      
                                                             switch (ELEMENT[`type`]) {
                                                                  case `checkbox`:
@@ -122,7 +122,7 @@ export default class UI {
                                                                       
                                                                       ELEMENT[`function`] = function() {
                                                                            DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
-                                                                           write(DATA[`target`], ELEMENT.checked, (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
+                                                                           globa.write(DATA[`target`], ELEMENT.checked, (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
                                                                       };
                                                                       break;
                                                                  default:
@@ -133,7 +133,7 @@ export default class UI {
                                                                                 try {
                                                                                      DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
                                                                                      DATA[`value`] = JSON.parse(ELEMENT.value.trim());
-                                                                                     write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
+                                                                                     globa.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
                                                                                 } catch(err) {
                                                                                      // The JSON isn't valid.
                                                                                      logging.error(err.name, texts.localized(`JSON_parse_error`), err.stack, false);
@@ -144,7 +144,7 @@ export default class UI {
      
                                                                            ELEMENT[`function`] = function() {
                                                                                 DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
-                                                                                write(DATA[`target`], ELEMENT.value.trim(), (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
+                                                                                globa.write(DATA[`target`], ELEMENT.value.trim(), (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
                                                                            }
                                                                       }
                                                                       break;
@@ -162,7 +162,7 @@ export default class UI {
                                                                  : ITEM[ELEMENT.getAttribute(`data-result-content`)])
                                                             : ((ITEM[ELEMENT.getAttribute(`data-result-store`)])
                                                                  ? (ITEM[ELEMENT.getAttribute(`data-result-store`)])
-                                                                 :  null) /*read(((ITEM[(ELEMENT.getAttribute(`data-result-store`).split(`,`))])[ITEM])));*/
+                                                                 :  null) /*global.read(((ITEM[(ELEMENT.getAttribute(`data-result-store`).split(`,`))])[ITEM])));*/
                                                        }
                                                   } else {
                                                        if (ELEMENT.getAttribute(`data-result-store`) && ELEMENT.type) {
@@ -212,9 +212,9 @@ export default class UI {
                                         .getAttribute(`data-results-filters`)
                                         .split(`,`);
                               }
-                              SEARCH[element.getAttribute(`data-result`)][`results`] = await search(element.getAttribute(`data-result`), SEARCH[element.getAttribute(`data-result`)][`criteria`], SEARCH[element.getAttribute(`data-result`)][`additional criteria`]);
+                              SEARCH[element.getAttribute(`data-result`)][`results`] = await global.search(element.getAttribute(`data-result`), SEARCH[element.getAttribute(`data-result`)][`criteria`], SEARCH[element.getAttribute(`data-result`)][`additional criteria`]);
                          } else {
-                              SEARCH[element.getAttribute(`data-result`)][`results`] = await read(element.getAttribute(`data-result`));
+                              SEARCH[element.getAttribute(`data-result`)][`results`] = await global.read(element.getAttribute(`data-result`));
                          };
      
                          display(element.getAttribute(`data-result`), SEARCH[element.getAttribute(`data-result`)][`results`], `name`);

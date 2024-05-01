@@ -25,7 +25,7 @@ export default class EntryManager {
 		Window.addActionListener(`onFocusChanged`, (data) => {this.onRefresh()});
 		
 		// Add the context menu event. 
-		IconIndicator.set(this.instances.popup.show);
+		IconIndicator.set(() => {this.instances.popup.show()});
 		this.instances.menu.menu.onclick(() => {this.instances.popup.show()});
 	}
 

@@ -30,8 +30,13 @@ export default class logging {
 
 		(PRIORITY) ? this.clear() : false;
 
-		// Display the message.
-		console.log((MESSAGE ? (this.title).concat(`\n`) : ``).concat(this.message));
+		// Display the message. 
+		if (MESSAGE) {
+			console.log('%c%s%c\n%s', 'font-weight: bold;', this.title, ``, this.message);
+		} else {
+			console.log(this.message);
+		}
+
 		try {
 			M.toast({ text: (MESSAGE ? (this.title).concat(`\n`) : ``).concat(this.message) });
 		} catch (err) {}

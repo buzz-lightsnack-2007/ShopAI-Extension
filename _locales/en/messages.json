@@ -86,6 +86,9 @@
 	"term_refresh": {
 		"message": "Refresh"
 	},
+	"page_opening": {
+		"message": "Opening..."
+	},
 
 	"settings_general_showApplicable": {
 		"message": "Show product's ratings in this extension's icon"
@@ -94,7 +97,7 @@
 		"message": "Inject a quick access button"
 	},
 	"settings_general_autoOpen": {
-		"message": "Automatically open the side panel"
+		"message": "Automatically open the popup"
 	},
 	"settings_behavior_autoRun": {
 		"message": "Automatically run this extension on a supported page"
