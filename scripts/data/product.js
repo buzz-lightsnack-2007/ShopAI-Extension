@@ -87,8 +87,6 @@ export default class product {
 				
 				// Run the analysis.
 				await analyzer.generate(PROMPT);
-	
-				console.log(`done`, analyzer.blocked);
 
 				// Raise an error if the product analysis is blocked. 
 				if (analyzer.blocked) {
