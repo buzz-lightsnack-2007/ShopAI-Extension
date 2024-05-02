@@ -10,9 +10,15 @@ export default class scraper {
 		function autoscroll() {
 			let SCROLL = {"x": window.scrollX, "y": window.scrollY};
 
-			[{"top": 0, "left": 0, "behavior": "smooth"}, {"top": document.body.scrollHeight, "left": document.body.scrollWidth, "behavior": "smooth"}, {"top": SCROLL[`y`], "left": SCROLL[`x`], "behavior": "smooth"}].forEach((POSITION) => {
-				window.scrollTo(POSITION);
-			})
+			// Repeat two times to ensure proper webpage load. 
+			for (let TIMES = 1; TIMES <= 2; TIMES++) {
+				[{"top": 0, "left": 0, "behavior": "smooth"}, {"top": document.body.scrollHeight, "left": document.body.scrollWidth, "behavior": "smooth"}].forEach((POSITION) => {
+					window.scrollTo(POSITION);
+				})
+			};
+
+			// Scroll back to user's previous position.
+			window.scrollTo({"top": SCROLL[`y`], "left": SCROLL[`x`], "behavior": "smooth"});
 		};
 
 		autoscroll();
