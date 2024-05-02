@@ -25,7 +25,7 @@ export default class watch {
 
 		document.onreadystatechange = async () => {
 			if (document.readyState == 'complete' && await global.read([`settings`, `behavior`, `autoRun`])) {
-				console.log(`Loading complete, processing…`);
+				new logging((new texts(`scrape_msg_ready`)).localized);
 				let PROC = new processor(filter);
 			}
 		};
