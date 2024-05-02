@@ -4,6 +4,7 @@ Window and window content management */
 import texts from "../../mapping/read.js";
 import net from "/scripts/utils/net.js";
 import Window from "../window.js";
+import Tabs from "/scripts/GUI/tabs.js";
 import logging from '/scripts/logging.js';
 import {global, observe} from "/scripts/secretariat.js";
 
@@ -210,7 +211,7 @@ export default class windowman {
 								new logging((new texts(`page_opening`)).localized, target[`path`]);
 
 								// Open the window as a popup. 
-								new Window(target[`path`], Object.assign(target[`dimensions`], {"type": "popup"}));
+								Tabs.create(target[`path`]);
 							};
 
 							button.addEventListener("click", event);
