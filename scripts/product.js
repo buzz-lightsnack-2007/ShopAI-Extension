@@ -43,9 +43,6 @@ export default class product {
 		// Add the data digest.
 		this.#snip = (await hash.digest(this.details, {"output": "Array"}));
 
-		// Indicate that this is the last updated. 
-		await session.write([`last`], this.URL);
-
 		// Add the status about this data.
 		this.status = {};
 		this.status[`update`] = !(await (compare([`sites`, this.URL, `snip`], this.#snip)));
@@ -70,6 +67,8 @@ export default class product {
 	};
 
 	async analyze() {
+		console.log(`run`, this[`analysis`], this.status ? (!this.status.update) : false);
+
 		// Stop when the data is already analyzed.
 		if (this[`analysis`]) {return(this.analysis)}
 		else if (this.status ? (!this.status.update) : false) {this.analysis = await global.read([`sites`, this.URL, `analysis`]);}
@@ -85,9 +84,12 @@ export default class product {
 			PROMPT.push({"text": ((new texts(`AI_message_prompt`)).localized).concat(JSON.stringify(this.details))});
 
 			try {
+				
 				// Run the analysis.
 				await analyzer.generate(PROMPT);
 	
+				console.log(`done`, analyzer.blocked);
+
 				// Raise an error if the product analysis is blocked. 
 				if (analyzer.blocked) {
 					throw new Error((new texts(`error_msg_blocked`)).localized)

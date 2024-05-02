@@ -5,6 +5,7 @@ Process the information on the website and display it on screen.
 import scraper from "/scripts/external/scraper.js";
 import product from "/scripts/product.js";
 import injection from "/scripts/GUI/entrypoints/inject.js"
+import {global} from "/scripts/secretariat.js";
 
 export default class processor {
 	#filter; 
@@ -23,13 +24,18 @@ export default class processor {
 	constructor (filter) {
 		this.#filter = filter;
 
+		this.notify();
+
 		this.targets = this.#filter[`data`];
 		this.scrape();
 
 		if ((this.data) ? (((typeof (this.data)).includes(`obj`) && !Array.isArray(this.data)) ? Object.keys(this.data) : this.data) : false) {
 			this.analyze();
-
 		}
-		
+	}
+
+	async notify () {
+		// Indicate that this is the last updated. 
+		await global.write([`last`], this.URL, -1);
 	}
 }
