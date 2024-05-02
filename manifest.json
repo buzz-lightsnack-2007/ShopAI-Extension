@@ -4,12 +4,14 @@
 	"description": "__MSG_extension_description__",
 	"version": "0",
 	
-	"permissions": ["tabs", "storage", "unlimitedStorage", "contextMenus"],
+	"permissions": ["tabs", "storage", "unlimitedStorage"],
 
 	"background": {
 		"service_worker": "scripts/background/shopAI.js", "type": "module"
 	},
-	"action": {},
+	"action": {
+		"default_popup": "pages/popup.htm"
+	},
 	"content_scripts": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
