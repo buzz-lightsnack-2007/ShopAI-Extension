@@ -12,6 +12,9 @@ export default class MenuEntry {
 	Enable the sidebar. 
 	*/
 	enable () {
+		// First disable to prevent ghost entries.
+		this.disable();
+
 		this.menu.show();
 	}
 
