@@ -2,8 +2,6 @@
 
 import Tabs from "/scripts/GUI/tabs.js";
 import Window from "/scripts/GUI/window.js";
-import MenuEntry from "./menuentry.js";
-import ManagedWindow from "./ManagedWindow.js";
 import IconIndicator from "./iconindicator.js";
 import check from "/scripts/external/check.js";
 import pointer from "/scripts/data/pointer.js";
@@ -12,8 +10,6 @@ export default class EntryManager {
 	constructor () {
 		// Initialize the entries. 
 		this.instances = {};
-		this.instances.popup = new ManagedWindow();
-		this.instances.menu = new MenuEntry();
 
 		// Add the action listeners.
 		this.#listen();
@@ -21,13 +17,10 @@ export default class EntryManager {
 
 	/* Add the action listeners. */
 	#listen() {
+		this.onRefresh()
 		Tabs.addActionListener(`onActivated`, (data) => {this.onRefresh()});
 		Tabs.addActionListener(`onUpdated`, (data) => {this.onRefresh()});
 		Window.addActionListener(`onFocusChanged`, (data) => {this.onRefresh()});
-		
-		// Add the context menu event. 
-		IconIndicator.set(() => {this.instances.popup.show()});
-		this.instances.menu.menu.onclick(() => {this.instances.popup.show()});
 	}
 
 	onRefresh() {
@@ -49,7 +42,6 @@ export default class EntryManager {
 	Enable the entries. 
 	*/
 	enable () {
-		this.instances.menu.enable();
 		IconIndicator.enable();
 	}
 
@@ -57,7 +49,6 @@ export default class EntryManager {
 	Disable the entries and the existing opened side panel. 
 	*/
 	disable () {
-		this.instances.menu.disable();
 		IconIndicator.disable();
 	}
 }
