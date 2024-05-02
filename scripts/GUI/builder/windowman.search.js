@@ -232,9 +232,7 @@ export default class UI {
                               pick(null, null, element.getAttribute(`data-result`));
                          }
      
-                         observe((what) => {
-                              find(element);
-                         });
+                         
                     }
                }
      
