@@ -6,6 +6,7 @@ import MenuEntry from "./menuentry.js";
 import ManagedWindow from "./ManagedWindow.js";
 import IconIndicator from "./iconindicator.js";
 import check from "/scripts/external/check.js";
+import pointer from "/scripts/data/pointer.js";
 
 export default class EntryManager {
 	constructor () {
@@ -32,8 +33,13 @@ export default class EntryManager {
 	onRefresh() {
 		(Tabs.query(null, 0)).then((DATA) => {
 			if (DATA ? (DATA.url) : false) {
-				(check.platform(DATA.url)).then((result) => {
-					(result) ? (this.enable()) : (this.disable())
+				(check.platform(DATA.url)).then(async (result) => {
+					if (result) {
+						this.enable();
+						await pointer.select(DATA.url);
+					} else {
+						this.disable();
+					};
 				});
 			};
 		})
