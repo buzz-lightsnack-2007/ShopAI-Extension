@@ -23,7 +23,7 @@ class IconIndicator {
 	/* 
 	Indicate that the website isn't supported through icon change. 
 	*/
-	static async disable() {
+	static disable() {
 		BrowserIcon.disable();
 		(Tabs.query(null, 0)).then(async (TAB) => {
 			BrowserIcon.set({
