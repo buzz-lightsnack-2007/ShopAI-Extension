@@ -85,3 +85,8 @@ iframe.viewer {
 	border: 0;
 	outline: 0;
 }
+
+body[role="window"] {
+	width: 300pt;
+	height: 300pt;
+}
