@@ -3,9 +3,11 @@ Process the information on the website and display it on screen.
 */
 
 import scraper from "/scripts/external/scraper.js";
-import product from "/scripts/product.js";
+import product from "/scripts/data/product.js";
 import injection from "/scripts/GUI/entrypoints/inject.js"
 import {global} from "/scripts/secretariat.js";
+import logging from "/scripts/logging.js";
+import pointer from "/scripts/data/pointer.js";
 
 export default class processor {
 	#filter; 
@@ -17,11 +19,26 @@ export default class processor {
 	async analyze() {
 		this.product = new product(this.data);
 		await this.product.attach();
-		await this.product.analyze();
+		try {
+			await this.product.analyze();
+		} catch(err) {
+			logging.error(err.name, err.message, err.stack, false);
+		};
+
+		// Indicate that the process is done. 
+		await this.notify({"done": true});
+
+		// Save the data. 
 		this.product.save();
 	}
 	
-	constructor (filter) {
+	constructor (filter, URL = window.location.href) {
+		const clean = (URL) => {
+			// Remove the protocol from the URL.
+			return((URL.replace(/(^\w+:|^)\/\//, ``).split(`?`))[0]);
+		}
+
+		this.URL = clean(URL);
 		this.#filter = filter;
 
 		this.notify();
@@ -34,8 +51,12 @@ export default class processor {
 		}
 	}
 
-	async notify () {
+	/*
+	Use the storage data to notify about the processing updates. 
+	*/
+	async notify (state) {
 		// Indicate that this is the last updated. 
-		await global.write([`last`], this.URL, -1);
+		await pointer.select(this.URL);
+		pointer.update(state);
 	}
 }
