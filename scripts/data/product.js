@@ -67,8 +67,6 @@ export default class product {
 	};
 
 	async analyze() {
-		console.log(`run`, this[`analysis`], this.status ? (!this.status.update) : false);
-
 		// Stop when the data is already analyzed.
 		if (this[`analysis`]) {return(this.analysis)}
 		else if (this.status ? (!this.status.update) : false) {this.analysis = await global.read([`sites`, this.URL, `analysis`]);}
