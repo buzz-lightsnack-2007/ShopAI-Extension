@@ -428,19 +428,11 @@ class session {
 			return DATABASE;
 		}
 
-		/* Forcibly write the data to chrome database
-
-		@param {object} DATA the data
-		*/
-		const store = async (DATA) => {
-			return(chrome.storage.session.set(DATA));
-		}
-
 		async function verify (NAME, DATA) {
 			let DATA_CHECK = {};
 
 			// Verify the presence of the data.
-			DATA_CHECK[`state`] = await compare(null, [session.read([...NAME]), DATA]);
+			DATA_CHECK[`state`] = await compare(null, [await session.read([...NAME]), DATA]);
 
 			// Only notify when writing failed. 
 			(!DATA_CHECK[`state`])
@@ -462,8 +454,8 @@ class session {
 		DATA[`inject`] = nest(DATA[`all`], [...TARGET], DATA[`write`]);
 
 		// Write!
-		store(DATA[`inject`]);
-		return(verify(TARGET, DATA[`write`]));
+		chrome.storage.session.set(DATA[`inject`]);
+		return(await verify(TARGET, DATA[`write`]));
 	}
 }
 
