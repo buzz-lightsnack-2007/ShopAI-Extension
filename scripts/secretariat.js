@@ -399,8 +399,6 @@ class session {
 		DATA[`all`] = await chrome.storage.session.get(null);
 		(DATA[`all`]) ? DATA[`selected`] = find_data(DATA[`all`], PATH) : false;
 
-		console.log(DATA) // debugging code
-
 		return (DATA[`selected`]);
 	}
 
@@ -523,26 +521,8 @@ class template {
 
 		// Merge the data. 
 		// Managed > Synchronized > Imported > Local
+		// Set managed preferences. 
 		managed.reinforce();
-
-		// Set the managed preferences. 
-		if ((PREFERENCES[`all`][`managed`] && (typeof PREFERENCES[`all`][`managed`]).includes(`obj`) && !Array.isArray(PREFERENCES[`all`][`managed`])) ? Object.keys(PREFERENCES[`all`][`managed`]).length > 0 : false) {
-			Object.keys(PREFERENCES[`all`][`managed`]).forEach((item) => {
-				let PREFERENCE = {};
-				PREFERENCE[`name`] = item;
-
-				// Get if the data already exists. 
-				PREFERENCE[`existing`] = (PREFERENCES[`all`][`sync`] && (typeof PREFERENCES[`all`][`sync`]).includes(`obj`))
-					? PREFERENCES[`all`][`sync`].hasOwnProperty(PREFERENCE[`name`])
-					: false;
-
-				if (!PREFERENCE[`existing`]) {
-					// Do not allow synchronized data to interfere with managed data.
-					global.forget(PREFERENCE[`name`], 0, true);
-					global.write(PREFERENCE[`name`], PREFERENCES_ALL[`managed`][PREFERENCE[`name`]]);
-				}
-			});
-		};
 
 		// Import build data
 		if (PREFERENCES[`all`][`build`]) {
@@ -566,6 +546,15 @@ class template {
 			});
 		}
 	};
+
+	/*
+	Use our preferences when handling the data.
+	*/
+	static configure() {
+		chrome.storage.session.setAccessLevel(
+			{accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS'}
+		);
+	}
 }
 
 /*
