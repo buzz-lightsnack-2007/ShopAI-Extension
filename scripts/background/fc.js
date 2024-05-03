@@ -57,6 +57,9 @@ export default class fc {
 	static run() {
 		fc.trigger();
 		fc.every();
+
+		// Might as well set the preferences for storage. 
+		template.configure();
 	}
 
 	static async every() {
