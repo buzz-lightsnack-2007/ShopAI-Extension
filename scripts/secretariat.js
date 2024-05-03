@@ -229,10 +229,10 @@ class global {
 			let DATA_CHECK = {};
 
 			// Verify the presence of the data.
-			DATA_CHECK[`state`] = await compare(NAME, DATA);
+			DATA_CHECK[`state`] = await compare([...NAME], DATA);
 
 			(!DATA_CHECK[`state`])
-				? logging.error((new texts(`error_msg_save_failed`)).localized, String(path), JSON.stringify(DATA))
+				? logging.error((new texts(`error_msg_save_failed`)).localized, NAME.join(`→`), JSON.stringify(DATA))
 				: ((((typeof OPTIONS).includes(`obj`) && OPTIONS != null) ? (!(!!OPTIONS[`silent`])) : true)
 					? new logging (new texts(`saving_done`).localized)
 					: false);
@@ -365,7 +365,7 @@ class global {
 
 class session {
 	/* Recall session storage data. */
-	static read(PATH) {
+	static async read(PATH) {
 		/* Recursively find through each data, returning either that value or null when the object is not found.
 
 		@param {dictionary} DATA_ALL the data
@@ -396,8 +396,10 @@ class session {
 		}
 
 		let DATA = {};
-		DATA[`all`] = chrome.storage.local.get(null);
+		DATA[`all`] = await chrome.storage.session.get(null);
 		(DATA[`all`]) ? DATA[`selected`] = find_data(DATA[`all`], PATH) : false;
+
+		console.log(DATA) // debugging code
 
 		return (DATA[`selected`]);
 	}
@@ -436,6 +438,20 @@ class session {
 			return(chrome.storage.session.set(DATA));
 		}
 
+		async function verify (NAME, DATA) {
+			let DATA_CHECK = {};
+
+			// Verify the presence of the data.
+			DATA_CHECK[`state`] = await compare(null, [session.read([...NAME]), DATA]);
+
+			// Only notify when writing failed. 
+			(!DATA_CHECK[`state`])
+				? logging.error((new texts(`error_msg_save_failed`)).localized, NAME.join(`→`), JSON.stringify(DATA))
+				: true;
+			
+			return (DATA_CHECK[`state`]);
+		}
+
 		DATA = {"write": DATA};
 		DATA[`all`] = await session.read(null);
 		((DATA[`all`] != null && (typeof DATA[`all`]).includes(`obj`)) ? Object.keys(DATA[`all`]).length <= 0 : true)
@@ -449,6 +465,7 @@ class session {
 
 		// Write!
 		store(DATA[`inject`]);
+		return(verify(TARGET, DATA[`write`]));
 	}
 }
 
