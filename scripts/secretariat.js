@@ -365,7 +365,7 @@ class global {
 
 class session {
 	/* Recall session storage data. */
-	static async read(PATH) {
+	static async read(path) {
 		/* Recursively find through each data, returning either that value or null when the object is not found.
 
 		@param {dictionary} DATA_ALL the data
@@ -376,7 +376,7 @@ class session {
 			let DATA = DATA_ALL;
 
 			// Pull the data out.
-			if (DATA_ALL != null && (Array.isArray(DATA_PATH) && DATA_PATH != null) ? DATA_PATH.length > 0 : false) {
+			if (DATA_ALL != null && (Array.isArray(DATA_PATH)) ? DATA_PATH.length > 0 : false) {
 				let DATA_PATH_SELECTED = String(DATA_PATH.shift()).trim();
 
 				// Get the selected data.
@@ -393,12 +393,18 @@ class session {
 
 			// Now return the data.
 			return DATA;
-		}
+		};
 
+		// Change PATH to array if it isn't. 
+		let PATH = (!(Array.isArray(path)) && path && path != undefined)
+			? String(path).trim().split(",")
+			: ((path != null) ? path : []);
+
+		// Prepare data. 
 		let DATA = {};
 		DATA[`all`] = await chrome.storage.session.get(null);
-		(DATA[`all`]) ? DATA[`selected`] = find_data(DATA[`all`], PATH) : false;
-
+		(DATA[`all`]) ? DATA[`selected`] = find_data(DATA[`all`], [...PATH]) : false;
+		
 		return (DATA[`selected`]);
 	}
 
