@@ -252,7 +252,7 @@
 		"message": "The file has been downloaded, but it is not the correct file type."
 	},
 	"error_msg_save_failed": {
-		"message": "Not saved."
+		"message": "Not saved"
 	},
 	"error_msg_notattached": {
 		"message": "The product data has not been attached to the storage."
