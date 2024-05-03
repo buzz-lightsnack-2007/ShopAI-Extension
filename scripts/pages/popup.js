@@ -3,7 +3,7 @@
 */
 
 // Import modules.
-import {session} from "/scripts/secretariat.js";
+import {session, observe} from "/scripts/secretariat.js";
 import Window from "/scripts/GUI/window.js";
 import Page from "/scripts/pages/page.js";
 import Loader from "/scripts/GUI/loader.js";
@@ -32,6 +32,7 @@ class Page_Popup extends Page {
 			"error": "error.htm"
 		}
 
+		// This will be rewritten to only get the active tab. It should not change whenever the user clicks another tab; it's assumed that he will open the pop-up seperately over there. 
 		// Get the last edited site. 
 		let SITE = {};
 		SITE = await session.read([`last`], -1);
@@ -61,7 +62,7 @@ class Page_Popup extends Page {
 		// Check if the frame is available.
 		if (this.elements[`frame`].length) {
 			await this.switch();
-			// observe((DATA) => {this.switch();});
+			this.background();
 		} else {
 			this.loading();
 		}
