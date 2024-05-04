@@ -23,6 +23,7 @@ export default class processor {
 			await this.product.analyze();
 		} catch(err) {
 			logging.error(err.name, err.message, err.stack, false);
+			this.notify({"error": true});
 		};
 
 		// Indicate that the process is done. 
