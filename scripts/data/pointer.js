@@ -20,7 +20,7 @@ class pointer {
 		} catch(err) {}
 
 		// Get the last edited site. 
-		return(global.write([`last`, `URL`], this.URL));
+		return(global.write([`last`, `URL`], this.URL, -1));
 	}
 
 	/*
@@ -32,9 +32,22 @@ class pointer {
 		// Indicate the status of the process.
 		if ((state && (typeof state).includes(`obj`)) ? Object.keys(state).length : false) {
 			(Object.keys(state)).forEach(async (key) => {
-				await global.write([`last`, key], state[key]);
+				await global.write([`last`, key], state[key], -1);
 			});
 		}
+	}
+
+	static read() {
+		return(global.read([`last`]));
+	}
+
+	/* 
+	Clear the pointer. 
+
+	@param {boolean} silent don't request a response.
+	*/
+	static clear(silent = true) {
+		return (global.forget([`last`], 0, silent))
 	}
 }
 
