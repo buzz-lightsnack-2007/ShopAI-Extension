@@ -4,6 +4,7 @@ This script provides installation run scripts.
 
 import { template, global, observe } from "../secretariat.js";
 import filters from "../filters.js";
+import pointer from "../data/pointer.js";
 let config = chrome.runtime.getURL("config/config.json");
 
 export default class fc {
@@ -60,6 +61,7 @@ export default class fc {
 
 		// Might as well set the preferences for storage. 
 		template.configure();
+		pointer.clear();
 	}
 
 	static async every() {
