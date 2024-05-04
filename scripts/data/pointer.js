@@ -3,7 +3,7 @@
 Change the currently selected data to be viewed by the popup.  
 */
 
-import {session} from "/scripts/secretariat.js";
+import {global} from "/scripts/secretariat.js";
 
 class pointer {
 	/*
@@ -20,7 +20,7 @@ class pointer {
 		} catch(err) {}
 
 		// Get the last edited site. 
-		return(session.write([`last`, `URL`], this.URL));
+		return(global.write([`last`, `URL`], this.URL));
 	}
 
 	/*
@@ -32,7 +32,7 @@ class pointer {
 		// Indicate the status of the process.
 		if ((state && (typeof state).includes(`obj`)) ? Object.keys(state).length : false) {
 			(Object.keys(state)).forEach(async (key) => {
-				await session.write([`last`, key], state[key]);
+				await global.write([`last`, key], state[key]);
 			});
 		}
 	}
