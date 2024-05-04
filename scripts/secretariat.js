@@ -442,9 +442,9 @@ class session {
 
 			// Only notify when writing failed. 
 			(!DATA_CHECK[`state`])
-				? logging.error((new texts(`error_msg_save_failed`)).localized, NAME.join(`→`), JSON.stringify(DATA))
+				? logging.error((new texts(`error_msg_save_failed`)).localized, NAME.join(` → `), JSON.stringify(DATA))
 				: true;
-			
+
 			return (DATA_CHECK[`state`]);
 		}
 
