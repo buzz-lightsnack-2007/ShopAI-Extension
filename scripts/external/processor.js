@@ -40,8 +40,6 @@ export default class processor {
 		this.URL = clean(URL);
 		this.#filter = filter;
 
-		this.notify();
-
 		this.targets = this.#filter[`data`];
 		this.scrape();
 
