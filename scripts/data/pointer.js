@@ -21,7 +21,7 @@ class pointer {
 		} catch(err) {}
 
 		// Get the last edited site. 
-		return((URL) ? global.write([`last`], URL, -1) : false); 
+		return((URL) ? global.write([`last`], URL, -1, {"silent": true}) : false); 
 	}
 
 	/*
@@ -39,7 +39,7 @@ class pointer {
 
 			(await global.read([`last`]))
 				? (Object.keys(state)).forEach(async (key) => {
-					await global.write([`sites`, await global.read([`last`]), key], state[key], -1);
+					await global.write([`sites`, await global.read([`last`]), key], state[key], -1, {"silent": true});
 				})
 				: false;
 		}
