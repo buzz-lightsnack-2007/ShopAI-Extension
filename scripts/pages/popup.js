@@ -7,6 +7,8 @@ import {global, observe} from "/scripts/secretariat.js";
 import Window from "/scripts/GUI/window.js";
 import Page from "/scripts/pages/page.js";
 import Loader from "/scripts/GUI/loader.js";
+import Tabs from "/scripts/GUI/tabs.js";
+import logging from "/scripts/logging.js";
 
 class Page_Popup extends Page {
 	constructor() {
@@ -82,7 +84,6 @@ class Page_Popup extends Page {
 
 			// The results page has its own container. 
 			this.elements[`container`].forEach((CONTAINER) => {
-				console.log(PAGE.includes("results.htm"));
 				CONTAINER.classList[(PAGE.includes(`results`)) ? `remove` : `add`](`container`);
 			});
 		};
@@ -109,6 +110,17 @@ class Page_Popup extends Page {
 		}) : false;
 		(document.querySelector(`[data-action="open,help"]`)) ? document.querySelector(`[data-action="open,help"]`).addEventListener("click", () => {
 			new Window(`help.htm`);
+		}) : false;
+		(document.querySelector(`[data-action="analysis,reload"]`)) ? document.querySelector(`[data-action="analysis,reload"]`).addEventListener("click", () => {
+			try {
+				// Send a message to the content script. 
+				Tabs.query(null, 0).then((TAB) => {
+					chrome.tabs.sendMessage(TAB.id, {"refresh": true});
+				});
+			} catch(err) {
+				logging.error(err.name, err.message, err.stack);
+				throw (err);
+			};
 		}) : false;
 	}
 }
