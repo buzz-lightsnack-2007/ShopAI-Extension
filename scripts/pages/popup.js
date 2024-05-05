@@ -3,7 +3,8 @@
 */
 
 // Import modules.
-import {session, observe} from "/scripts/secretariat.js";
+import {session, global, observe} from "/scripts/secretariat.js";
+import pointer from "/scripts/data/pointer.js";
 import Window from "/scripts/GUI/window.js";
 import Page from "/scripts/pages/page.js";
 import Loader from "/scripts/GUI/loader.js";
@@ -32,13 +33,10 @@ class Page_Popup extends Page {
 	*/
 	async update(override = false) {
 		// Set the reference website when overriding or unset. 
-		(override || !this[`ref`]) ? this[`ref`] = await session.read([`last`, `URL`]) : false;
+		(override || !this[`ref`]) ? this[`ref`] = await global.read([`last`]) : false;
 
 		// Update all other data. 
-		(this[`ref`]) ? this[`data`] = await session.read([`last`]) : false;
-
-		// Merge objects
-		(this[`data`] && this[`ref`]) ? this[`data`] = Object.assign(this[`data`], await session.read([`sites`, this[`ref`]])) : false;
+		(this[`ref`]) ? this[`data`] = await global.read([`sites`, this[`ref`]]) : false;
 	}
 
 	async loading() {
@@ -54,7 +52,7 @@ class Page_Popup extends Page {
 
 		// Prepare all the necessary data. 
 		await this.update();
-		
+
 		// Make sure that the website has been selected!
 		if (this[`ref`]) {	
 			// Set the relative chrome URLs
