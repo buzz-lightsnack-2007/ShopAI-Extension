@@ -79,12 +79,19 @@ class Page_Popup extends Page {
 			this.elements[`frame`].forEach((frame) => {
 				frame.src = PAGE;
 			})
+
+			// The results page has its own container. 
+			this.elements[`container`].forEach((CONTAINER) => {
+				console.log(PAGE.includes("results.htm"));
+				CONTAINER.classList[(PAGE.includes(`results`)) ? `remove` : `add`](`container`);
+			});
 		};
 	};
 	
 	async content() {
 		this.elements = {};
-		this.elements[`frame`] = document.querySelectorAll(`iframe.viewer`);
+		this.elements[`container`] = document.querySelectorAll(`main`);
+		this.elements[`frame`] = document.querySelectorAll(`main > iframe.viewer`);
 
 		
 		// Check if the frame is available.
