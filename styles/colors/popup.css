@@ -1,0 +1,21 @@
+@import url("/styles/colors/defaults.results.css");
+
+#score {
+	background-color: #88888888;
+}
+
+#score::-webkit-progress-value {
+	background-color: #ffF;    
+}
+
+[result="bad"] {
+     background: var(--color-results_bad_gradient);
+}
+
+[result="ok"] {
+     background: var(--color-results_ok_gradient);
+}
+
+[result="good"], [result="trusted"] {
+     background: var(--color-results_good_gradient);
+}
