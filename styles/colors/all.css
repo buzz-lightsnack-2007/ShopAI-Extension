@@ -24,6 +24,10 @@ nav {
 	background-color: var(--background-color) !important;
 }
 
+nav.transparent {
+	box-shadow: none !important;
+}
+
 nav#header {
 	background: linear-gradient(
 		335deg,
