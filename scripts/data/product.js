@@ -36,6 +36,9 @@ export default class product {
 
 		// Set private variables.
 		this.#options = options;
+
+		// Set the status. 
+		this.status = {};
 	};
 
 	/* Attach the product data to the storage. */
@@ -44,7 +47,6 @@ export default class product {
 		this.#snip = (await hash.digest(this.details, {"output": "Array"}));
 
 		// Add the status about this data.
-		this.status = {};
 		this.status[`update`] = !(await (compare([`sites`, this.URL, `snip`], this.#snip)));
 	}
 
@@ -55,34 +57,33 @@ export default class product {
 		// There is only a need to save the data if an update is needed. 
 		if (this.status[`update`]) {
 			// Save the data to the storage.
+			await global.write([`sites`, this.URL, `status`], this.status, -1);
 			await global.write([`sites`, this.URL, `snip`], this.#snip, 1);
 	
 			// Write the analysis data to the storage.
 			(this[`analysis`]) ? global.write([`sites`, this.URL, `analysis`], this.analysis, 1): false;
 		}
-
 	};
 
 	async analyze() {
 		// Stop when the data is already analyzed.
 		if (this[`analysis`]) {return(this.analysis)}
 		else if (this.status ? (!this.status.update) : false) {this.analysis = await global.read([`sites`, this.URL, `analysis`]);}
+		
 		if ((this.analysis && this.analysis != null && this.analysis != undefined) ? !((typeof this.analysis).includes(`obj`) && !Array.isArray(this.analysis)) : true) {
-			// Analyze the data.
 			const gemini = (await import(chrome.runtime.getURL("scripts/AI/gemini.js"))).default;
 			let analyzer = new gemini (await global.read([`settings`,`analysis`,`api`,`key`]), `gemini-pro`);
-
-			// Analyze the data.
-			let PROMPT = [];
-
+			
 			// Add the prompt.
+			let PROMPT = [];
 			PROMPT.push({"text": ((new texts(`AI_message_prompt`)).localized).concat(JSON.stringify(this.details))});
-				
+			
 			// Run the analysis.
 			await analyzer.generate(PROMPT);
 
 			// Raise an error if the product analysis is blocked. 
-			if (analyzer.blocked) {
+			this.status[`blocked`] = analyzer.blocked;
+			if (this.status[`blocked`]) {
 				throw new Error((new texts(`error_msg_blocked`)).localized)
 			};
 
