@@ -11,3 +11,7 @@
 #score::-webkit-progress-value {
 	background-color: #ffF;    
 }
+
+body:has(summary + details) summary {
+	padding-bottom: 2em;
+}
