@@ -11,6 +11,7 @@ class pointer {
 	*/
 	static select(URL) {
 		const clean = (URL) => {
+
 			// Remove the protocol from the URL.
 			return((URL.replace(/(^\w+:|^)\/\//, ``).split(`?`))[0]);
 		}
@@ -20,7 +21,8 @@ class pointer {
 		} catch(err) {}
 
 		// Get the last edited site. 
-		return(global.write([`last`, `URL`], this.URL, -1));
+		return((URL) ? global.write([`last`], URL, -1) : null); 
+		
 	}
 
 	/*
@@ -28,17 +30,38 @@ class pointer {
 
 	@param {dictionary} state the new state
 	*/
-	static update(state) {
+	static async update(state) {
 		// Indicate the status of the process.
 		if ((state && (typeof state).includes(`obj`)) ? Object.keys(state).length : false) {
-			(Object.keys(state)).forEach(async (key) => {
-				await global.write([`last`, key], state[key], -1);
-			});
+			if (state[`URL`]) {
+				await this.select(state[`URL`]);
+				delete state[`URL`];
+			};
+
+			(await global.read([`last`]))
+				? (Object.keys(state)).forEach(async (key) => {
+					await global.write([`sites`, await global.read([`last`]), key], state[key], -1);
+				})
+				: false;
 		}
 	}
 
-	static read() {
-		return(global.read([`last`]));
+	/*
+	Read a property about the pointer. 
+
+	@param {string} name the property to read
+	*/
+	static async read(name) {
+		let RETURN = ((name)
+			? (!(name.trim().includes(`URL`))
+				? await global.read([`last`])
+				: true)
+			: false)
+			? global.read((name.trim().includes(`URL`))
+				? [`last`]
+				: [`sites`, await global.read([`last`]), ...((Array.isArray(name)) ? name : name.trim().split(`,`))]) 
+			: null;
+		return(RETURN);
 	}
 
 	/* 
