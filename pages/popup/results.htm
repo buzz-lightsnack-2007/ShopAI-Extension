@@ -2,15 +2,15 @@
      <head>
           <script src="../../styles/external/materialize/js/materialize.js"></script> 
           <script src="../../scripts/pages/results.js" type="module"></script> 
-          <link href="../styles/popup.css" rel="stylesheet" type="text/css" />
+          <link href="../../styles/popup.css" rel="stylesheet" type="text/css" />
      </head>
      <body id="results">
           <summary>
+               <p id="summary" data-active-result="Rating,Reason" class="flow-text"></p>
                <p data-active-result="Description,Summary"></p>
-               <p id="summary" class="flow-text" data-active-result="Rating,Reason"></p>
                <progress id="score" data-active-result="Rating,Score" min="0" max="1" value=""></progress>
           </summary>
-          <details>
+          <details data-active-result="Description,*" data-active-result-type="card">
           </details>
      </body>
 </html>
