@@ -1,6 +1,7 @@
 @import url("/styles/layouts/all.inputs.css");
 @import url("/styles/layouts/all.collapsible.css");
 @import url("/styles/layouts/all.navbar.css");
+@import url("/styles/layouts/all.cards.css");
 
 fieldset {
 	padding: 2em !important;
@@ -81,7 +82,7 @@ nav ul:not(.dropdown-content) > li > a {
 
 iframe.viewer {
 	width: 100%;
-	height: fit-content;
+	height: 100%;
 	border: 0;
 	outline: 0;
 }
@@ -89,4 +90,12 @@ iframe.viewer {
 body[role="window"] {
 	width: 300pt;
 	height: 300pt;
+}
+
+*:has(summary + details) summary:not(:last-child) {
+	padding-bottom: 1em;
+}
+
+summary + details {
+     padding-top: 1em;
 }
