@@ -6,6 +6,7 @@ import {global, session, compare} from "/scripts/secretariat.js";
 import hash from "/scripts/utils/hash.js";
 import texts from "/scripts/mapping/read.js";
 import logging from "/scripts/logging.js";
+import {URLs} from "/scripts/utils/URLs.js";
 
 // Don't forget to set the class as export default.
 export default class product {
@@ -24,14 +25,8 @@ export default class product {
 			options = {};
 		}
 
-		/* Remove uneeded data or formatting from the URL and the data. */
-		let clean = (URL) => {
-			// Remove the protocol from the URL.
-			return((URL.replace(/(^\w+:|^)\/\//, ``).split(`?`))[0]);
-		}
-
 		// Set this product's details as part of the object's properties.
-		this.URL = clean(URL);
+		this.URL = URLs.clean(URL);
 		this.details = details;
 
 		// Set private variables.

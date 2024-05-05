@@ -6,6 +6,7 @@ import scraper from "/scripts/external/scraper.js";
 import product from "/scripts/data/product.js";
 import {global} from "/scripts/secretariat.js";
 import logging from "/scripts/logging.js";
+import {URLs} from "/scripts/utils/URLs.js";
 
 export default class processor {
 	#filter; 
@@ -42,12 +43,7 @@ export default class processor {
 	}
 	
 	constructor (filter, URL = window.location.href) {
-		const clean = (URL) => {
-			// Remove the protocol from the URL.
-			return((URL.replace(/(^\w+:|^)\/\//, ``).split(`?`))[0]);
-		}
-
-		this.URL = clean(URL);
+		this.URL = URLs.clean(URL);
 		this.#filter = filter;
 
 		this.targets = this.#filter[`data`];
