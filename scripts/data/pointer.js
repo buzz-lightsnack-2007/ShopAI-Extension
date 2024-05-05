@@ -21,8 +21,7 @@ class pointer {
 		} catch(err) {}
 
 		// Get the last edited site. 
-		return((URL) ? global.write([`last`], URL, -1) : null); 
-		
+		return((URL) ? global.write([`last`], URL, -1) : false); 
 	}
 
 	/*
