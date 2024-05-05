@@ -4,10 +4,8 @@ Process the information on the website and display it on screen.
 
 import scraper from "/scripts/external/scraper.js";
 import product from "/scripts/data/product.js";
-import injection from "/scripts/GUI/entrypoints/inject.js"
 import {global} from "/scripts/secretariat.js";
 import logging from "/scripts/logging.js";
-import pointer from "/scripts/data/pointer.js";
 
 export default class processor {
 	#filter; 
@@ -23,11 +21,11 @@ export default class processor {
 			await this.product.analyze();
 		} catch(err) {
 			logging.error(err.name, err.message, err.stack, false);
-			this.notify({"error": true});
+			this.product.status[`error`] = true;
 		};
 
 		// Indicate that the process is done. 
-		await this.notify({"done": true});
+		this.product.status[`done`] = true;
 
 		// Save the data. 
 		this.product.save();
@@ -50,14 +48,5 @@ export default class processor {
 		if ((this.data) ? (((typeof (this.data)).includes(`obj`) && !Array.isArray(this.data)) ? Object.keys(this.data) : this.data) : false) {
 			this.analyze();
 		}
-	}
-
-	/*
-	Use the storage data to notify about the processing updates. 
-	*/
-	async notify (state) {
-		// Indicate that this is the last updated. 
-		await pointer.select(this.URL);
-		pointer.update(state);
 	}
 }
