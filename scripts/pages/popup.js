@@ -3,8 +3,7 @@
 */
 
 // Import modules.
-import {session, global, observe} from "/scripts/secretariat.js";
-import pointer from "/scripts/data/pointer.js";
+import {global, observe} from "/scripts/secretariat.js";
 import Window from "/scripts/GUI/window.js";
 import Page from "/scripts/pages/page.js";
 import Loader from "/scripts/GUI/loader.js";
@@ -19,7 +18,7 @@ class Page_Popup extends Page {
 
 	async background() {
 		// Wait until a change in the session storage.
-		observe(async (changes) => {
+		observe((changes) => {
 			this.update();
 			this.switch();
 			// First, update site data but retain the URL. 
@@ -33,10 +32,20 @@ class Page_Popup extends Page {
 	*/
 	async update(override = false) {
 		// Set the reference website when overriding or unset. 
-		(override || !this[`ref`]) ? this[`ref`] = await global.read([`last`]) : false;
+		if (override || !this[`ref`]) {this[`ref`] = await global.read([`last`])};
+		
+		// Get all the data to be used here. 
+		let DATA = {
+			"status": await global.read([`sites`, this[`ref`], `status`], -1)
+		}
 
 		// Update all other data. 
-		(this[`ref`]) ? this[`data`] = await global.read([`sites`, this[`ref`]]) : false;
+		this[`status`] = (DATA[`status`])
+			? DATA[`status`]
+			// Accomodate data erasure. 
+			: ((this[`status`])
+				? this[`status`]
+				: {});
 	}
 
 	async loading() {
@@ -54,24 +63,24 @@ class Page_Popup extends Page {
 		await this.update();
 
 		// Make sure that the website has been selected!
-		if (this[`ref`]) {	
+		if (this[`ref`]) {
 			// Set the relative chrome URLs
 			(Object.keys(PAGES)).forEach(PAGE => {
 				PAGES[PAGE] = chrome.runtime.getURL(`pages/popup/${PAGES[PAGE]}`);
 			});
-	
-			// Check if the site is available.
-			if ((this[`ref`] && this[`data`]) ? (!this[`data`][`done`]) : true) {
-				this.elements[`frame`].src = PAGES[`loading`];
-			} else if (this[`data`][`error`]) {
-				// Set the iframe src to display the error. 
-				this.elements[`frame`].src = PAGES[`error`];
-			} else {
-				// Set the iframe src to display the results. 
-				this.elements[`frame`].src = PAGES[`results`];
-			}
-		}
-	}
+			
+			let PAGE = PAGES[((this[`status`][`done`])
+				? ((this[`status`][`error`])
+					? `error`
+					: `results`)
+				: `loading`)];
+
+			// Replace the iframe src with the new page.
+			this.elements[`frame`].forEach((frame) => {
+				frame.src = PAGE;
+			})
+		};
+	};
 	
 	async content() {
 		this.elements = {};
