@@ -10,7 +10,8 @@ class IconIndicator {
 	Indicate that the website is supported through icon change. 
 	*/
 	static enable() {
-		BrowserIcon.enable();		
+		BrowserIcon.enable();
+		BrowserIcon.addActionListener("onClicked", () => {BrowserIcon.onclick();});
 
 		// Enable icon changes if enabled within the settings. 
 		(Tabs.query(null, 0)).then((TAB) => {
@@ -69,6 +70,7 @@ class IconIndicator {
 	*/
 	static disable() {
 		BrowserIcon.disable();
+		BrowserIcon.removeActionListener("onClicked", () => {BrowserIcon.onclick();});
 
 		// Enable icon changes if enabled within the settings. 
 		global.read([`settings`, `general`, `showApplicable`]).then((PREFERENCE) => {
@@ -81,15 +83,6 @@ class IconIndicator {
 				: false;
 			})
 		})
-	}
-	
-	/*
-	Set the function. 
-	
-	@param {function} callback the function to run.
-	*/
-	static set(callback) {
-		BrowserIcon.addActionListener("onClicked", callback);
 	}
 
 	/*
