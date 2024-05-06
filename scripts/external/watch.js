@@ -17,15 +17,16 @@ export default class watch {
 
 	/* Act on the page.
 
-	@param {dictionary} filter the filter to work with
+	@param {object} filter the filter to work with
+	@param {object} options the options
 	*/
-	static async process(filter) {
+	static async process(filter, options) {
 		document.onreadystatechange = async () => {
-			if (document.readyState == 'complete' && await global.read([`settings`, `behavior`, `autoRun`])) {
+			if (document.readyState == 'complete' && (await global.read([`settings`, `behavior`, `autoRun`]) || ((typeof options).includes(`object`) && options != null) ? options[`override`] : false)) {
 				new logging((new texts(`scrape_msg_ready`)).localized);
-				let PROC = new processor(filter);
+				this.processed = (override || this.processed == null) ? new processor(filter) : this.processed;
 			}
-		};
+		}
 	}
 
 	static main() {
@@ -39,7 +40,7 @@ export default class watch {
 				
 				// Create a listener for messages indicating re-processing. 
 				chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-					(((typeof message).includes(`obj`) && !Array.isArray(message)) ? message[`refresh`] : false) ? watch.process(FILTER_RESULT) : false;
+					(((typeof message).includes(`obj`) && !Array.isArray(message)) ? message[`refresh`] : false) ? watch.process(FILTER_RESULT, {"override": true}) : false;
 				});
 			}
 		});
