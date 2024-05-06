@@ -1,11 +1,11 @@
 {
-	"extensionIcon_product_error": {
+	"extensionIcon_error": {
 		"symbol": "⚠"
 	},
 	"extensionIcon_product_bad": {
 		"symbol": "👎"
 	},
-	"extensionIcon_product_OK": {
+	"extensionIcon_product_ok": {
 		"symbol": "🆗"
 	},
 	"extensionIcon_product_good": {
