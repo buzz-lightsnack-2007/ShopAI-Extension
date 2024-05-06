@@ -71,6 +71,13 @@ export default class logging {
 	@param {boolean} critical the critical nature
 	*/
 	static async error(ERROR_CODE, ERROR_MESSAGE, ERROR_STACK, critical = true) {
+		// Depackage the shortcut method of sending the error message. 
+		(!ERROR_MESSAGE && !ERROR_STACK && (typeof ERROR_CODE).includes(`obj`)) ? (
+			ERROR_MESSAGE = ERROR_CODE.message,
+			ERROR_STACK = ERROR_CODE.stack,
+			ERROR_CODE = ERROR_CODE.name
+		) : false;
+
 		// Display the error message.
 		console.error('%c%s%c%s%c%s%c\n%s%c', `font-weight: bold;`, ERROR_CODE, ``, `: `, ``, ERROR_MESSAGE, `font-family: monospace;`, ERROR_STACK, ``);
 		

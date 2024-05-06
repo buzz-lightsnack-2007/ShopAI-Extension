@@ -1,6 +1,8 @@
 /* read_universal
 	Read a file stored in the universal strings. */
 
+import logging from "/scripts/logging.js";
+
 export default class texts {
 	/* This reads the message from its source. This is a fallback for the content scripts, who doesn't appear to read classes.
 
@@ -54,7 +56,7 @@ export default class texts {
 				return (SYMBOL);
 			})
 			.catch((error) => {
-				console.error(error);
+				logging.error(error.name, null, null, false);
 			}));
 	};
 }

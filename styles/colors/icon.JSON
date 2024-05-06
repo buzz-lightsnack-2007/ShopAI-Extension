@@ -1,1 +1,9 @@
-{	"loading": "rgb(255, 134, 57)",	"N/A": "rgb(127, 127, 127)",	"product_bad": "rgba(255, 0, 0)",	"product_OK": "rgba(255, 255, 0)",	"product_good": "rgb(0, 255, 0)",	"product_trusted": "rgb(0, 255, 0)"}
+{
+	"loading": "rgb(255, 134, 57)",
+	"N/A": "rgb(127, 127, 127)",
+	"error": "rgb(255, 0, 0)",
+	"product_bad": "rgba(255, 0, 0)",
+	"product_OK": "rgba(255, 255, 0)",
+	"product_good": "rgb(0, 255, 0)",
+	"product_trusted": "rgb(0, 255, 0)"
+}
