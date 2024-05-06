@@ -20,11 +20,11 @@ export default class watch {
 	@param {object} filter the filter to work with
 	@param {object} options the options
 	*/
-	static async process(filter, options) {
+	static async process(filter, options = {}) {
 		document.onreadystatechange = async () => {
-			if (document.readyState == 'complete' && (await global.read([`settings`, `behavior`, `autoRun`]) || ((typeof options).includes(`object`) && options != null) ? options[`override`] : false)) {
+			if (document.readyState == 'complete' && (await global.read([`settings`, `behavior`, `autoRun`]) || ((typeof options).includes(`object`) && options) ? options[`override`] : false)) {
 				new logging((new texts(`scrape_msg_ready`)).localized);
-				this.processed = (override || this.processed == null) ? new processor(filter) : this.processed;
+				this.processed = (((options && typeof options == `object`) ? options[`override`] : false) || this.processed == null) ? new processor(filter) : this.processed;
 			}
 		}
 	}
