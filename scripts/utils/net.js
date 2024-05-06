@@ -40,6 +40,8 @@ export default class net {
 						}
 					};
 				};
+			} else if (!CONNECT.ok) {
+				throw new ReferenceError();
 			}
 		} catch(err) {
 			throw err;
