@@ -35,6 +35,36 @@ nested.dictionary = class dictionary {
           // Now return the data.
           return DATA;
      }
+
+     /*
+     Update a data with a new value.
+
+     @param {object} data the data to be used
+     @param {string} path the path to the data
+     @param {object} value the value to be used
+     @return {object} the data
+     */
+     static set(data, path, value) {
+          let DATA = data, PATH = path, VALUE = value;
+
+          // Convert path into an array if not yet set.
+          PATH = (Array.isArray(PATH)) ? PATH : (PATH && (typeof PATH).includes(`str`)) ? PATH.trim().split(`,`) : [];
+
+          // Get the current path.
+          PATH = {"all": PATH};
+          PATH[`target`] = PATH[`all`];
+          PATH[`current`] = String(PATH[`target`].shift()).trim();
+
+          if (PATH[`target`].length > 0) {
+               (DATA[PATH[`current`]] == null) ? DATA[PATH[`current`]] = {} : false;
+               DATA[PATH[`current`]] = nested.dictionary.set(DATA[PATH[`current`]], PATH[`target`], VALUE);
+          } else {
+               DATA[PATH[`current`]] = VALUE;
+          }
+
+          // Return the value.
+          return (DATA);
+     }
 }
 
 export {nested as default};
