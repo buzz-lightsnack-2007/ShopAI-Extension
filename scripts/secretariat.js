@@ -5,6 +5,7 @@ Manage the local cache.
 import logging from "/scripts/logging.js";
 import texts from "/scripts/mapping/read.js";
 import hash from "/scripts/utils/hash.js";
+import nested from "/scripts/utils/nested.js";
 
 /*
 Global data storage, which refers to local and synchronized storage
@@ -25,36 +26,6 @@ class global {
 		function pull(SOURCE = -1) {
 			return (chrome.storage[(SOURCE > 0) ? `sync` : `local`].get(null));
 		}
-
-		/*
-		Find a data given its path. 
-
-		@param {object} DATA_ALL the data
-		@param {object} path the path of the data
-		*/
-		function find(DATA_ALL, path) {
-			let DATA_PATH = path;
-			let DATA = DATA_ALL;
-
-			// Pull the data out.
-			if (DATA_ALL != null && (Array.isArray(DATA_PATH) && DATA_PATH != null) ? DATA_PATH.length > 0 : false) {
-				let DATA_PATH_SELECTED = String(DATA_PATH.shift()).trim();
-
-				// Get the selected data.
-				DATA = DATA_ALL[DATA_PATH_SELECTED];
-
-				// must run if there is actually a parameter to test
-				if (DATA_PATH.length > 0) {
-					// Recursively run to make use of the existing data.
-					DATA = find(DATA, DATA_PATH);
-				};
-			} else {
-				return null;
-			}
-
-			// Now return the data.
-			return DATA;
-		};
 
 		// Initialize the selected pref data.
 		let DATA, DATA_RETURNED;
@@ -87,7 +58,7 @@ class global {
 			default:
 				cloud = (cloud > 0) ? 1 : -1;
 				DATA = await pull(cloud);
-				DATA_RETURNED = (NAME) ? find(DATA, NAME) : DATA;
+				DATA_RETURNED = (NAME) ? nested.dictionary.get(DATA, NAME) : DATA;
 	
 				return(DATA_RETURNED);
 				break;
@@ -189,42 +160,6 @@ class global {
 	static async write(path, data, CLOUD = -1, OPTIONS = {}) {
 		let DATA_INJECTED = {};
 
-		/* Appropriately nest and merge the data.
-
-		@param {object} EXISTING the original data
-		@param {object} PATH the subpath
-		@param {object} VALUE the value
-		@param {boolean} STRICT determines whether data is to be overridden or merged
-		@return {object} the updated data
-		*/
-		function nest(existing, path, value, strict = false) {
-			let DATABASE = existing, SUBPATH = path;
-			
-			// Get the current path.
-			let PATH = {};
-			PATH[`current`] = (SUBPATH.length) ? String(SUBPATH.shift()).trim() : null;
-			PATH[`target`] = SUBPATH;
-
-			if (PATH[`target`].length > 0 && PATH[`current`] != undefined && PATH[`current`] != null) {
-				DATABASE[PATH[`current`]] = (DATABASE[PATH[`current`]] == null)
-					? {}
-					: DATABASE[PATH[`current`]];
-				DATABASE[PATH[`current`]] = nest(DATABASE[PATH[`current`]], PATH[`target`], value, strict);
-			} else if (PATH[`current`]  != undefined && PATH[`current`] != null) {
-				// If not strict and the data selected is a dictionary, then merge them. 
-				DATABASE[PATH[`current`]] = (((DATABASE[PATH[`current`]]) ? ((typeof DATABASE[PATH[`current`]]).includes(`obj`) && !Array.isArray(DATABASE[PATH[`current`]])) : false) && !strict)
-					? Object.assign(DATABASE[PATH[`current`]], value)
-					: value;
-			} else {
-				DATABASE = (DATABASE == null || DATABASE == undefined) ? {} : DATABASE;
-
-				DATABASE = (((typeof DATABASE).includes(`obj`) && !Array.isArray(DATABASE) && !strict) ? Object.assign(DATABASE, value) : value);
-			}
-
-			// Return the value.
-			return DATABASE;
-		}
-
 		async function verify (NAME, DATA) {
 			let DATA_CHECK = {};
 
@@ -259,7 +194,7 @@ class global {
 			: ((path != null) ? path : []) // Ensure that path isn't empty. 
 
 		// Merge!
-		DATA_INJECTED = nest(DATA_ALL, (DATA_NAME != null) ? [...DATA_NAME] : DATA_NAME, data, (OPTIONS[`strict`] != null) ? OPTIONS[`strict`] : false);
+		DATA_INJECTED = nested.dictionary.set(DATA_ALL, (DATA_NAME != null) ? [...DATA_NAME] : DATA_NAME, data, (OPTIONS[`strict`] != null) ? OPTIONS[`strict`] : false);
 
 		// If cloud is not selected, get where the data is already existent. 
 		(CLOUD == 0 || CLOUD == null)
@@ -364,37 +299,13 @@ class global {
 }
 
 class session {
-	/* Recall session storage data. */
+	/*
+	Recall session storage data. 
+	
+	@param {string} path the path to the data
+	@return {object} the data
+	*/
 	static async read(path) {
-		/* Recursively find through each data, returning either that value or null when the object is not found.
-
-		@param {dictionary} DATA_ALL the data
-		@param {object} DATA_PATH the path of the data
-		@return {object} the data
-		*/
-		function find_data(DATA_ALL, DATA_PATH) {
-			let DATA = DATA_ALL;
-
-			// Pull the data out.
-			if (DATA_ALL != null && (Array.isArray(DATA_PATH)) ? DATA_PATH.length > 0 : false) {
-				let DATA_PATH_SELECTED = String(DATA_PATH.shift()).trim();
-
-				// Get the selected data.
-				DATA = DATA_ALL[DATA_PATH_SELECTED];
-
-				// must run if there is actually a parameter to test
-				if (DATA_PATH.length > 0) {
-					// Recursively run to make use of the existing data.
-					DATA = find_data(DATA, DATA_PATH);
-				};
-			} else {
-				return null;
-			}
-
-			// Now return the data.
-			return DATA;
-		};
-
 		// Change PATH to array if it isn't. 
 		let PATH = (!(Array.isArray(path)) && path && path != undefined)
 			? String(path).trim().split(",")
@@ -403,37 +314,18 @@ class session {
 		// Prepare data. 
 		let DATA = {};
 		DATA[`all`] = await chrome.storage.session.get(null);
-		(DATA[`all`]) ? DATA[`selected`] = find_data(DATA[`all`], [...PATH]) : false;
+		(DATA[`all`]) ? DATA[`selected`] = nested.dictionary.get(DATA[`all`], [...PATH]) : false;
 		
 		return (DATA[`selected`]);
 	}
 
+	/*
+	Write the data to a specified path. 
+
+	@param {string} PATH the path to the data
+	@param {object} DATA the data to be written
+	*/
 	static async write(PATH, DATA) {
-		/* Appropriately nest and merge the data.
-
-		@param {object} EXISTING the original data
-		@param {object} PATH the subpath
-		@param {object} VALUE the value
-		@return {object} the updated data
-		*/
-		function nest(EXISTING, SUBPATH, VALUE) {
-			let DATABASE = EXISTING;
-
-			// Get the current path.
-			let PATH = {};
-			PATH[`current`] = String(SUBPATH.shift()).trim();
-			PATH[`target`] = SUBPATH;
-
-			if (PATH[`target`].length > 0) {
-				(DATABASE[PATH[`current`]] == null) ? DATABASE[PATH[`current`]] = {} : false;
-				DATABASE[PATH[`current`]] = nest(DATABASE[PATH[`current`]], PATH[`target`], VALUE);
-			} else {
-				DATABASE[PATH[`current`]] = VALUE;
-			}
-			// Return the value.
-			return DATABASE;
-		}
-
 		async function verify (NAME, DATA) {
 			let DATA_CHECK = {};
 
@@ -457,7 +349,7 @@ class session {
 		let TARGET = (!(typeof PATH).includes(`obj`)) ? String(PATH).trim().split(",") : PATH;
 
 		// Merge!
-		DATA[`inject`] = nest(DATA[`all`], [...TARGET], DATA[`write`]);
+		DATA[`inject`] = nested.dictionary.set(DATA[`all`], [...TARGET], DATA[`write`]);
 
 		// Write!
 		chrome.storage.session.set(DATA[`inject`]);
