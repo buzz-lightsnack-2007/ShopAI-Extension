@@ -53,15 +53,15 @@ export default class filters {
 	@param {string} URL the URL to update
 	@return {boolean} the state
 	*/
-	async update(URL) {
+	async update(location) {
 		// Create a queue of the filters.
 		let filters = new Queue();
 
-		if (URL) {
+		if (location) {
 			// Check if the URL is in a valid protocol
-			if (URL.includes(`://`)) {
+			if (location.includes(`://`)) {
 				// Append that to the queue.
-				filters.enqueue(URL);
+				filters.enqueue(new URL(location));
 			}
 		} else {
 			// Add every item to the queue based on what was loaded first.
@@ -81,7 +81,7 @@ export default class filters {
 				let filter_URL = filters.dequeue();
 
 				// Inform the user of download state.
-				new logging (texts.localized(`settings_filters_update_status`, null, [filter_URL]));
+				new logging (texts.localized(`settings_filters_update_status`), filter_URL);
 
 				// Create promise of downloading.
 				let filter_download = net.download(filter_URL, `JSON`, false, true);
@@ -91,15 +91,17 @@ export default class filters {
 						if (result) {
 							// Write the filter to storage.
 							await global.write(["filters", filter_URL], result, -1, {"silent": true});
-							new logging(texts.localized(`settings_filters_update_status_complete`,null,[filter_URL]));
-                            
+							
 							// Add the filter to the sync list.
 							if ((await global.read(["settings", `filters`])) ? !((Object.keys(await global.read(["settings", `filters`]))).includes(filter_URL)) : true) {
 								global.write(["settings", `filters`, filter_URL], true, 1, {"silent": true});
-							}
+							};
+
+							// Notify that the update is completed. 
+							new logging(texts.localized(`settings_filters_update_status_complete`),filter_URL);
 						}
 					})
-					.catch(async function(error) {
+					.catch((error) => {
 						// Inform the user of the download failure.
 						logging.error(error.name, texts.localized(`settings_filters_update_status_failure`, null, [error.name, filter_URL]), error.stack);
 					});
