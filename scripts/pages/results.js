@@ -41,7 +41,7 @@ class Page_Results extends Page {
 		}
 
           // Set the data. 
-          this[`data`] = (DATA[`data`]) ? DATA[`data`] : (this[`data`] ? this[`data`] : {});
+          this[`data`] = ((DATA[`data`] != null) && !((typeof DATA[`data`]).includes(`undef`))) ? (DATA[`data`]) : (this[`data`] ? this[`data`] : {});
      }
 
      async content() {
@@ -78,7 +78,7 @@ class Page_Results extends Page {
      Populate the contents.
      */
      async fill() {
-          (this.elements)
+          (this.elements && !((typeof this.elements).includes(`undef`)))
                ?  (Object.keys(this.elements)).forEach(async (SOURCE) => {
                     if (SOURCE.indexOf(`*`) < SOURCE.length - 1) {
                          let DATA = (nested.dictionary.get(this[`data`][`analysis`], SOURCE));
@@ -100,7 +100,7 @@ class Page_Results extends Page {
                               "body": "p"
                          };
 
-                         (Object.keys(DATA)).forEach((ITEM) => {
+                         (DATA) ? (Object.keys(DATA)).forEach((ITEM) => {
                               let ELEMENTS = {};
 
                               // Create the elements. 
@@ -124,13 +124,16 @@ class Page_Results extends Page {
                               });
                               ELEMENTS[`container`].appendChild(ELEMENTS[`content`]);
                               this.elements[SOURCE].appendChild(ELEMENTS[`container`]);
-                         })
+                         }) : false;
                     }
                })
                : false;
           
           // Set the color. 
           (nested.dictionary.get(this[`data`][`analysis`], [`Rating`, `Trust`]) && document.querySelector(`summary`)) ? document.querySelector(`summary`).setAttribute(`result`, (nested.dictionary.get(this[`data`][`analysis`], [`Rating`, `Trust`]))) : false;
+
+          // Display the results in the console. 
+          console.log(this[`data`][`analysis`])
      };
 }
 
