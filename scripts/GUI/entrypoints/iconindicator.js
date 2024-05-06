@@ -10,10 +10,10 @@ class IconIndicator {
 	Indicate that the website is supported through icon change. 
 	*/
 	static enable() {
-		BrowserIcon.enable();
+		BrowserIcon.enable();		
 
 		// Enable icon changes if enabled within the settings. 
-		global.read([`settings`, `behavior`, `showApplicable`]).then(async (PREFERENCE) => {(PREFERENCE)
+		global.read([`settings`, `general`, `showApplicable`]).then((PREFERENCE) => {(PREFERENCE)
 			? fetch(CONFIG).then((response) => response.json()).then((jsonData) => {
 				const ICON_COLORS = jsonData;
 
@@ -35,7 +35,6 @@ class IconIndicator {
 
 							if (STATUS[`done`]) {
 								global.read([`sites`, LOCATION, `analysis`, `Rating`, `Trust`]).then(async (RESULTS) => {
-									((typeof RESULTS).includes(`str`)) ? RESULTS.trim() : false;
 									(RESULTS) ? BrowserIcon.set({
 											"BadgeText": await (new texts(`extensionIcon_product_`.concat(RESULTS))).symbol,
 											"BadgeBackgroundColor": ICON_COLORS[`product_`.concat(RESULTS)]
@@ -74,7 +73,7 @@ class IconIndicator {
 		BrowserIcon.disable();
 
 		// Enable icon changes if enabled within the settings. 
-		global.read([`settings`, `behavior`, `showApplicable`]).then((PREFERENCE) => {
+		global.read([`settings`, `general`, `showApplicable`]).then((PREFERENCE) => {
 			(Tabs.query(null, 0)).then(async (TAB) => {
 				BrowserIcon.set({
 						"BadgeText": await (new texts(`extensionIcon_website_unsupported`)).symbol,
