@@ -167,7 +167,7 @@ class global {
 			DATA_CHECK[`state`] = await compare([...NAME], DATA);
 
 			(!DATA_CHECK[`state`])
-				? logging.error((new texts(`error_msg_save_failed`)).localized, NAME.join(`→`), JSON.stringify(DATA))
+				? logging.error((new texts(`error_msg_save_failed`)).localized, NAME.join(` → `), JSON.stringify(DATA))
 				: ((((typeof OPTIONS).includes(`obj`) && OPTIONS != null) ? (!(!!OPTIONS[`silent`])) : true)
 					? new logging (new texts(`saving_done`).localized)
 					: false);
@@ -203,7 +203,7 @@ class global {
 
 		// Write!
 		chrome.storage[(CLOUD > 0) ? `sync` : `local`].set(DATA_INJECTED);
-		return (verify(DATA_NAME, data));
+		return ((OPTIONS[`verify`] != null ? (OPTIONS[`verify`]) : true) ? verify(DATA_NAME, data) : true);
 	}
 
 	/*
@@ -239,7 +239,7 @@ class global {
 						return(global.read([...PATH], cloud).then(async (DATA) => {
 							return((DATA != null)
 								// Then erase the data. 
-								? await global.write(PATH, null, cloud, {"strict": true})
+								? await global.write(PATH, null, cloud, {"strict": true, "verify": false})
 								: true);
 						}));
 					};

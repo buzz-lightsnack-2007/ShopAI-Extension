@@ -72,7 +72,7 @@ export default class logging {
 	*/
 	static async error(ERROR_CODE, ERROR_MESSAGE, ERROR_STACK, critical = true) {
 		// Display the error message.
-		console.error('%c%s%c%s%c%s%c\n%s%c', `font-weight: bold;`, ERROR_CODE, ``, `:`, ``, ERROR_MESSAGE, `font-family: monospace;`, ERROR_STACK, ``);
+		console.error('%c%s%c%s%c%s%c\n%s%c', `font-weight: bold;`, ERROR_CODE, ``, `: `, ``, ERROR_MESSAGE, `font-family: monospace;`, ERROR_STACK, ``);
 		
 		try {
 			(critical) ? alert(texts.localized(`error_msg_GUI`, false, [String(ERROR_CODE), ERROR_MESSAGE])) : M.toast({ text: ERROR_MESSAGE });
