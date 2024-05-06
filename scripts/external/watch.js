@@ -9,12 +9,6 @@ import texts from "/scripts/mapping/read.js";
 import {global} from "/scripts/secretariat.js";
 
 export default class watch {
-	/* Open relevant graphical user interfaces. 
-	*/
-	static callGUI() {
-		
-	}
-
 	/* Act on the page.
 
 	@param {object} filter the filter to work with
@@ -36,7 +30,6 @@ export default class watch {
 				new logging((new texts(`message_external_supported`)).localized);
 
 				watch.process(FILTER_RESULT);
-				watch.callGUI();
 				
 				// Create a listener for messages indicating re-processing. 
 				chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
