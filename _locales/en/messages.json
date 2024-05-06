@@ -118,7 +118,7 @@
 		"message": "Update"
 	},
 	"settings_filters_update_status": {
-		"message": "Updating the filter at $filter_url$…",
+		"message": "Updating…",
 		"placeholders": {
 			"filter_url": {
 				"content": "$1"
@@ -126,7 +126,7 @@
 		}
 	},
 	"settings_filters_update_status_complete": {
-		"message": "Updated the filter at $filter_url$.",
+		"message": "Update complete.",
 		"placeholders": {
 			"filter_url": {
 				"content": "$1"
