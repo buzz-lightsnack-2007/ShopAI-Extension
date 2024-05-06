@@ -19,16 +19,16 @@ nested.dictionary = class dictionary {
 
           // Pull the data out.
           if (DATA != null && DATA != undefined && PATH[`all`].length) {
-               PATH[`remain`] = PATH[`all`];
+               PATH[`remain`] = [...PATH[`all`]];
                PATH[`selected`] = String(PATH[`remain`].shift()).trim();
 
                // Get the selected data.
-               DATA = DATA[PATH[`selected`]];
-
-               // must run if there is actually a parameter to test
-               if (PATH[`remain`].length > 0) {
-                    // Recursively run to make use of the existing data.
-                    DATA = nested.dictionary.get(DATA, PATH[`remain`]);
+               if (Object.hasOwn(DATA, PATH[`selected`])) {
+                    DATA = (PATH[`remain`].length)
+                         ? nested.dictionary.get(DATA[PATH[`selected`]], PATH[`remain`])
+                         : DATA[PATH[`selected`]];
+               } else if (!Object.hasOwn(DATA, PATH[`selected`])) {
+                    DATA = null;
                };
           };
 
