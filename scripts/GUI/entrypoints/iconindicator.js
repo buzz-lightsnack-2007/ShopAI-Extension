@@ -13,43 +13,42 @@ class IconIndicator {
 		BrowserIcon.enable();		
 
 		// Enable icon changes if enabled within the settings. 
-		global.read([`settings`, `general`, `showApplicable`]).then((PREFERENCE) => {(PREFERENCE)
-			? fetch(CONFIG).then((response) => response.json()).then((jsonData) => {
-				const ICON_COLORS = jsonData;
+		(Tabs.query(null, 0)).then((TAB) => {
+			// Get the URL of the tab. 
+			const LOCATION = TAB.url;
 
-				/*
-				Show an iconified summary of the results. 
+			global.read([`settings`, `general`, `showApplicable`]).then((PREFERENCE) => {(PREFERENCE)
+				? fetch(CONFIG).then((response) => response.json()).then(async (jsonData) => {
+					const ICON_COLORS = jsonData;
 	
-				@param {string} location the URL of the page
-				@param {string} ID the tab's ID
-				*/
-				function showDetails(location, ID) {
-					let LOCATION = location; 
-					// If the tab data is ready, change the icon to reflect the results. 
-					global.read([`sites`, LOCATION, `status`]).then(async (STATUS) => {
-						if (STATUS) {
-							(STATUS[`error`]) ? BrowserIcon.set({
-									"BadgeText": await (new texts(`extensionIcon_error`)).symbol,
-									"BadgeBackgroundColor": ICON_COLORS[`error`]
-								}, {"tabId": ID}) : false;
-
-							if (STATUS[`done`]) {
-								global.read([`sites`, LOCATION, `analysis`, `Rating`, `Trust`]).then(async (RESULTS) => {
-									(RESULTS) ? BrowserIcon.set({
-											"BadgeText": await (new texts(`extensionIcon_product_`.concat(RESULTS))).symbol,
-											"BadgeBackgroundColor": ICON_COLORS[`product_`.concat(RESULTS)]
-										}, {"tabId": ID}) : false;
-								})
-							};
-						};
-					});
-				}
-	
-				
-				(Tabs.query(null, 0)).then(async (TAB) => {
-					// Get the URL of the tab. 
-					let LOCATION = TAB.url;
+					/*
+					Show an iconified summary of the results. 
 		
+					@param {string} location the URL of the page
+					@param {string} ID the tab's ID
+					*/
+					function showDetails(location, ID) {
+						let LOCATION = location; 
+						// If the tab data is ready, change the icon to reflect the results. 
+						global.read([`sites`, LOCATION, `status`]).then(async (STATUS) => {
+							if (STATUS) {
+								(STATUS[`error`]) ? BrowserIcon.set({
+										"BadgeText": await (new texts(`extensionIcon_error`)).symbol,
+										"BadgeBackgroundColor": ICON_COLORS[`error`]
+									}, {"tabId": ID}) : false;
+	
+								if (STATUS[`done`]) {
+									global.read([`sites`, LOCATION, `analysis`, `Rating`, `Trust`]).then(async (RESULTS) => {
+										(RESULTS) ? BrowserIcon.set({
+												"BadgeText": await (new texts(`extensionIcon_product_`.concat(RESULTS))).symbol,
+												"BadgeBackgroundColor": ICON_COLORS[`product_`.concat(RESULTS)]
+											}, {"tabId": ID}) : false;
+									})
+								};
+							};
+						});
+					}
+
 					BrowserIcon.set({
 							"BadgeText": await (new texts(`extensionIcon_website_loading`)).symbol,
 							"BadgeBackgroundColor": ICON_COLORS[`loading`]
@@ -58,12 +57,11 @@ class IconIndicator {
 					showDetails(LOCATION, TAB.id);
 					observe((changes) => {
 						showDetails(LOCATION, TAB.id);
-					})
-				});
+					});
+				})
+				: false;
 			})
-			: false;
 		})
-
 	}
 
 	/* 
@@ -75,10 +73,12 @@ class IconIndicator {
 		// Enable icon changes if enabled within the settings. 
 		global.read([`settings`, `general`, `showApplicable`]).then((PREFERENCE) => {
 			(Tabs.query(null, 0)).then(async (TAB) => {
-				BrowserIcon.set({
+				(PREFERENCE)
+				? BrowserIcon.set({
 						"BadgeText": await (new texts(`extensionIcon_website_unsupported`)).symbol,
-						"BadgeBackgroundColor": await fetch(CONFIG).then((response) => response.json()).then((jsonData) => {return (jsonData[`N/A`]);})
-					}, {"tabId": TAB.id});
+						"BadgeBackgroundColor": await fetch(CONFIG).then((response) => response.json()).then((jsonData) => {return (jsonData[`N/A`]);})},
+					{"tabId": TAB.id})
+				: false;
 			})
 		})
 	}
