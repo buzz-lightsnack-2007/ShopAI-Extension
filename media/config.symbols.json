@@ -1,4 +1,7 @@
 {
+	"extensionIcon_product_error": {
+		"symbol": "⚠"
+	},
 	"extensionIcon_product_bad": {
 		"symbol": "👎"
 	},
@@ -15,6 +18,6 @@
 		"symbol": "✕"
 	},
 	"extensionIcon_website_loading": {
-		"symbol": "..."
+		"symbol": "…"
 	}
 }
