@@ -35,19 +35,24 @@ class Page_Popup extends Page {
 	async update(override = false) {
 		// Set the reference website when overriding or unset. 
 		if (override || !this[`ref`]) {this[`ref`] = await global.read([`last`])};
-		
+
 		// Get all the data to be used here. 
 		let DATA = {
 			"status": await global.read([`sites`, this[`ref`], `status`], -1)
 		}
 
 		// Update all other data. 
-		this[`status`] = (DATA[`status`])
+		this[`status`] = (DATA[`status`] != null)
 			? DATA[`status`]
 			// Accomodate data erasure. 
 			: ((this[`status`])
 				? this[`status`]
 				: {});
+
+		// Call for scraping of data if global data does not indicate automatic scraping or if data doesn't exist. 
+		if (!await global.read([`settings`, `behavior`, `autoRun`]) && DATA[`status`] == null) {
+			this.send();
+		}
 	}
 
 	async loading() {
@@ -72,7 +77,7 @@ class Page_Popup extends Page {
 			});
 			
 			let PAGE = PAGES[((this[`status`][`done`])
-				? ((this[`status`][`error`])
+				? ((this[`status`][`error`] && this[`status`][`error`] != {})
 					? `error`
 					: `results`)
 				: `loading`)];
@@ -103,6 +108,18 @@ class Page_Popup extends Page {
 			this.loading();
 		}
 	};
+	
+	send() {
+		try {
+			// Send a message to the content script. 
+			Tabs.query(null, 0).then((TAB) => {
+				chrome.tabs.sendMessage(TAB.id, {"refresh": true});
+			});
+		} catch(err) {
+			logging.error(err.name, err.message, err.stack);
+			throw (err);
+		};
+	}
 
 	events() {
 		(document.querySelector(`[data-action="open,settings"]`)) ? document.querySelector(`[data-action="open,settings"]`).addEventListener("click", () => {
@@ -112,15 +129,7 @@ class Page_Popup extends Page {
 			new Window(`help.htm`);
 		}) : false;
 		(document.querySelector(`[data-action="analysis,reload"]`)) ? document.querySelector(`[data-action="analysis,reload"]`).addEventListener("click", () => {
-			try {
-				// Send a message to the content script. 
-				Tabs.query(null, 0).then((TAB) => {
-					chrome.tabs.sendMessage(TAB.id, {"refresh": true});
-				});
-			} catch(err) {
-				logging.error(err.name, err.message, err.stack);
-				throw (err);
-			};
+			this.send();
 		}) : false;
 	}
 }
