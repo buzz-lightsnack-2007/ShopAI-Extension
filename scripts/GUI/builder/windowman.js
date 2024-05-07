@@ -86,9 +86,9 @@ export default class windowman {
 			}
 
 			function icons() {
-				let target_elements = document.querySelectorAll(`[data-icon]`);
-
-				target_elements.forEach((element) => {
+				let TARGET_ELEMENTS = document.querySelectorAll(`[data-icon]`);
+				
+				(TARGET_ELEMENTS).forEach((element) => {
 					// Get the content before removing it.
 					let element_data = {};
 
@@ -122,6 +122,8 @@ export default class windowman {
 					iconify();
 					clean();
 				});
+
+				return TARGET_ELEMENTS;
 			}
 
 			function text() {
@@ -151,9 +153,8 @@ export default class windowman {
 					}
 				});
 
-				delete text_elements[`content`];
 				Object.keys(text_elements).forEach((key) => {
-					if (text_elements[key]) {
+					if (text_elements[key] && !key.includes(`content`)) {
 						text_elements[key].forEach((text_element) => {
 							let text_inserted = texts.localized(
 								text_element.getAttribute(key.concat(`-for`)),
@@ -175,11 +176,16 @@ export default class windowman {
 						});
 					}
 				});
-			}
 
+				return text_elements;
+			};
+
+			let ELEMENTS = {};
 			elements();
-			text();
-			icons();
+			ELEMENTS[`text`] = text();
+			ELEMENTS[`icons`] = icons();
+
+			return (ELEMENTS);
 		}
 
 		// Adds events to the window.

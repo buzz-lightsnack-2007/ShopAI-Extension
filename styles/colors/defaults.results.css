@@ -1,13 +1,21 @@
 :root {
 	--color-results_bad_dark: #AF3119;
 	--color-results_bad_light: #EC6342;
-     --color-results_bad_gradient: linear-gradient(43deg, var(--color-results_bad_dark) 0%, var(--color-results_bad_light) 100%);
+     --color-results_bad_gradient: linear-gradient(43deg, var(--color-results_bad_dark) 100%, var(--color-results_bad_light) 0%);
 
-     --color-results_ok_dark: #E8A87C;
-     --color-results_ok_light: #F6C7A1;
-     --color-results_ok_gradient: linear-gradient(43deg, var(--color-results_ok_dark) 0%, var(--color-results_ok_light) 100%);
+     --color-results_ok_dark: rgba(221, 106, 59);
+     --color-results_ok_light: rgba(255, 134, 57);
+     --color-results_ok_gradient: linear-gradient(43deg, var(--color-results_ok_dark) 100%, var(--color-results_ok_light) 0%);
 
 	--color-results_good_dark: #487858;
 	--color-results_good_light: #5BBF4B;
-     --color-results_good_gradient: linear-gradient(43deg, var(--color-results_good_dark) 0%, var(--color-results_good_light) 100%);
+     --color-results_good_gradient: linear-gradient(43deg, var(--color-results_good_dark) 100%, var(--color-results_good_light) 0%);
+}
+
+@media (prefers-color-scheme: dark) {
+     :root {
+          --color-results_bad_gradient: linear-gradient(43deg, var(--color-results_bad_dark) 0%, var(--color-results_bad_light) 100%);
+          --color-results_ok_gradient: linear-gradient(43deg, var(--color-results_ok_dark) 0%, var(--color-results_ok_light) 100%);
+          --color-results_good_gradient: linear-gradient(43deg, var(--color-results_good_dark) 0%, var(--color-results_good_light) 100%);
+     }
 }

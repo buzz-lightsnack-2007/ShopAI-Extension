@@ -1,5 +1,5 @@
 :root {
-	--surface-color: rgba(252, 162, 133) !important;
+	--surface-color: rgba(255, 134, 57, .1) !important;
 
 	--font-color-main: rgba(0, 0, 0) !important;
 	--font-color-medium: rgba(25, 25, 25) !important;
@@ -12,14 +12,39 @@
 	--primary-color-numeric: 255, 134, 57 !important;
 	--primary-color-raised-hover-solid: rgba(252, 162, 133) !important;
 	--primary-color-raised-focus-solid: rgba(221, 106, 59) !important;
+	--primary-color-gradient: linear-gradient(
+		43deg,
+		var(--primary-color-dark) 0%,
+		var(--primary-color) 62%,
+		var(--primary-color-raised-hover-solid) 100%
+	) !important;
 
+	--background-color-disabled: rgba(125, 125, 125) !important;
+	--background-color-level-4dp: rgba(229, 229, 229) !important;
 	--background-color-level-16dp-solid: rgba(255, 238, 235) !important;
+
+	--background-color-card: rgba(242, 242, 242) !important;
+	--background-color-slight-emphasis: rgba(252, 162, 133) !important;
 
 	--secondary-color: rgba(221, 106, 59, 1) !important;
 	--secondary-color-hover-solid: rgba(252, 162, 133) !important;
 	--secondary-color-focus-solid: rgba(221, 106, 59) !important;
 
 	--secondary-container-color: rgba(252, 162, 133) !important;
+	--secondary-color-lighter: rgba(221, 106, 59) !important;
+	--secondary-color: rgba(190, 80, 1) !important;
+	--secondary-color-dark: rgba(159, 55, 0) !important;
+	--secondary-color-hover-solid: rgba(252, 162, 133) !important;
+	--secondary-color-focus-solid: rgba(159, 55, 0) !important;
+	--font-on-secondary-container-color: rgba(255, 255, 255) !important;
+
+	--hover-color: rgba(255, 255, 255, 0.3) !important;
+	--focus-color: rgba(255, 255, 255, 0.3) !important;
+	--focus-color-solid: rgb(76.5, 76.5, 76.5) !important;
+	--active-color: rgba(255, 255, 255, 0.3) !important;
+
+	--separator-color: rgba(178,178,178) !important;
+	--error-color: #cf6679 !important;
 }
 
 @media (prefers-color-scheme: dark) {
