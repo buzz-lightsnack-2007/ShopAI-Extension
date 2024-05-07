@@ -1,17 +1,26 @@
 <html>
-     <head>
-          <script src="../../styles/external/materialize/js/materialize.js"></script> 
-          <script src="../../scripts/pages/results.js" type="module"></script> 
-          <link href="../../styles/popup.css" rel="stylesheet" type="text/css" />
-     </head>
-     <body id="results">
-          <summary>
-               <p id="summary" data-active-result="Rating,Reason" class="flow-text"></p>
-               <p data-active-result="Description,Summary"></p>
-               <progress id="score" data-active-result="Rating,Score" min="0" max="1" value=""></progress>
-               <label >Scroll down for details.</label>
-          </summary>
-          <section class="tip" data-active-result="Description,Aspects,*" data-active-result-type="card">
-          </section>
-     </body>
+	<head>
+		<script src="../../styles/external/materialize/js/materialize.js"></script> 
+		<script src="../../scripts/pages/results.js" type="module"></script> 
+		<link href="../../styles/popup.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body id="results">
+		<summary>
+			<section>
+				<p id="summary" data-active-result="Rating,Reason" class="flow-text"></p>
+				<p data-active-result="Description,Summary"></p>
+				<progress id="score" data-active-result="Rating,Score" min="0" max="1" value=""></progress>
+			</section>
+			<footer>
+				<label id="tip" for="results_tip_1"></label>
+			</footer>
+		</summary>
+		<article>
+			<section data-active-result="Description,Aspects,*" data-active-result-type="card">
+			</section>
+			<footer>
+				<label id="tip" for="results_tip_2"></label>
+			</footer>
+		</article>
+	</body>
 </html>
