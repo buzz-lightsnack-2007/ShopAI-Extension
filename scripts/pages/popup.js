@@ -129,19 +129,17 @@ class Page_Popup extends Page {
 			ELEMENT.removeAttribute(`data-action`);
 		});
 
-		console.log(this[`elements`]);
-
-		this[`elements`][`button`][`open,settings`].addEventListener("click", () => {
+		(this[`elements`][`button`][`open,settings`]) ? this[`elements`][`button`][`open,settings`].addEventListener("click", () => {
 			chrome.runtime.openOptionsPage();
-		});
+		}) : false;
 
-		this[`elements`][`button`][`open,help`].addEventListener("click", () => {
+		(this[`elements`][`button`][`open,help`]) ? this[`elements`][`button`][`open,help`].addEventListener("click", () => {
 			new Window(`help.htm`);
-		});
+		}) : false; 
 
-		this[`elements`][`button`][`analysis,reload`].addEventListener("click", () => {
+		(this[`elements`][`button`][`analysis,reload`]) ? this[`elements`][`button`][`analysis,reload`].addEventListener("click", () => {
 			this.send();
-		});
+		}) : false;
 	}
 }
 
