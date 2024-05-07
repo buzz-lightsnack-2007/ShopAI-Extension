@@ -201,6 +201,12 @@
 	"scrape_msg_ready": {
 		"message": "Loading complete, processing…"
 	},
+	"results_tip_1": {
+		"message": "Scroll down to view details."
+	},
+	"results_tip_2": {
+		"message": "Feel that something is off? Click on the hamburger menu and refresh."
+	},
 	
 	"JSON_parse_error": {
 		"message": "There is a mistake in your JSON formatting. Please correct the error before saving."
