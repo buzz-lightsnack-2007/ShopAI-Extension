@@ -79,7 +79,7 @@ export default class logging {
 		) : false;
 
 		// Display the error message.
-		console.error('%c%s%c%s%c%s%c\n%s%c', `font-weight: bold;`, ERROR_CODE, ``, `: `, ``, ERROR_MESSAGE, `font-family: monospace;`, ERROR_STACK, ``);
+		(ERROR_CODE && ERROR_MESSAGE && ERROR_STACK) ? console.error(`${ERROR_CODE}: ${ERROR_MESSAGE}\n${ERROR_STACK}`) : console.error(ERROR_MESSAGE);
 		
 		try {
 			(critical) ? alert(texts.localized(`error_msg_GUI`, false, [String(ERROR_CODE), ERROR_MESSAGE])) : M.toast({ text: ERROR_MESSAGE });
