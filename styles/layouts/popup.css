@@ -6,8 +6,11 @@
      padding: 2em;
 }
 
-#results > details {
-     margin-top: auto;
-     margin-bottom: auto;
+#results:not(:has(details[open])) summary {
+     height: 100%;
 }
 
+#results summary p {
+     margin-top: 0.5em;
+     margin-bottom: 0.5em;
+}
