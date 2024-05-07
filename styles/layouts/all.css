@@ -89,7 +89,6 @@ iframe.viewer {
 
 body[role="window"] {
 	width: 300pt;
-	height: 300pt;
 }
 
 *:has(summary + details) summary:not(:last-child) {
