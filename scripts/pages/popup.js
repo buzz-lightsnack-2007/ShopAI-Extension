@@ -13,9 +13,9 @@ import logging from "/scripts/logging.js";
 class Page_Popup extends Page {
 	constructor() {
 		super();
-		(this.events) ? this.events() : false;
 		this.content();
 		this.background();
+		this.events();
 	};
 
 	async background() {
@@ -83,25 +83,21 @@ class Page_Popup extends Page {
 				: `loading`)];
 
 			// Replace the iframe src with the new page.
-			this.elements[`frame`].forEach((frame) => {
-				frame.src = PAGE;
-			})
+			this.elements[`frame`].src = PAGE;
 
 			// The results page has its own container. 
-			this.elements[`container`].forEach((CONTAINER) => {
-				CONTAINER.classList[(PAGE.includes(`results`)) ? `remove` : `add`](`container`);
-			});
+			this.elements[`container`].classList[(PAGE.includes(`results`)) ? `remove` : `add`](`container`);
 		};
 	};
 	
 	async content() {
 		this.elements = {};
-		this.elements[`container`] = document.querySelectorAll(`main`);
-		this.elements[`frame`] = document.querySelectorAll(`main > iframe.viewer`);
-
+		this.elements[`container`] = document.querySelector(`main`);
+		this.elements[`frame`] = document.querySelector(`main > iframe.viewer`);
+		this.elements[`nav`] = document.querySelector(`nav`);
 		
 		// Check if the frame is available.
-		if (this.elements[`frame`].length) {
+		if (this.elements[`frame`]) {
 			await this.switch();
 			this.background();
 		} else {
@@ -119,18 +115,33 @@ class Page_Popup extends Page {
 			logging.error(err.name, err.message, err.stack);
 			throw (err);
 		};
-	}
+	};
 
 	events() {
-		(document.querySelector(`[data-action="open,settings"]`)) ? document.querySelector(`[data-action="open,settings"]`).addEventListener("click", () => {
+		this[`elements`] = (this[`elements`]) ? this[`elements`] : {};
+		this[`elements`][`button`] = {};
+
+		document.querySelectorAll(`[data-action]`).forEach((ELEMENT) => {
+			let ACTION = ELEMENT.getAttribute(`data-action`).trim();
+			this[`elements`][`button`][ACTION] = ELEMENT;
+
+			// Remove the data-action attribute.
+			ELEMENT.removeAttribute(`data-action`);
+		});
+
+		console.log(this[`elements`]);
+
+		this[`elements`][`button`][`open,settings`].addEventListener("click", () => {
 			chrome.runtime.openOptionsPage();
-		}) : false;
-		(document.querySelector(`[data-action="open,help"]`)) ? document.querySelector(`[data-action="open,help"]`).addEventListener("click", () => {
+		});
+
+		this[`elements`][`button`][`open,help`].addEventListener("click", () => {
 			new Window(`help.htm`);
-		}) : false;
-		(document.querySelector(`[data-action="analysis,reload"]`)) ? document.querySelector(`[data-action="analysis,reload"]`).addEventListener("click", () => {
+		});
+
+		this[`elements`][`button`][`analysis,reload`].addEventListener("click", () => {
 			this.send();
-		}) : false;
+		});
 	}
 }
 
