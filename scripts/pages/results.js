@@ -16,7 +16,6 @@ class Page_Results extends Page {
 		this.background();
 	};
 
-
      async background() {
 		// Wait until a change in the session storage.
 		observe((changes) => {
@@ -137,9 +136,6 @@ class Page_Results extends Page {
                // Set the color. 
                (nested.dictionary.get(this[`data`][`analysis`], [`Rating`, `Trust`]) && document.querySelector(`summary`)) ? document.querySelector(`summary`).setAttribute(`result`, (nested.dictionary.get(this[`data`][`analysis`], [`Rating`, `Trust`]))) : false;
           }
-
-          // Display the results in the console. 
-          console.log(this[`data`][`analysis`])
      };
 }
 
