@@ -23,20 +23,21 @@ export default class watch {
 		}
 	}
 
-	static main() {
-		(check.platform()).then((FILTER_RESULT) => {
-			if (FILTER_RESULT && Object.keys(FILTER_RESULT).length > 0) {
-				// Let user know that the website is supported, if ever they have opened the console. 
-				new logging((new texts(`message_external_supported`)).localized);
+	static async main() {
+		let FILTER_RESULT = await check.platform();
 
-				watch.process(FILTER_RESULT);
-				
-				// Create a listener for messages indicating re-processing. 
-				chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-					(((typeof message).includes(`obj`) && !Array.isArray(message)) ? message[`refresh`] : false) ? watch.process(FILTER_RESULT, {"override": true}) : false;
-				});
-			}
-		});
+		if (FILTER_RESULT && Object.keys(FILTER_RESULT).length > 0) {
+			// Let user know that the website is supported, if ever they have opened the console. 
+			new logging((new texts(`message_external_supported`)).localized);
 
+			watch.process(FILTER_RESULT);
+			
+			// Create a listener for messages indicating re-processing. 
+			chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+				(((typeof message).includes(`obj`) && !Array.isArray(message)) ? message[`refresh`] : false)
+					? watch.process(FILTER_RESULT, {"override": true})
+					: false;
+			});
+		}
 	}
 }
