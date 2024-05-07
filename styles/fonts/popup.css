@@ -4,3 +4,7 @@
 	font-size: 175% !important;
 	font-weight: bold !important;
 }
+
+.tip {
+	font-style: italic;
+}
