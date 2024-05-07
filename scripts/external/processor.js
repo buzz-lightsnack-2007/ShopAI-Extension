@@ -32,7 +32,12 @@ export default class processor {
 			await this.product.analyze();
 		} catch(err) {
 			logging.error(err.name, err.message, err.stack, false);
-			this.product.status[`error`] = err;
+
+			// Convert the error to an object. 
+			this.product.status[`error`] = {};
+			[`name`, `message`, `stack`].forEach((KEY) => {
+				this.product.status.error[KEY] = String(err[KEY]);
+			})
 		};
 
 		// Indicate that the process is done. 
