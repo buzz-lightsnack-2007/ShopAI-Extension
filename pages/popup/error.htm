@@ -1,14 +1,15 @@
 <html>
      <head>
           <script src="../../styles/external/materialize/js/materialize.js"></script> 
-          <script src="../../scripts/pages/popup.js" type="module"></script> 
+          <script src="../../scripts/pages/error.js" type="module"></script> 
           <link href="../styles/popup.css" rel="stylesheet" type="text/css" />
      </head>
      <body id="error">
           <h1 data-icon="alert-circle"></h1>
-          <label class="flow-text" data-active-result="error_text"></label>
+          <label class="flow-text" data-error="name"></label>
           <label for="error_msg_steps"></label>
-          <label data-active-result="error_body"></label>
-          <button class="btn" data-action="analysis,reload" for="refresh" role="primary"></button>
+          <label data-error="message"></label>
+          <label><code data-error="stack"></code></label>
+          <button class="btn" data-action="refresh" for="refresh" role="primary"></button>
      </body>
 </html>
