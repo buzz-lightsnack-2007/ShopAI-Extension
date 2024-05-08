@@ -2,6 +2,7 @@ import BrowserIcon from '/scripts/GUI/browsericon.js';
 import Tabs from '/scripts/GUI/tabs.js';
 import texts from "/scripts/mapping/read.js";
 import {global, observe} from "/scripts/secretariat.js";
+import {URLs} from "/scripts/utils/URLs.js";
 
 const CONFIG = chrome.runtime.getURL("styles/colors/icon.json");
 
@@ -16,7 +17,7 @@ class IconIndicator {
 		// Enable icon changes if enabled within the settings. 
 		(Tabs.query(null, 0)).then((TAB) => {
 			// Get the URL of the tab. 
-			const LOCATION = TAB.url;
+			const LOCATION = URLs.clean(TAB.url);
 
 			global.read([`settings`, `general`, `showApplicable`]).then((PREFERENCE) => {(PREFERENCE)
 				? fetch(CONFIG).then((response) => response.json()).then(async (jsonData) => {
@@ -31,14 +32,14 @@ class IconIndicator {
 					function showDetails(location, ID) {
 						let LOCATION = location; 
 						// If the tab data is ready, change the icon to reflect the results. 
-						global.read([`sites`, LOCATION, `status`]).then(async (STATUS) => {
-							if (STATUS) {
+						global.read([`sites`, LOCATION, `status`], -1).then(async (STATUS) => {
+							if (STATUS)  {
 								(STATUS[`error`]) ? BrowserIcon.set({
 										"BadgeText": await (new texts(`extensionIcon_error`)).symbol,
 										"BadgeBackgroundColor": ICON_COLORS[`error`]
 									}, {"tabId": ID}) : false;
 	
-								if (STATUS[`done`]) {
+								if ((STATUS[`done`] && (typeof STATUS[`done`]).includes(`num`)) ? STATUS[`done`] >= 1 : false) {
 									global.read([`sites`, LOCATION, `analysis`, `Rating`, `Trust`]).then(async (RESULTS) => {
 										(RESULTS) ? BrowserIcon.set({
 												"BadgeText": await (new texts(`extensionIcon_product_`.concat(RESULTS))).symbol,
