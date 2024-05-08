@@ -46,14 +46,16 @@ class pointer {
 	@param {string} name the property to read
 	*/
 	static async read(name) {
-		let RETURN = ((name)
-			? (!(name.trim().includes(`URL`))
+		let NAME = (Array.isArray(name)) ? name : ((name) ? name.trim().split(`,`) : null);
+
+		let RETURN = ((NAME)
+			? (!(NAME[0].includes(`URL`))
 				? await global.read([`last`])
 				: true)
 			: false)
-			? global.read((name.trim().includes(`URL`))
+			? global.read((NAME[0].includes(`URL`))
 				? [`last`]
-				: [`sites`, await global.read([`last`]), ...((Array.isArray(name)) ? name : name.trim().split(`,`))]) 
+				: [`sites`, await global.read([`last`]), ...NAME]) 
 			: null;
 		return(RETURN);
 	}
