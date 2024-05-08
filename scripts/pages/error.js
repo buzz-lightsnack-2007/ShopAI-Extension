@@ -71,12 +71,10 @@ class Page_Error extends Page {
 	/*
 	Fill in the content of the page. 
 	*/
-	fill () {
-		this.update();
+	async fill () {
+		await this.update();
 
-		console.log(this);
-
-		(this[`elements`][`error display`] && this[`status`][`error`])
+		(this[`elements`][`error display`] && (this[`status`] ? this[`status`][`error`] : false))
 			? (Object.keys(this[`elements`][`error display`]).forEach((KEY) => {
 				this[`elements`][`error display`][KEY].innerText = String(this[`status`][`error`][KEY])
 			}))
@@ -111,7 +109,7 @@ class Page_Error extends Page {
 		try {
 			// Send a message to the content script. 
 			Tabs.query(null, 0).then((TAB) => {
-				chrome.tabs.sendMessage(TAB.id, {"refresh": true});
+				chrome.tabs.sendMessage(TAB.id, {"refresh": "automatic"});
 			});
 		} catch(err) {
 			logging.error(err.name, err.message, err.stack);
