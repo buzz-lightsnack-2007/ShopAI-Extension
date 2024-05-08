@@ -48,46 +48,50 @@ class Page_Popup extends Page {
 			: ((this[`status`])
 				? this[`status`]
 				: {});
-
-		// Call for scraping of data if global data does not indicate automatic scraping or if data doesn't exist. 
-		if (!await global.read([`settings`, `behavior`, `autoRun`]) && DATA[`status`] == null) {
-			this.send();
-		}
 	}
 
 	async loading() {
-		this.loading = new Loader();
+		this[`elements`] = (this[`elements`]) ? this[`elements`] : {};
+		this[`elements`][`loader`] = new Loader();
 	}
 
 	async switch() {
-		let PAGES = {
-			"results": "results.htm",
-			"loading": "load.htm",
-			"error": "error.htm"
+		if (this.elements[`frame`]) {
+			let PAGES = {
+				"results": "results.htm",
+				"loading": "load.htm",
+				"error": "error.htm"
+			}
+	
+			// Prepare all the necessary data. 
+			await this.update();
+	
+			// Make sure that the website has been selected!
+			if (this[`ref`]) {
+				// Set the relative chrome URLs
+				(Object.keys(PAGES)).forEach(PAGE => {
+					PAGES[PAGE] = chrome.runtime.getURL(`pages/popup/${PAGES[PAGE]}`);
+				});
+				
+				let PAGE = PAGES[(((this[`status`] && (typeof this[`status`]).includes(`obj`)) ? (this[`status`][`done`] >= 1) : false)
+					? ((this[`status`][`error`] && this[`status`][`error`] != {})
+						? `error`
+						: `results`)
+					: `loading`)];
+	
+				// Replace the iframe src with the new page.
+				this.elements[`frame`].src = PAGE;
+				
+	
+				// The results page has its own container. 
+				this.elements[`container`].classList[(PAGE.includes(`results`)) ? `remove` : `add`](`container`);
+			};
 		}
 
-		// Prepare all the necessary data. 
-		await this.update();
-
-		// Make sure that the website has been selected!
-		if (this[`ref`]) {
-			// Set the relative chrome URLs
-			(Object.keys(PAGES)).forEach(PAGE => {
-				PAGES[PAGE] = chrome.runtime.getURL(`pages/popup/${PAGES[PAGE]}`);
-			});
-			
-			let PAGE = PAGES[((this[`status`][`done`])
-				? ((this[`status`][`error`] && this[`status`][`error`] != {})
-					? `error`
-					: `results`)
-				: `loading`)];
-
-			// Replace the iframe src with the new page.
-			this.elements[`frame`].src = PAGE;
-
-			// The results page has its own container. 
-			this.elements[`container`].classList[(PAGE.includes(`results`)) ? `remove` : `add`](`container`);
-		};
+		// Also set the loader. 
+		(this[`elements`][`loader`])
+			? ((this[`status`] ? (this[`status`][`done`] ? (this[`status`][`done`] <= 1) : false) : false) ? parseFloat(this[`elements`][`loader`].update(this[`status`][`done`])) : false)
+			: false
 	};
 	
 	async content() {
@@ -99,21 +103,30 @@ class Page_Popup extends Page {
 		// Check if the frame is available.
 		if (this.elements[`frame`]) {
 			await this.switch();
-			this.background();
+
+			// Call for scraping of data if global data does not indicate automatic scraping or if data doesn't exist. 
+			if (!await global.read([`settings`, `behavior`, `autoRun`]) && DATA[`status`] == null) {
+				this.send({"refresh": "automatic"});
+			}
 		} else {
 			this.loading();
 		}
 	};
-	
-	send() {
+
+	/*
+	Call for the scraper and analyzer. 
+	*/
+	send(options) {
+		// Make sure that it is the correct format. 
+		let OPTIONS = (options && (typeof options).includes(`obj`) && !Array.isArray(options)) ? options : {};
+
 		try {
 			// Send a message to the content script. 
 			Tabs.query(null, 0).then((TAB) => {
-				chrome.tabs.sendMessage(TAB.id, {"refresh": true});
+				chrome.tabs.sendMessage(TAB.id, OPTIONS);
 			});
 		} catch(err) {
 			logging.error(err.name, err.message, err.stack);
-			throw (err);
 		};
 	};
 
@@ -133,12 +146,12 @@ class Page_Popup extends Page {
 			chrome.runtime.openOptionsPage();
 		}) : false;
 
-		(this[`elements`][`button`][`open,help`]) ? this[`elements`][`button`][`open,help`].addEventListener("click", () => {
+		(this[`elements`][`button`][`open,help`]) ? this[`elements`][`button`][`open,help`].addEventListener(`click`, () => {
 			new Window(`help.htm`);
 		}) : false; 
 
-		(this[`elements`][`button`][`analysis,reload`]) ? this[`elements`][`button`][`analysis,reload`].addEventListener("click", () => {
-			this.send();
+		(this[`elements`][`button`][`analysis,reload`]) ? this[`elements`][`button`][`analysis,reload`].addEventListener(`click`, () => {
+			this.send({"refresh": "manual"});
 		}) : false;
 	}
 }
