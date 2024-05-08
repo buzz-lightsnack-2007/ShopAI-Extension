@@ -6,6 +6,14 @@
      padding: 2em;
 }
 
+#results > * > *:not(:first-child) {
+     margin-block-start: 1em;
+}
+
+#results > * > *:not(:last-child) {
+     margin-block-end: 1em;
+}
+
 #results > summary {
      height: 100%;
 }
