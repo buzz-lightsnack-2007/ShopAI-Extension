@@ -44,7 +44,7 @@ class global {
 				DATA[`local`] = await global.read((NAME) ? [...NAME] : null, -1);
 	
 				// Now return the data.
-				DATA_RETURNED[`source`] = (DATA[`sync`] != null) ? `sync` : `local`;
+				DATA_RETURNED[`source`] = (DATA[`sync`] != null && !(typeof DATA[`sync`]).includes(`undef`)) ? `sync` : `local`;
 				DATA_RETURNED[`value`] = DATA[DATA_RETURNED[`source`]];
 	
 				// Override the data with managed data if available. 
@@ -194,7 +194,7 @@ class global {
 			: ((path != null) ? path : []) // Ensure that path isn't empty. 
 
 		// Merge!
-		DATA_INJECTED = nested.dictionary.set(DATA_ALL, (DATA_NAME != null) ? [...DATA_NAME] : DATA_NAME, data, (OPTIONS[`strict`] != null) ? OPTIONS[`strict`] : false);
+		DATA_INJECTED = nested.dictionary.set(DATA_ALL, (DATA_NAME != null) ? [...DATA_NAME] : DATA_NAME, data, OPTIONS);
 
 		// If cloud is not selected, get where the data is already existent. 
 		(CLOUD == 0 || CLOUD == null)
