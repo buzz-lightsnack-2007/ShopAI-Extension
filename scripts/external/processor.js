@@ -12,50 +12,69 @@ export default class processor {
 	#filter; 
 	
 	async scrape (fields) {
-		this.data = new scraper ((fields) ? fields : this.targets); 
+		this.product.details = new scraper ((fields) ? fields : this.targets); 
+
+		// Read product data and gather the SHA512 hash. 
+		await this.product.read();
+		
+		// Save the details already. 
+		return(await this.product.save());
 	}
 	
-	async analyze() {
-		// Do not reset the product data, just re-use it. 
-		this.product = (!this.product) ? new product(this.data) : this.product;
-		await this.product.attach();
-
+	async analyze(options = {}) {
 		// Set up current data of the site, but forget about its previous errored state. 
-		this.product.status[`done`] = false;
 		delete this.product.status[`error`];
 
-		// First save the SHA512 summary of the scraped data. 
+		// Set the completion state to anything else but not 1. 
+		this.product.status[`done`] = (this.product.status[`done`] == 1) ? 0 : this.product.status[`done`];
+
+		// Save this information. 
 		this.product.save();
 
 		// Try analysis of the data.
 		try {
-			await this.product.analyze();
+			await this.product.analyze(options);
 		} catch(err) {
-			logging.error(err.name, err.message, err.stack, false);
+			// Use the existing error if there exists any. 
+			this.product.status[`error`] = (this.product.status[`error`]) ? this.product.status[`error`] : {};
 
-			// Convert the error to an object. 
-			this.product.status[`error`] = {};
-			[`name`, `message`, `stack`].forEach((KEY) => {
+			(this.product.status[`error`]) ? false
+			:  [`name`, `message`, `stack`].forEach((KEY) => {
 				this.product.status.error[KEY] = String(err[KEY]);
-			})
+			});
+			logging.error(err);
+			logging.error(this.product.status[`error`].name, this.product.status[`error`].message, this.product.status[`error`].stack);
 		};
 
 		// Indicate that the process is done. 
-		this.product.status[`done`] = true;
+		this.product.status[`done`] = 1;
 
 		// Save the data. 
 		this.product.save();
+	};
+
+	/*
+	Run in the chronological order. Useful when needed to be redone manually. 
+	*/
+	async run (options = {}) {
+		this.product.status[`done`] = (this.targets) ? .25 : 0;
+
+		// Scrape the data. 
+		await this.scrape();
+		
+		if ((this.product.details) ? Object.keys(this.product.details).length : false) {
+			this.product.status[`done`] = .5;
+			this.analyze((options && (typeof options).includes(`obj`)) ? options[`analysis`] : null);
+		};
 	}
-	
-	constructor (filter, URL = window.location.href) {
+
+	constructor (filter, URL = window.location.href, options = {}) {
 		this.URL = URLs.clean(URL);
 		this.#filter = filter;
 
+		this.product = new product();
 		this.targets = this.#filter[`data`];
-		this.scrape();
-
-		if ((this.data) ? (((typeof (this.data)).includes(`obj`) && !Array.isArray(this.data)) ? Object.keys(this.data) : this.data) : false) {
-			this.analyze();
-		}
+		
+		((((typeof options).includes(`obj`)) ? Object.hasOwn(options, `automatic`) : false) ? options[`automatic`] : true) ? this.run() : false;
 	}
 }
