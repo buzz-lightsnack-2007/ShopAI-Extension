@@ -3,11 +3,20 @@
 }
 
 .collapsible > li {
-     border: 1px solid var(--separator-color);
      border-bottom-width: 0px;
 }
 
 .collapsible > li:last-child {
      border-bottom-width: 1px;
+}
+
+.collapsible > li:first-child, .collapsible > li:first-child > .collapsible-header {
+     border-top-left-radius: 5px;
+     border-top-right-radius: 5px;
+}
+
+.collapsible > li:last-child, .collapsible > li:last-child:not(.active) > .collapsible-header, .collapsible > li.active:last-child > .collapsible-body {
+     border-bottom-left-radius: 5px;
+     border-bottom-right-radius: 5px;
 }
 
