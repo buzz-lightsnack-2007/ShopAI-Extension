@@ -14,9 +14,9 @@
 	--primary-color-raised-focus-solid: rgba(221, 106, 59) !important;
 	--primary-color-gradient: linear-gradient(
 		43deg,
-		var(--primary-color-dark) 0%,
+		var(--primary-color-raised-hover-solid) 0%,
 		var(--primary-color) 62%,
-		var(--primary-color-raised-hover-solid) 100%
+		var(--primary-color-dark) 100%
 	) !important;
 
 	--background-color-disabled: rgba(125, 125, 125) !important;
