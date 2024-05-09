@@ -32,14 +32,17 @@ class Page_Results extends Page {
      */
      async update(override = false) {
           // Set the reference website when overriding or unset. 
-		if (override || !this[`ref`]) {this[`ref`] = await global.read([`last`])};
+		if (override || !this[`ref`]) {
+               let RECORD = await global.read([`last`]);
+               (RECORD) ? this[`ref`] = RECORD : false;
+          };
           
           if (this[`ref`]) {
                // Get all the data. 
                let DATA = {
                     "data": await global.read([`sites`, this[`ref`]])
                }
-     
+               
                // Set the data. 
                this[`data`] = (DATA[`data`] && (typeof DATA[`data`]).includes(`obj`)) ? DATA[`data`] : (this[`data`] ? this[`data`] : {});
           }
