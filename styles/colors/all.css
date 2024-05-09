@@ -24,9 +24,14 @@ nav {
 	background-color: var(--background-color) !important;
 }
 
+nav .brand-logo, nav ul:not(.dropdown-content) > li > a {
+	color: var(--font-color-main) !important;
+}
+
 nav.transparent {
 	box-shadow: none !important;
 }
+
 
 nav#header {
 	background: linear-gradient(
