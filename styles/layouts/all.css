@@ -55,26 +55,6 @@ nav .input-field label {
 	margin-right: 0.5em;
 }
 
-.nav-wrapper {
-	position: fixed;
-	top: 0; 
-	left: 0;
-	z-index: 10;
-}
-
-.nav-wrapper + *, *:has(.nav-wrapper) + * {
-	margin-top: 56px;
-}
-
-@media only screen and (min-width: 601px) {
-	.nav-wrapper + *, *:has(.nav-wrapper) + * {
-		margin-top: 64px;
-	}
-}
-
-nav ul:not(.dropdown-content) > li > a {
-	height: 100%;
-}
 
 @media only screen and (min-width: 601px) {
 	.dual .container {
