@@ -9,15 +9,10 @@
 	<header>
 		<nav id="header" class="nav-wrapper transparent">
 			<ul class="right">
-				<li><a class="dropdown-trigger" data-target="dropdown_more" data-icon="menu"></a></li>
+				<li><a accesskey="r" data-action="analysis,reload" title-for="refresh" data-icon="refresh"></a></li>
+				<li><a accesskey="," data-action="open,settings" title-for="preferences" data-icon="cog"></a></li>
 			</ul>
 		</nav>
-		<ul id="dropdown_more" class="dropdown-content">
-			<li><a accesskey="r" data-action="analysis,reload" for="refresh"></a></li>
-			<li class="divider"></li>
-			<li><a accesskey="," data-action="open,settings" for="preferences"></a></li>
-			<li><a accesskey="?" data-action="open,help" for="help"></a></li>
-		</ul>
 	</header>
 	<main class="container">
 		<iframe src="popup/load.htm" class="viewer"></iframe>
