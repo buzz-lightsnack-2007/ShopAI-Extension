@@ -1,0 +1,3 @@
+.sidenav li.active > a:not(.collapsible-header):not(.btn):not(.btn-large):not(.btn-small):not(.btn-large):not(.btn-small):not(.btn-flat):not(.btn-large):not(.btn-floating) {
+     color: var(--font-color-main) !important;
+}
