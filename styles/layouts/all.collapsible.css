@@ -2,8 +2,8 @@
 	border: none !important;
 }
 
-.collapsible > li {
-     border-bottom-width: 0px;
+.collapsible > li, .collapsible > .active {
+     border-bottom-width: 0px !important;
 }
 
 .collapsible > li:last-child {
