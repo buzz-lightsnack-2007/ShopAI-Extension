@@ -1,3 +1,10 @@
+.nav-wrapper {
+	position: fixed;
+     width: -webkit-fill-available;
+     top: 0;
+	z-index: 10;
+}
+
 nav .brand-logo {
      position: relative !important;
      margin-top: auto !important;
