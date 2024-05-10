@@ -80,8 +80,7 @@ class Page_Popup extends Page {
 					: `loading`)];
 	
 				// Replace the iframe src with the new page.
-				this.elements[`frame`].src = PAGE;
-				
+				(this.elements[`frame`].src != PAGE) ? this.elements[`frame`].src = PAGE : false;
 	
 				// The results page has its own container. 
 				this.elements[`container`].classList[(PAGE.includes(`results`)) ? `remove` : `add`](`container`);
