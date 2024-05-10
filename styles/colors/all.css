@@ -1,6 +1,8 @@
 @import url("/styles/colors/defaults.css");
 @import url("/styles/colors/all.forms.css");
-@import url("/styles/colors/all.backgrounds.collapsible.css");
+@import url("/styles/colors/all.collapsible.css");
+@import url("/styles/colors/all.navbar.css");
+@import url("/styles/colors/all.menu.css");
 
 body {
 	color: var(--font-color-main);
@@ -18,32 +20,6 @@ body {
 
 main.container:not(:has(.collapsible)) {
 	background-color: var(--background-color);
-}
-
-nav {
-	background-color: var(--background-color) !important;
-}
-
-nav .brand-logo, nav ul:not(.dropdown-content) > li > a {
-	color: var(--font-color-main) !important;
-}
-
-nav.transparent {
-	box-shadow: none !important;
-}
-
-
-nav#header {
-	background: linear-gradient(
-		335deg,
-		var(--primary-color-dark) 0%,
-		var(--primary-color) 62%,
-		var(--primary-color-raised-hover-solid) 100%
-	);
-}
-
-nav .input-field input[type="search"], textarea {
-	color: var(--font-color-main) !important;
 }
 
 .transparent {
