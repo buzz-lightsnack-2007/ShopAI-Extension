@@ -8,16 +8,18 @@
 	--error-color: #cf6679 !important;
 
 	--primary-color: rgba(255, 134, 57) !important;
-	--primary-color-dark: rgba(221, 106, 59) !important;
+	--primary-color-light: rgba(252, 162, 133) !important;
+	--primary-color-lighter: #ffdac2 !important;
+	
+	--primary-color-dark: #dd6a3b !important;
+	--primary-color-darker: #823617 !important;
+
 	--primary-color-numeric: 255, 134, 57 !important;
-	--primary-color-raised-hover-solid: rgba(252, 162, 133) !important;
+	--primary-color-raised-hover-solid: #ff9653 !important;
 	--primary-color-raised-focus-solid: rgba(221, 106, 59) !important;
-	--primary-color-gradient: linear-gradient(
-		43deg,
-		var(--primary-color-raised-hover-solid) 0%,
-		var(--primary-color) 62%,
-		var(--primary-color-dark) 100%
-	) !important;
+
+	--primary-color-gradient: linear-gradient(43deg, var(--primary-color-raised-hover-solid) 0%, var(--primary-color) 62%, var(--primary-color-dark) 100%) !important;
+	--primary-color-gradient-light: linear-gradient(43deg, var(--primary-color-lighter) 0%, var(--primary-color-light) 62%, var(--primary-color-raised-hover-solid) 100%) !important;
 
 	--background-color-disabled: rgba(125, 125, 125) !important;
 	--background-color-level-4dp: rgba(229, 229, 229) !important;
@@ -62,9 +64,6 @@
 		--font-on-primary-color-medium: rgba(0, 0, 0, 0.56) !important;
 		--font-on-primary-color-disabled: rgba(0, 0, 0, 0.38) !important;
 
-		--primary-color: rgba(255, 134, 57) !important;
-		--primary-color-dark: rgba(221, 106, 59) !important;
-		--primary-color-numeric: 255, 134, 57 !important;
 		--primary-color-raised-hover-solid: rgba(252, 162, 133) !important;
 		--primary-color-raised-focus-solid: rgba(221, 106, 59) !important;
 		--primary-color-gradient: linear-gradient(
@@ -73,6 +72,7 @@
 			var(--primary-color) 62%,
 			var(--primary-color-raised-hover-solid) 100%
 		) !important;
+		--primary-color-gradient-light: linear-gradient(43deg, var(--primary-color-darker) 0%, var(--primary-color-dark) 62%, var(--primary-color-raised-hover-solid) 100%) !important;
 
 		--secondary-color-lighter: rgba(221, 106, 59) !important;
 		--secondary-color: rgba(190, 80, 1) !important;
@@ -95,7 +95,7 @@
 		--separator-color: #424242 !important;
 		--error-color: #cf6679 !important;
 
-		--input-color: rgba(255, 255, 255, 0.12) !important;
+		
 		--slider-track-color: rgba(255, 255, 255, 0.26) !important;
 		--switch-thumb-off-color: #bababa !important;
 
