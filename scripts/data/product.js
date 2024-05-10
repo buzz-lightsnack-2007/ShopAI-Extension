@@ -21,12 +21,12 @@ export default class product {
 	@param {object} options the options
 	*/
 	constructor (details, URL = window.location.href, options) {
-		if (!((typeof options).includes(`obj`) && !Array.isArray(options) && options != null)) {
-			options = {};
-		}
+		options = (!((typeof options).includes(`obj`) && !Array.isArray(options) && options != null))
+			? {}
+			: options;
 
 		// Set this product's details as part of the object's properties.
-		this.URL = URLs.clean(URL);
+		(URL) ? this.URL = URLs.clean(URL) : false;
 		this.details = details;
 
 		// Set private variables.
@@ -36,36 +36,38 @@ export default class product {
 		this.status = {};
 	};
 
-	/* Attach the product data to the storage. */
-	async attach() {
-		// Add the data digest.
-		this.#snip = (await hash.digest(this.details, {"output": "Array"}));
+	/*
+	Check the data with data from the storage. 
+	*/
+	async read() {
+		if (this.details) {
+			// Add the data digest.
+			this.#snip = (await hash.digest(this.details, {"output": "Array"}));
+	
+			// Add the status about this data.
+			this.status[`update`] = !(await (compare([`sites`, this.URL, `snip`], this.#snip)));
+		};
 
-		// Add the status about this data.
-		this.status[`update`] = !(await (compare([`sites`, this.URL, `snip`], this.#snip)));
+		if (!this.status.update && Object.hasOwn(this.status, `update`)) {this.analysis = await global.read([`sites`, this.URL, `analysis`]);};
 	}
 
 	async save() {
-		// Stop when not attached (basically, not entirely initialized).
-		if (!this.#snip) {throw new ReferenceError((new texts(`error_msg_notattached`)).localized)};
+		// Save the status to the storage. This might be needed since it's also a signalling method. 
+		await global.write([`sites`, this.URL, `status`], this.status, -1, {"strict": true});
 
 		// There is only a need to save the data if an update is needed. 
-		if (this.status[`update`]) {
-			// Save the data to the storage.
-			await global.write([`sites`, this.URL, `status`], this.status, -1);
-			await global.write([`sites`, this.URL, `snip`], this.#snip, 1);
+		if (Object.hasOwn(this.status, `update`) ? this.status[`update`] : true) {	
+			// Save the snip data. 
+			(this.#snip) ? await global.write([`sites`, this.URL, `snip`], this.#snip, 1) : false;
 	
 			// Write the analysis data to the storage.
-			(this[`analysis`]) ? global.write([`sites`, this.URL, `analysis`], this.analysis, 1): false;
+			return((this[`analysis`]) ? global.write([`sites`, this.URL, `analysis`], this.analysis, 1) : false);
 		}
 	};
 
-	async analyze() {
+	async analyze(options = {}) {
 		// Stop when the data is already analyzed.
-		if (this[`analysis`]) {return(this.analysis)}
-		else if (this.status ? (!this.status.update) : false) {this.analysis = await global.read([`sites`, this.URL, `analysis`]);}
-		
-		if ((this.analysis && this.analysis != null && this.analysis != undefined) ? !((typeof this.analysis).includes(`obj`) && !Array.isArray(this.analysis)) : true) {
+		if (((this.analysis && this.analysis != undefined) ? !((typeof this.analysis).includes(`obj`) && !Array.isArray(this.analysis)) : true) || ((options && (typeof options).includes(`obj`)) ? options[`override`] : false)) {
 			const gemini = (await import(chrome.runtime.getURL("scripts/AI/gemini.js"))).default;
 			let analyzer = new gemini (await global.read([`settings`,`analysis`,`api`,`key`]), `gemini-pro`);
 			
@@ -79,6 +81,7 @@ export default class product {
 			// Raise an error if the product analysis is blocked. 
 			this.status[`blocked`] = analyzer.blocked;
 			if (this.status[`blocked`]) {
+				this.status.error = {"name": (new texts(`blocked`)).localized, "message": (new texts(`error_msg_blocked`)).localized, "stack": analyzer.response};
 				throw new Error((new texts(`error_msg_blocked`)).localized)
 			};
 
