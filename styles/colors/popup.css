@@ -8,6 +8,10 @@
 	background-color: #ffF;    
 }
 
+[result] {
+     color: white;
+}
+
 [result="bad"] {
      background: var(--color-results_bad_gradient);
 }
