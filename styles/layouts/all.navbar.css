@@ -29,3 +29,25 @@ nav .brand-logo img {
      height: var(--dimension) !important;
      width: var(--dimension) !important;
 }
+
+.nav-wrapper + *:not(:has(iframe), .container), *:has(.nav-wrapper) + *:not(:has(iframe), .container) {
+	margin-top: 64px !important;
+}
+
+.nav-wrapper + *:has(iframe), .nav-wrapper + *.container, *:has(.nav-wrapper) + *:has(iframe), *:has(.nav-wrapper) + *.container {
+	margin-top: 56px !important;
+}
+
+@media only screen and (min-width: 601px) {
+	.nav-wrapper + *:has(iframe), .nav-wrapper + *.container, *:has(.nav-wrapper) + *:has(iframe), *:has(.nav-wrapper) + *.container {
+		margin-top: 64px !important;
+	}
+
+	.nav-wrapper + *:not(:has(iframe)), *:has(.nav-wrapper) + *:not(:has(iframe)) {
+		margin-top: 72px !important;
+	}
+}
+
+nav ul:not(.dropdown-content) > li > a {
+	height: 100%;
+}
