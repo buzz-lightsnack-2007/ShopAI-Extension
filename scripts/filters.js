@@ -33,15 +33,9 @@ export default class filters {
 		};
 
 		if (URL) {
-			let SELECTED = await (async () => {
-				// Get the filters.
-				let filter = await global.search(`filters`, URL, `URL`, 0.5, {"cloud": -1});
-	
-				// If there are filters, then filter the URL.
-				return filter;
-			})();
+			let SELECTED = await global.search(`filters`, URL, `URL`, 0.5, {"cloud": -1});
 			
-			if ((SELECTED && SELECTED != null && (typeof SELECTED).includes(`obj`)) ? (Object.keys(SELECTED)).length > 0 : false) {
+			if ((SELECTED && SELECTED != null && (typeof SELECTED).includes(`obj`)) ? (Object.keys(SELECTED)).length : false) {
 				this.one = (Object.entries(SELECTED))[0][1];
 				return (this.one);
 			};
