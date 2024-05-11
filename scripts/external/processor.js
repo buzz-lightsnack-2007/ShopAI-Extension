@@ -4,12 +4,15 @@ Process the information on the website and display it on screen.
 
 import scraper from "/scripts/external/scraper.js";
 import product from "/scripts/data/product.js";
-import {global} from "/scripts/secretariat.js";
+import {global, observe} from "/scripts/secretariat.js";
 import logging from "/scripts/logging.js";
+import texts from "/scripts/mapping/read.js";
 import {URLs} from "/scripts/utils/URLs.js";
+import gemini from "/scripts/AI/gemini.js";
 
 export default class processor {
 	#filter; 
+	#analyzer;
 	
 	async scrape (fields, options) {
 		this.product.details = new scraper (((fields) ? fields : this.targets), options); 
@@ -22,35 +25,84 @@ export default class processor {
 	}
 	
 	async analyze(options = {}) {
-		// Set up current data of the site, but forget about its previous errored state. 
-		delete this.product.status[`error`];
+		const main = async() => {
+			// Set up the analyzer.
+			this.#analyzer = (this.#analyzer) ? this.#analyzer : new gemini (await global.read([`settings`,`analysis`,`api`,`key`]), `gemini-1.5-pro-latest`);
+	
+			// Set up current data of the site, but forget about its previous errored state. 
+			delete this.status[`error`];
+	
+			// Set the completion state to anything else but not 1. 
+			(this.status[`done`] >= 1) ? this.#notify(0) : false;
 
-		// Set the completion state to anything else but not 1. 
-		this.product.status[`done`] = (this.product.status[`done`] == 1) ? 0 : this.product.status[`done`];
-
-		// Save this information. 
-		this.product.save();
-
-		// Try analysis of the data.
-		try {
-			await this.product.analyze(options);
-		} catch(err) {
-			// Use the existing error if there exists any. 
-			this.product.status[`error`] = (this.product.status[`error`]) ? this.product.status[`error`] : {};
-
-			(this.product.status[`error`]) ? false
-			:  [`name`, `message`, `stack`].forEach((KEY) => {
-				this.product.status.error[KEY] = String(err[KEY]);
-			});
-			logging.error(err);
-			logging.error(this.product.status[`error`].name, this.product.status[`error`].message, this.product.status[`error`].stack);
+			const perform = async() => {
+				if (((this.product.analysis && !((typeof this.product.analysis).includes(`undef`)))
+					? !((typeof this.product.analysis).includes(`obj`) && !Array.isArray(this.product.analysis))
+					: true)
+				|| this.product.status[`update`] || ((options && (typeof options).includes(`obj`)) ? options[`override`] : false)) {
+					// Add the prompt.
+					let PROMPT = [];
+					PROMPT.push({"text": ((new texts(`AI_message_prompt`)).localized).concat(JSON.stringify(this.product.details.texts))});
+					
+					// Run the analysis.
+					await this.#analyzer.generate(PROMPT);
+	
+					// Raise an error if the product analysis is blocked. 
+					this.status[`blocked`] = this.#analyzer.blocked;
+					if (this.status[`blocked`]) {
+						this.status.error = {"name": (new texts(`blocked`)).localized, "message": (new texts(`error_msg_blocked`)).localized, "stack": analyzer.response};
+						throw Error();
+					};
+	
+					if (this.#analyzer.candidate && !this.status[`blocked`]) {
+						// Remove all markdown formatting.
+						this.product.analysis = JSON.parse(this.#analyzer.candidate.replace(/(```json|```|`)/g, ''));
+						
+						// Save the data. 
+						await this.product.save();
+					};
+				}
+			}
+	
+			// Try analysis of the data.
+			try {
+				await perform();
+			} catch(err) {
+				// Use the existing error, if any exists. 
+				(this.status.error) ? false : 
+				[`name`, `message`, `stack`].forEach((KEY) => {
+					this.status.error = String(err[KEY]);
+				});
+	
+				// Display the error. 
+				logging.error(err);
+			};
+	
+			// Indicate that the process is done. 
+			this.#notify(1);
+	
+			// Save the data. 
+			this.product.save();
 		};
 
-		// Indicate that the process is done. 
-			this.#notify(1);
+		const wait = async () => {
+			let RUN = false;
+			if (await global.read([`settings`,`analysis`,`api`,`key`])) {
+				console.log(`run`);
+				await main();
+				RUN = true;
+			} else {
+				new logging(texts.localized(`AIkey_message_waiting_title`), texts.localized(`AIkey_message_waiting_body`))
+				observe(async () => {
+					if ((!RUN) ? (await global.read([`settings`,`analysis`,`api`,`key`])) : false) {
+						await main();
+						RUN = true;
+					}
+				})
+			}
+		}
 
-		// Save the data. 
-		this.product.save();
+		wait();
 	};
 
 	/*
@@ -60,7 +112,7 @@ export default class processor {
 		this.#notify((this.targets) ? .25 : 0);
 
 		// Scrape the data. 
-		await this.scrape();
+		await this.scrape(null, ((typeof options).includes(`obj`) && options) ? options[`scrape`] : null);
 		
 		if ((this.product.details) ? Object.keys(this.product.details).length : false) {
 			// Update the status. 

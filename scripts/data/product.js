@@ -51,9 +51,6 @@ export default class product {
 	}
 
 	async save() {
-		// Save the status to the storage. This might be needed since it's also a signalling method. 
-		await global.write([`sites`, this.URL, `status`], this.status, -1, {"strict": true});
-
 		// There is only a need to save the data if an update is needed. 
 		if (Object.hasOwn(this.status, `update`) ? this.status[`update`] : true) {	
 			// Save the snip data. 
@@ -62,35 +59,5 @@ export default class product {
 			// Write the analysis data to the storage.
 			return((this[`analysis`]) ? global.write([`sites`, this.URL, `analysis`], this.analysis, 1) : false);
 		}
-	};
-
-	async analyze(options = {}) {
-		// Stop when the data is already analyzed.
-		if (((this.analysis && this.analysis != undefined) ? !((typeof this.analysis).includes(`obj`) && !Array.isArray(this.analysis)) : true) || this.status[`update`] || ((options && (typeof options).includes(`obj`)) ? options[`override`] : false)) {
-			const gemini = (await import(chrome.runtime.getURL("scripts/AI/gemini.js"))).default;
-			let analyzer = new gemini (await global.read([`settings`,`analysis`,`api`,`key`]), `gemini-pro`);
-			
-			// Add the prompt.
-			let PROMPT = [];
-			PROMPT.push({"text": ((new texts(`AI_message_prompt`)).localized).concat(JSON.stringify(this.details))});
-			
-			// Run the analysis.
-			await analyzer.generate(PROMPT);
-
-			// Raise an error if the product analysis is blocked. 
-			this.status[`blocked`] = analyzer.blocked;
-			if (this.status[`blocked`]) {
-				this.status.error = {"name": (new texts(`blocked`)).localized, "message": (new texts(`error_msg_blocked`)).localized, "stack": analyzer.response};
-				throw new Error((new texts(`error_msg_blocked`)).localized)
-			};
-
-			if (analyzer.candidate) {
-				// Remove all markdown formatting.
-				this.analysis = JSON.parse(analyzer.candidate.replace(/(```json|```|`)/g, ''));
-			};
-			
-		};
-
-		return(this.analysis);
 	};
 };
