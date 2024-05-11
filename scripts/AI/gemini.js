@@ -94,9 +94,9 @@ export default class gemini {
 
 
                 // Convert the photos to a list if it isn't set to be one.
-                if (PROMPT[REQUEST[`contents`].length][`images`] ? !Array.isArray(PROMPT[REQUEST[`contents`].length][`images`]) : false) {
-                    PROMPT[REQUEST[`contents`].length][`images`] = [PROMPT[REQUEST[`contents`].length][`images`]];
-                }
+                (PROMPT[REQUEST[`contents`].length][`images`] ? !Array.isArray(PROMPT[REQUEST[`contents`].length][`images`]) : false)
+                    ? PROMPT[REQUEST[`contents`].length][`images`] = [PROMPT[REQUEST[`contents`].length][`images`]]
+                    : false;
 
                 // Add the photos, which are already in the blob format. 
                 while ((PROMPT[REQUEST[`contents`].length][`images`]) ? (MESSAGE[`parts`].length < PROMPT[REQUEST[`contents`].length][`images`].length) : false) {
