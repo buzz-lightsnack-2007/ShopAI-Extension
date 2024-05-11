@@ -7,7 +7,7 @@ import processor from "/scripts/external/processor.js";
 import logging from "/scripts/logging.js";
 import texts from "/scripts/mapping/read.js";
 import {global} from "/scripts/secretariat.js";
-import nested from "/scripts/utils/nested.js";
+import {URLs} from "/scripts/utils/URLs.js";
 import pointer from "/scripts/data/pointer.js";
 
 export default class watch {
@@ -28,10 +28,12 @@ export default class watch {
 	@param {object} options the options
 	*/
 	static async process(filter) {
-		let PROCESSOR = new processor(filter, window.location.href, {"automatic": false});
-		
+		let LOCATION = URLs.clean(window.location.href);
+		let PROCESSOR = new processor(filter, LOCATION, {"automatic": false});
+		global.forget([`sites`, LOCATION, `status`], 0, true);
+
 		const perform = (options) => {
-			(document.readyState == `complete`) ? PROCESSOR.run(options) : document.onreadystatechange = async () => {(document.readyState == `complete`) ? PROCESSOR.run(options) : PROCESSOR.product.status.done = .125;};
+			(document.readyState == `complete`) ? PROCESSOR.run(options) : document.onreadystatechange = async () => {(document.readyState == `complete`) ? PROCESSOR.run(options) : PROCESSOR.status.done = .125;};
 		}
 
 		(await global.read([`settings`, `behavior`, `autoRun`]) || await pointer.read([`status`, `error`])) ? document.onreadystatechange = async () => {perform(((await pointer.read([`status`, `error`])) ? {"override": true} : null));} : false;
