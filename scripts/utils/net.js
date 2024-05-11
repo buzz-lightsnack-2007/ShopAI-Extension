@@ -22,7 +22,7 @@ export default class net {
 			CONNECT = await fetch(URL);
 	
 			if (CONNECT.ok && !VERIFY_ONLY) {
-				DATA = await CONNECT.text();
+				DATA = await CONNECT[(TYPE.toLowerCase().includes('blob')) ? `blob` : `text`]();
 			
 				if (TYPE
 						? (TYPE.toLowerCase().includes(`json`) || TYPE.toLowerCase().includes(`dictionary`))
