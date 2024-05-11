@@ -52,7 +52,7 @@ export default class gemini {
                 PROMPT.push({"text": String(prompt)});
             } else if (Array.isArray(prompt)) {
                 while (PROMPT.length < prompt.length) {
-                    if ((typeof prompt[PROMPT.length]).includes(`obj`) && prompt[PROMPT.length] != null && !Array.isArray(prompt[PROMPT.length])) {
+                    if ((typeof prompt[PROMPT.length]).includes(`obj`) && prompt[PROMPT.length] && !Array.isArray(prompt[PROMPT.length])) {
                         PROMPT.push(prompt[PROMPT.length]);
                     } else {
                         PROMPT.push({"text": prompt[PROMPT.length]});
@@ -64,7 +64,13 @@ export default class gemini {
 
             REQUEST[`contents`] = [];
 
-            // Function below by Google (https://ai.google.dev/tutorials/get_started_web)
+            /*
+            Add the blob to a generative part. 
+
+            Function below by Google (https://ai.google.dev/tutorials/get_started_web)
+            @param {Blob} image the image to add
+            @return {Object} the generative part
+            */
             async function fileToGenerativePart(image) {
                 image = {"blob": image};
                 image[`type`] = image[`blob`].type;
