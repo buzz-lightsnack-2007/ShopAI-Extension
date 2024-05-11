@@ -201,9 +201,29 @@
 	"entry_contextMenu": {
 		"message": "Open in ShopAI…"
 	},
+
+	"scrape_msg_0": {
+		"message": "Preparing…"
+	},
+	"scrape_msg_0.25": {
+		"message": "Gathering information…"
+	},
+	"scrape_msg_0.5": {
+		"message": "Generating analysis…"
+	},
+	"scrape_msg_1": {
+		"message": "All done."
+	},
 	"scrape_msg_ready": {
 		"message": "Loading complete, processing…"
 	},
+	"AIkey_message_waiting_title": {
+		"message": "Waiting for your API key…"
+	},
+	"AIkey_message_waiting_body": {
+		"message": "Please enter your API key in the settings. Loading will automatically continue once the key is entered."
+	},
+	
 	"results_tip_1": {
 		"message": "Scroll down to view details."
 	},
