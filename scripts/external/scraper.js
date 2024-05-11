@@ -2,82 +2,156 @@
 Read the contents of the page.  
 */
 
+import net from "/scripts/utils/net.js";
+
 export default class scraper {
+	#options;
+
 	/*
 	Scrape fields. 
 
 	@param {Object} scraper_fields the fields to scrape
 	@param {Object} options the options
 	*/
-	constructor(scraper_fields, options = {"wait until available": true}) {
-		let field_content;
+	constructor(fields, options) {
+		(((typeof fields).includes(`obj`) && fields) ? Object.keys(fields).length : false)
+			? this.fields = fields
+			: false;
+		this.#options = Object.assign({}, {"scroll": true, "duration": 125, "automatic": true, "background": true}, options);
 
-		// Quickly scroll down then to where the user already was to get automatically hidden content. 
-		function autoscroll() {
-			let SCROLL = {"x": parseInt(window.scrollX), "y": parseInt(window.scrollY)};
+		if (this.#options.automatic) { 
+			// Quickly scroll down then to where the user already was to get automatically hidden content. 
+			async function autoscroll(options) {
+				let SCROLL = {"x": parseInt(window.scrollX), "y": parseInt(window.scrollY)};
+				let DURATION = Math.abs(options[`duration`]);
 
-			// Repeat every ten milliseconds until 3 times.
+				// Repeat every ten milliseconds until 3 times.
+				function go(position, duration) {
+					Object.assign({}, position, {"behavior": `smooth`})
 
-			for (let SCROLLS = 1; SCROLLS <= 2; SCROLLS++) {
-				[{"top": document.body.scrollHeight, "left": document.body.scrollWidth}, {"top": 0, "left": 0}].forEach(POSITION => {
-					setTimeout(() => {
-						window.scrollTo(POSITION);
-					}, 10);
+					return new Promise(resolve => {
+						window.scrollTo(position);
+						setTimeout(resolve, duration);
+					});
+				}
+
+				// Scroll two times to check for updated data. 
+				for (let SCROLLS = 1; SCROLLS <= 2; SCROLLS++) {
+					for (const POSITION of [{"top": document.body.scrollHeight, "left": document.body.scrollWidth}, {"top": 0, "left": 0}]) {
+						await go(POSITION, DURATION);
+					}
+				};
+
+				// Scroll back to user's previous position.
+				setTimeout(() => {window.scrollTo(SCROLL);}, DURATION)
+			};
+
+			// Check every 1 second to check until autosccroll is done.
+			function wait(OPTIONS) {
+				return new Promise((resolve, reject) => {
+					// Check if autoscroll is done.
+					if (!((typeof window).includes(`undef`))) {
+						autoscroll(OPTIONS);
+						resolve();
+					} else if (OPTIONS[`scroll`]) {
+						setTimeout(() => {
+							wait(OPTIONS).then(resolve).catch(reject);
+						}, 1000);
+					} else {
+						reject();
+					}
 				});
 			}
 
-			// Scroll back to user's previous position.
-			setTimeout(() => {
-				window.scrollTo(SCROLL);
-			}, 5)
-		};
+			wait(this.#options).then(() => {
+				this.getTexts(this.fields, this.#options);
+				this.getImages(this.fields, this.#options);
 
-		const read = () => {
-			if ((typeof scraper_fields).includes("object") && scraper_fields != null && scraper_fields) {
-	
-				/* Read for the particular fields. */
-				function read(fields) {
-					let field_data = {};
-	
-					(Object.keys(fields)).forEach((FIELD_NAME) => {
-						let FIELD = {"name": FIELD_NAME, "value": fields[FIELD_NAME]};
-	
-						if (FIELD[`value`]) {
-							// Check if array.
-							if (Array.isArray(FIELD[`value`])) {
-								// Temporarily create an empty list. 
-								field_data[FIELD[`name`]] = [];
-								
-								if (typeof FIELD[`value`][0] == "object" && FIELD[`value`][0] != null && !Array.isArray(FIELD[`value`][0])) {
-									field_data[FIELD[`name`]].push(read(FIELD[`value`][0]));
-								} else {
-									let ELEMENTS = (document.querySelectorAll(FIELD[`value`][0]));
-									
-									if (ELEMENTS.length > 0) {
-										(ELEMENTS).forEach((ELEMENT) => {
-											field_data[FIELD[`name`]].push(ELEMENT.innerText);
-										})
-									};
-								};
-							} else if ((typeof FIELD[`value`]).includes(`obj`) && FIELD[`value`] != null) {
-								field_data[FIELD[`name`]] = read(FIELD[`value`]);
-							} else if (document.querySelector(FIELD[`value`])) {
-								field_data[FIELD[`name`]] = document.querySelector(FIELD[`value`]).innerText;
-							};
-						};
+				if (this.#options.background) {
+					// Event listener when elements are added or removed.
+					const OBSERVER = new MutationObserver((mutations) => {
+						this.getTexts(this.fields, this.#options);
+						this.getImages(this.fields, this.#options);
 					});
 	
-					return field_data;
+					// Observe the document.
+					OBSERVER.observe(document.body, {"childList": true, "subtree": true});
+				}
+			});
+		}
+	}
+
+	/*
+	Scrape the texts of the page.
+
+	@param {Object} fields the fields to scrape
+	@param {Object} options the options
+	@return {Object} the texts
+	*/
+	getTexts(fields, options) {
+		let CONTENT;
+
+		/* Read for the particular fields. */
+		function read(fields) {
+			let DATA = {}; // Store here the resulting data
+			
+			(Object.keys(fields)).forEach((NAME) => {
+				// Remove trailing spaces within the name. 
+				NAME = (typeof NAME).includes(`str`) ? NAME.trim() : NAME;
+				
+				// Set the referring value.
+				let VALUE = fields[NAME];
+				VALUE = (typeof VALUE).includes(`str`) ? VALUE.trim() : VALUE;
+				
+				if (VALUE && NAME) {
+					// Check if array.
+					if ((Array.isArray(VALUE)) ? VALUE.length : false) {
+						// Temporarily create an empty list. 
+						DATA[NAME] = [];
+
+						VALUE.forEach((PARTICULAR) => {
+							if ((typeof PARTICULAR).includes("obj") && PARTICULAR && !Array.isArray(PARTICULAR)) {
+								DATA[NAME].push(read(PARTICULAR));
+							} else {
+								let ELEMENTS = [...(document.querySelectorAll(PARTICULAR))];
+								
+								(ELEMENTS && ELEMENTS.length)
+									? (ELEMENTS).forEach((ELEMENT) => {
+										DATA[NAME].push(ELEMENT.textContent.trim());
+									})
+									: false;
+							};
+						})
+					} else if ((typeof VALUE).includes(`obj`) && VALUE && !Array.isArray(VALUE)) {
+						DATA[NAME] = read(VALUE);
+					} else if (document.querySelector(VALUE)) {
+						(document.querySelector(VALUE))
+							? DATA[NAME] = document.querySelector(VALUE).textContent.trim()
+							: false;
+					};
 				};
-				field_content = read(scraper_fields);
-			}
-	
-			if (Object.keys(field_content).length > 0) {
-				(Object.keys(field_content)).forEach((field_name) => {
-					this[field_name] = field_content[field_name];
-				});
-			}
+			});
+
+			return DATA;
 		};
+
+		// Determine and set the appropriate field source. 
+		let FIELDS = (((typeof fields).includes(`obj`) && fields) ? Object.keys(fields).length : false) ? fields : this.fields;
+		((((typeof options).includes(`obj`) && options) ? Object.hasOwn(`update`) : false) ? options[`update`] : true)
+			? this.fields = FIELDS
+			: null;
+
+		// Read the fields. 
+		(FIELDS)
+			? CONTENT = read(FIELDS)
+			: false;
+
+		// Set the data if the options doesn't indicate otherwise. 
+		(((((typeof options).includes(`obj`) && options) ? Object.hasOwn(`update`) : false) ? options[`update`] : true) && CONTENT)
+			? this.texts = CONTENT
+			: false;
+		return (CONTENT);
+	};
 
 	/*
 	Scrape the images from a page. 
@@ -171,7 +245,7 @@ export default class scraper {
 						for (let PARTICULAR of VALUE) {
 							if ((typeof PARTICULAR).includes(`obj`) && PARTICULAR && !Array.isArray(PARTICULAR)) {
 								DATA = [...DATA, ...(await read(PARTICULAR))];
-				} else {
+							} else {
 								let ELEMENTS = [...(document.querySelectorAll(PARTICULAR))];
 
 								if (ELEMENTS && ELEMENTS.length) {
