@@ -11,8 +11,8 @@ import {URLs} from "/scripts/utils/URLs.js";
 export default class processor {
 	#filter; 
 	
-	async scrape (fields) {
-		this.product.details = new scraper ((fields) ? fields : this.targets); 
+	async scrape (fields, options) {
+		this.product.details = new scraper (((fields) ? fields : this.targets), options); 
 
 		// Read product data and gather the SHA512 hash. 
 		await this.product.read();
