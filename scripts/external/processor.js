@@ -47,7 +47,7 @@ export default class processor {
 		};
 
 		// Indicate that the process is done. 
-		this.product.status[`done`] = 1;
+			this.#notify(1);
 
 		// Save the data. 
 		this.product.save();
@@ -57,16 +57,40 @@ export default class processor {
 	Run in the chronological order. Useful when needed to be redone manually. 
 	*/
 	async run (options = {}) {
-		this.product.status[`done`] = (this.targets) ? .25 : 0;
+		this.#notify((this.targets) ? .25 : 0);
 
 		// Scrape the data. 
 		await this.scrape();
 		
 		if ((this.product.details) ? Object.keys(this.product.details).length : false) {
-			this.product.status[`done`] = .5;
+			// Update the status. 
+			await this.#notify(.5);
+
+			// Analyze the data.
 			this.analyze((options && (typeof options).includes(`obj`)) ? options[`analysis`] : null);
 		};
 	}
+
+	/*
+	Update the percentage of the progress. 
+	
+	@param {number} status the status of the progress
+	*/
+	async #notify (status) {
+		this.status[`done`] = status;
+
+		// Set the status of the site.
+		if (await global.write([`sites`, this.URL, `status`], this.status, -1)) {
+			// Set the status to its whole number counterpart. 
+			let STATUS = Math.round(status * 100);
+			
+			// Get the corresponding status message. 
+			new logging(texts.localized(`scrape_msg_`.concat(String(STATUS))), (String(STATUS)).concat("%"));
+			return true;
+		} else {
+			return false;
+		}
+	};
 
 	constructor (filter, URL = window.location.href, options = {}) {
 		this.URL = URLs.clean(URL);
@@ -74,6 +98,8 @@ export default class processor {
 
 		this.product = new product();
 		this.targets = this.#filter[`data`];
+
+		this.status = {};
 		
 		((((typeof options).includes(`obj`)) ? Object.hasOwn(options, `automatic`) : false) ? options[`automatic`] : true) ? this.run() : false;
 	}
