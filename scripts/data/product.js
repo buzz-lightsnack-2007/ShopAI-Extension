@@ -11,7 +11,6 @@ import {URLs} from "/scripts/utils/URLs.js";
 // Don't forget to set the class as export default.
 export default class product {
 	// Create private variables for explicit use for the storage.
-	#snip;
 	#options;
 
 	/* Initialize a new product with its details.
@@ -42,10 +41,10 @@ export default class product {
 	async read() {
 		if (this.details) {
 			// Add the data digest.
-			this.#snip = (await hash.digest(this.details, {"output": "Array"}));
+			this.snip = (await hash.digest(this.details, {"output": "Array"}));
 	
 			// Add the status about this data.
-			this.status[`update`] = !(await (compare([`sites`, this.URL, `snip`], this.#snip)));
+			this.status[`update`] = !(await (compare([`sites`, this.URL, `snip`], this.snip)));
 		};
 
 		if (!this.status.update && Object.hasOwn(this.status, `update`)) {this.analysis = await global.read([`sites`, this.URL, `analysis`]);};
@@ -58,7 +57,7 @@ export default class product {
 		// There is only a need to save the data if an update is needed. 
 		if (Object.hasOwn(this.status, `update`) ? this.status[`update`] : true) {	
 			// Save the snip data. 
-			(this.#snip) ? await global.write([`sites`, this.URL, `snip`], this.#snip, 1) : false;
+			(this.snip) ? await global.write([`sites`, this.URL, `snip`], this.snip, 1) : false;
 	
 			// Write the analysis data to the storage.
 			return((this[`analysis`]) ? global.write([`sites`, this.URL, `analysis`], this.analysis, 1) : false);
