@@ -67,7 +67,7 @@ export default class product {
 
 	async analyze(options = {}) {
 		// Stop when the data is already analyzed.
-		if (((this.analysis && this.analysis != undefined) ? !((typeof this.analysis).includes(`obj`) && !Array.isArray(this.analysis)) : true) || ((options && (typeof options).includes(`obj`)) ? options[`override`] : false)) {
+		if (((this.analysis && this.analysis != undefined) ? !((typeof this.analysis).includes(`obj`) && !Array.isArray(this.analysis)) : true) || this.status[`update`] || ((options && (typeof options).includes(`obj`)) ? options[`override`] : false)) {
 			const gemini = (await import(chrome.runtime.getURL("scripts/AI/gemini.js"))).default;
 			let analyzer = new gemini (await global.read([`settings`,`analysis`,`api`,`key`]), `gemini-pro`);
 			
