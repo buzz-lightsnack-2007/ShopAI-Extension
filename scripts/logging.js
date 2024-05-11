@@ -72,11 +72,11 @@ export default class logging {
 	*/
 	static async error(ERROR_CODE, ERROR_MESSAGE, ERROR_STACK, critical = true) {
 		// Depackage the shortcut method of sending the error message. 
-		(!ERROR_MESSAGE && !ERROR_STACK && (typeof ERROR_CODE).includes(`obj`)) ? (
-			ERROR_MESSAGE = ERROR_CODE.message,
-			ERROR_STACK = ERROR_CODE.stack,
-			ERROR_CODE = ERROR_CODE.name
-		) : false;
+		if ((typeof ERROR_CODE).includes(`obj`)) {
+			ERROR_MESSAGE = ERROR_CODE.message;
+			ERROR_STACK = ERROR_CODE.stack;
+			ERROR_CODE = ERROR_CODE.name;
+		};
 
 		// Display the error message.
 		(ERROR_CODE && ERROR_MESSAGE && ERROR_STACK) ? console.error(`${ERROR_CODE}: ${ERROR_MESSAGE}\n${ERROR_STACK}`) : console.error(ERROR_MESSAGE);
