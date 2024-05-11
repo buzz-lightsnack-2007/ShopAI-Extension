@@ -235,24 +235,6 @@
 		"message": "There is a mistake in your JSON formatting. Please correct the error before saving."
 	},
 
-	"error_msg": {
-		"message": "$error_code$: $error_msg$ \n$error_trace$",
-		"description": "The error message template",
-		"placeholders": {
-			"error_code": {
-				"content": "$1",
-				"description": "The error code"
-			},
-			"error_msg": {
-				"content": "$2",
-				"description": "The error message"
-			}, 
-		"error_trace": {
-				"content": "$3",
-				"description": "The error trace"
-			}
-		}
-	},
 	"error_msg_GUI": {
 		"message": "Unfortunately, an exception of type $error_code$ has occured. $error_message$ Click OK to continue.",
 		"description": "The error message template for a full graphical UI",
