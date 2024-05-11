@@ -205,13 +205,13 @@
 	"scrape_msg_0": {
 		"message": "Preparing…"
 	},
-	"scrape_msg_0.25": {
+	"scrape_msg_25": {
 		"message": "Gathering information…"
 	},
-	"scrape_msg_0.5": {
+	"scrape_msg_50": {
 		"message": "Generating analysis…"
 	},
-	"scrape_msg_1": {
+	"scrape_msg_100": {
 		"message": "All done."
 	},
 	"scrape_msg_ready": {
