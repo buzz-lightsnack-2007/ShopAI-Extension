@@ -45,7 +45,7 @@ export default class gemini {
     @param {boolean} continued whether to continue the existing prompt
     */
     async generate(prompt, safetySettings, generationConfig, continued = false) {
-        let create = async () => {
+        const create = async () => {
             let REQUEST = {}, PROMPT = [];
 
             if ((typeof prompt) != `object`) {
@@ -178,7 +178,7 @@ export default class gemini {
         }
 
         let REQUEST = await create();
-        let RESPONSE_RAW = await send(REQUEST);
-        return(analyze(RESPONSE_RAW));
+        await send(REQUEST);
+        return(analyze(this.response));
     }
 };
