@@ -12,7 +12,7 @@ import logging from "/scripts/logging.js";
 
 class Page_Popup extends Page {
 	constructor() {
-		super();
+		super({"headers": {"CSS": [`/styles/popup.css`]}});
 		this.content();
 		this.background();
 		this.events();
@@ -23,7 +23,6 @@ class Page_Popup extends Page {
 		observe((changes) => {
 			this.update();
 			this.switch();
-			// First, update site data but retain the URL. 
 		});
 	}
 
