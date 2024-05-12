@@ -22,7 +22,13 @@ export default class windowman {
 			};
 
 			// Add additional sources. 
-			(OPTIONS) ? ((OPTIONS[`CSS`] != null) ? ((Array.isArray(OPTIONS[`CSS`])) ? UI[`CSS`] = UI[`CSS`].concat(OPTIONS[`CSS`]) : UI[`CSS`].push(OPTIONS[`CSS`])) : null) : null;
+			(OPTIONS && (typeof OPTIONS).includes(`obj`))
+				? ((OPTIONS[`CSS`] != null)
+					? ((Array.isArray(OPTIONS[`CSS`]))
+						? UI[`CSS`] = [...UI[`CSS`], ...OPTIONS[`CSS`]]
+						: UI[`CSS`].push(OPTIONS[`CSS`]))
+					: null)
+				: null;
 
 			(UI[`CSS`]).forEach(async (source) => {
 				try {
@@ -51,10 +57,7 @@ export default class windowman {
 					};
 				};
 			})
-		}
-
-		// Get the window.
-		this[`metadata`] = chrome.windows.getCurrent();
+		};
 
 		/* Fill in data and events.  */
 		function appearance() {
@@ -258,7 +261,10 @@ export default class windowman {
 			actions();
 		}
 		
-		headers(((OPTIONS != null && typeof OPTIONS == `object`) ? OPTIONS[`headers`] : false)? OPTIONS[`headers`] : null);
+		// Get the window.
+		this[`metadata`] = chrome.windows.getCurrent();
+		
+		headers(((OPTIONS != null && typeof OPTIONS == `object`) ? OPTIONS[`headers`] : false) ? OPTIONS[`headers`] : null);
 		appearance();
 		events();
 	}
