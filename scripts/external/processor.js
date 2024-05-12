@@ -67,6 +67,14 @@ export default class processor {
 			// Try analysis of the data.
 			try {
 				await perform();
+				
+				// Indicate that the process is done. 
+				this.#notify(1);
+				// Display the results. 
+				new logging(texts.localized(`AI_message_title_done`), JSON.stringify(this.product.analysis));
+
+				// Save the data. 
+				this.product.save();
 			} catch(err) {
 				// Use the existing error, if any exists. 
 				(this.status.error) ? false : 
@@ -75,14 +83,8 @@ export default class processor {
 				});
 	
 				// Display the error. 
-				logging.error(err);
+				this.#notify(-1);
 			};
-	
-			// Indicate that the process is done. 
-			this.#notify(1);
-	
-			// Save the data. 
-			this.product.save();
 		};
 
 		const wait = async () => {
@@ -132,13 +134,15 @@ export default class processor {
 		this.status[`done`] = status;
 
 		// Set the status of the site.
-		if (await global.write([`sites`, this.URL, `status`], this.status, -1)) {
+		if ((await global.write([`sites`, this.URL, `status`], this.status, -1)) && (this.status[`done`] >= 0)) {
 			// Set the status to its whole number counterpart. 
 			let STATUS = Math.round(status * 100);
 			
 			// Get the corresponding status message. 
 			new logging(texts.localized(`scrape_msg_`.concat(String(STATUS))), (String(STATUS)).concat("%"));
 			return true;
+		} else if (this.status[`done`] < 0) {
+			logging.error(this.status.error);	
 		} else {
 			return false;
 		}
