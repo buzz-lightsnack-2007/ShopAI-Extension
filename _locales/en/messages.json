@@ -262,7 +262,7 @@
 		"message": "The file has been downloaded, but it is not the correct file type."
 	},
 	"error_msg_notJSON_syntax": {
-		"message": "There is a mistake in your JSON formatting. Please correct the error before saving."
+		"message": "Your changes have not been saved as there is a mistake in your JSON formatting. To save, please correct the error."
 	},
 	"error_msg_save_failed": {
 		"message": "Not saved"
