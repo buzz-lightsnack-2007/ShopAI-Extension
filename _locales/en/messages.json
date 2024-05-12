@@ -198,8 +198,11 @@
 	"saving_done": {
 		"message": "Saved!"
 	},
-	"entry_contextMenu": {
-		"message": "Open in ShopAI…"
+	"saving_reload_title": {
+		"message": "The data might have been updated."
+	},
+	"saving_reload_body": {
+		"message": "If you did not make the change from this tab, you can view it by reloading this page."
 	},
 
 	"scrape_msg_0": {
