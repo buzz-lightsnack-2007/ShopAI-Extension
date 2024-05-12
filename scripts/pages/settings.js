@@ -86,7 +86,6 @@ class Page_Settings extends Page {
 		(document.querySelector(`[data-action="storage,clear"]`)) 
 			? document.querySelector(`[data-action="storage,clear"]`).addEventListener(`click`, async () => {
 					await global.forget(`sites`);
-					console.log(await global.read(null, 1), await global.read(null, -1));
 				})
 			: false;		
 
