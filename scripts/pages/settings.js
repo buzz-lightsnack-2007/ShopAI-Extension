@@ -23,21 +23,8 @@ class Page_Settings extends Page {
 	@param {object} window the window
 	*/
 	events() {
-		if (document.querySelector(`[data-action="filters,update"]`)) {
-			document
-				.querySelector(`[data-action="filters,update"]`)
-				.addEventListener(`click`, async () => {
-					let filters = new (
-						await import(chrome.runtime.getURL(`scripts/filters.js`))
-					).default();
-					filters.update();
-				});
-		}
-	
-		if (document.querySelector(`[data-action="filters,add,one"]`)) {
-			document
-				.querySelector(`[data-action="filters,add,one"]`)
-				.addEventListener(`click`, async () => {
+		(document.querySelector(`[data-action="filters,update"]`))
+			? document.querySelector(`[data-action="filters,update"]`).addEventListener(`click`, async () => {
 					// Import the filters module.
 					this.data.filters = (this.data.filters) ? this.data.filters : new filters();
 
@@ -56,7 +43,7 @@ class Page_Settings extends Page {
 				// Update the filter if the source is not empty.
 				if (FILTER_SOURCE ? FILTER_SOURCE.trim() : false) {
 					this.data.filters.update(FILTER_SOURCE.trim());
-					};
+				};
 			})
 			: false;
 		
@@ -83,7 +70,7 @@ class Page_Settings extends Page {
 					}
 				});
 		}
-	
+		
 		// The extension icon cache doesn't clear by itself. 
 		(document.querySelector(`[data-store="settings,general,showApplicable"]`))
 			? document.querySelectorAll(`[data-store="settings,general,showApplicable"]`).forEach((ELEMENT) => {
@@ -102,9 +89,11 @@ class Page_Settings extends Page {
 				})
 			: false;		
 
-		(document.querySelectorAll(`[data-action]`)).forEach((ELEMENT) => {
-			ELEMENT.removeAttribute(`data-action`);
-		})
+		(document.querySelectorAll(`[data-action]`)) 
+			? (document.querySelectorAll(`[data-action]`)).forEach((ELEMENT) => {
+				ELEMENT.removeAttribute(`data-action`);
+			})
+			: false;
 	}
 }
 
