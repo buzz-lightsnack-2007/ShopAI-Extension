@@ -42,7 +42,8 @@ class Page_Settings extends Page {
 
 				// Update the filter if the source is not empty.
 				if (FILTER_SOURCE ? FILTER_SOURCE.trim() : false) {
-					this.data.filters.update(FILTER_SOURCE.trim());
+					FILTER_SOURCE = FILTER_SOURCE.trim().split(`, `);
+					this.data.filters.update(FILTER_SOURCE);
 				};
 			})
 			: false;

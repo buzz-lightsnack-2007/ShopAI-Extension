@@ -5,6 +5,7 @@ Manage filters.
 import {global} from "./secretariat.js";
 import net from "/scripts/utils/net.js";
 import texts from "/scripts/mapping/read.js";
+import {URLs} from "/scripts/utils/URLs.js";
 import {Queue} from "/scripts/utils/common.js";
 import logging from "/scripts/logging.js"
 // const logging = (await import(chrome.runtime.getURL("/scripts/logging.js"))).default;
@@ -51,12 +52,19 @@ export default class filters {
 		// Create a queue of the filters.
 		let filters = new Queue();
 
-		if (location) {
-			// Check if the URL is in a valid protocol
-			if (location.includes(`://`)) {
-				// Append that to the queue.
-				filters.enqueue(new URL(location));
-			}
+		if (location && location != `*`) {
+			let LOCATIONS = [];
+			(Array.isArray(location)) 
+				? location.forEach((LOCATION) => {
+					URLs.test(LOCATION) ? LOCATIONS.push(LOCATION) : false;
+				})
+				: (URLs.test(location)) ? LOCATIONS.push(location) : false;
+			
+			(LOCATIONS.length)
+				? LOCATIONS.forEach((LOCATION) => {
+					filters.enqueue(LOCATION);
+				})
+				: false;
 		} else {
 			// Add every item to the queue based on what was loaded first.
 			let FILTERS_ALL = await global.read(["settings", `filters`]);
