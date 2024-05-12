@@ -18,8 +18,15 @@ export default class net {
 	static async download(URL, TYPE, VERIFY_ONLY = false, STRICT = false) {
 		let CONNECT, DATA; 
 	
+		// If TYPE is used as headers, then the other parts of the header should be taken out for later usage. 
+		if (TYPE && (typeof TYPE).includes(`obj`)) {
+			let HEADERS = TYPE;
+			TYPE = HEADERS[`Content-Type`];
+		}
+
 		try {
-			CONNECT = await fetch(URL);
+			// Fetch the file. Add headers when defined. 
+			CONNECT = await (((typeof HEADERS).includes(`undef`)) ? fetch(URL) : fetch(URL, {method: `POST`, headers: HEADERS}));
 	
 			if (CONNECT.ok && !VERIFY_ONLY) {
 				DATA = await CONNECT[(TYPE.toLowerCase().includes('blob')) ? `blob` : `text`]();
