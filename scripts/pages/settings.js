@@ -29,7 +29,7 @@ class Page_Settings extends Page {
 					this.data.filters = (this.data.filters) ? this.data.filters : new filters();
 
 					// Update all of the filters. 
-					filters.update(`*`);
+					this.data.filters.update(`*`);
 				})
 			: false;
 	
