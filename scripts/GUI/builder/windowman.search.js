@@ -136,7 +136,7 @@ export default class UI {
                                                                                      global.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
                                                                                 } catch(err) {
                                                                                      // The JSON isn't valid.
-                                                                                     logging.error(err.name, texts.localized(`JSON_parse_error`), err.stack, false);
+                                                                                     logging.error(err.name, texts.localized(`error_msg_notJSON_syntax`), err.stack, false);
                                                                                 };
                                                                            }
                                                                       } else {
