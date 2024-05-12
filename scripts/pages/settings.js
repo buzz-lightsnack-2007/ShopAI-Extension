@@ -86,10 +86,19 @@ class Page_Settings extends Page {
 				});
 		}
 	
-		if (document.querySelector(`[data-action="storage,clear"]`)) {
-			document
-				.querySelector(`[data-action="storage,clear"]`)
-				.addEventListener(`click`, async () => {
+		// The extension icon cache doesn't clear by itself. 
+		(document.querySelector(`[data-store="settings,general,showApplicable"]`))
+			? document.querySelectorAll(`[data-store="settings,general,showApplicable"]`).forEach((ELEMENT) => {
+				ELEMENT.addEventListener(`change`, () => {
+					!(ELEMENT.checked)
+						? new logging(texts.localized(`settings_restartToApply`), texts.localized(`settings_restartToApply_iconChange`), true)
+						: false;
+				})
+			}) 
+			: false;
+	
+		(document.querySelector(`[data-action="storage,clear"]`)) 
+			? document.querySelector(`[data-action="storage,clear"]`).addEventListener(`click`, async () => {
 					await global.forget(`sites`);
 					console.log(await global.read(null, 1), await global.read(null, -1));
 				});

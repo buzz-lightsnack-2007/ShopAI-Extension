@@ -189,6 +189,13 @@
 	"settings_filters_target": {
 		"message": "Injection Target"
 	},
+	"settings_restartToApply": {
+		"message": "Restart the extension or the browser to apply the changes."
+	},
+	"settings_restartToApply_iconChange": {
+		"message": "The icon change doesn't happen automatically."
+	},
+
 	"saving_current": {
 		"message": "Saving…"
 	},
