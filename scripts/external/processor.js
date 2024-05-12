@@ -79,7 +79,7 @@ export default class processor {
 				// Use the existing error, if any exists. 
 				(this.status.error) ? false : 
 				[`name`, `message`, `stack`].forEach((KEY) => {
-					this.status.error = String(err[KEY]);
+					this.status.error = err[KEY];
 				});
 	
 				// Display the error.

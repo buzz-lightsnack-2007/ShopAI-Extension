@@ -11,6 +11,8 @@ import pointer from "/scripts/data/pointer.js";
 import logging from "/scripts/logging.js";
 
 class Page_Error extends Page {
+	status = {};
+
 	constructor() {
 		super();
 		this.content();
@@ -34,14 +36,14 @@ class Page_Error extends Page {
 		if (!this[`ref`]) {this[`ref`] = await pointer.read(`URL`)};
 
 		// Get all the data to be used here. 
-		let STORAGE_DATA = await global.read([`sites`, this[`ref`], `status`], -1)
+		let STORAGE_DATA = await global.read([`sites`, this[`ref`], `status`, `error`], -1)
 
 		// Update all other data. 
-		this[`status`] = ((STORAGE_DATA != null && (typeof STORAGE_DATA).includes(`obj`)) ? (Object.keys(STORAGE_DATA).length) : false)
+		this[`status`][`error`] = ((STORAGE_DATA && (typeof STORAGE_DATA).includes(`obj`)) ? (Object.keys(STORAGE_DATA).length) : false)
 			? STORAGE_DATA
 			// Accomodate data erasure. 
-			: ((this[`status`])
-				? this[`status`]
+			: ((this[`status`][`error`])
+				? this[`status`][`error`]
 				: {});
 	}
 
@@ -76,7 +78,7 @@ class Page_Error extends Page {
 
 		(this[`elements`][`error display`] && (this[`status`] ? this[`status`][`error`] : false))
 			? (Object.keys(this[`elements`][`error display`]).forEach((KEY) => {
-				this[`elements`][`error display`][KEY].innerText = String(this[`status`][`error`][KEY])
+				this[`elements`][`error display`][KEY].innerText = this[`status`][`error`][KEY];
 			}))
 			: false;
 	}
