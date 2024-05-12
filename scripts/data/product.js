@@ -47,7 +47,10 @@ export default class product {
 			this.status[`update`] = !(await (compare([`sites`, this.URL, `snip`], this.snip)));
 		};
 
-		if (!this.status.update && Object.hasOwn(this.status, `update`)) {this.analysis = await global.read([`sites`, this.URL, `analysis`]);};
+		if ((!this.status.update && Object.hasOwn(this.status, `update`)) && !this.analysis) {
+			let DATA = await global.read([`sites`, this.URL, `analysis`]);
+			(DATA) ? this.analysis = DATA : false;
+		};
 	}
 
 	async save() {
