@@ -54,7 +54,7 @@ export default class processor {
 						throw Error();
 					};
 	
-					if (this.#analyzer.candidate && !this.status[`blocked`]) {
+					if (this.#analyzer.candidate) {
 						// Remove all markdown formatting.
 						this.product.analysis = JSON.parse(this.#analyzer.candidate.replace(/(```json|```|`)/g, ''));
 						
@@ -82,7 +82,7 @@ export default class processor {
 					this.status.error = String(err[KEY]);
 				});
 	
-				// Display the error. 
+				// Display the error.
 				this.#notify(-1);
 			};
 		};
