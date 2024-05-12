@@ -19,7 +19,7 @@ export default class logging {
 	@param {string} TITLE the title
 	@param {string} MESSAGE the message
 	@param {bool} PRIORITY automatically dismiss other, older messages */
-	constructor(TITLE, MESSAGE, PRIORITY = true) {
+	constructor(TITLE, MESSAGE, PRIORITY = false) {
 		// Set this message's properties. 
 		if (!MESSAGE || (typeof MESSAGE).includes(`undef`)) {
 			this.message = TITLE;
