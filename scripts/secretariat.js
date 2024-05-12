@@ -178,9 +178,9 @@ class global {
 		let DATA_ALL;
 
 		// Inform the user that saving is in progress.
-		(((typeof OPTIONS).includes(`obj`) && OPTIONS != null) ? (!(!!OPTIONS[`silent`])) : true) 
-			? new logging ((new texts(`saving_current`)).localized, (new texts(`saving_current_message`)).localized, false)
-			: false;
+		if (((typeof OPTIONS).includes(`obj`) && OPTIONS != null) ? (!(!!OPTIONS[`silent`])) : true) {
+			let LOG = new logging ((new texts(`saving_current`)).localized, (new texts(`saving_current_message`)).localized, false)
+		};
 
 		// Get all data and set a blank value if it doesn't exist yet. 
 		DATA_ALL = await global.read(null, CLOUD);
@@ -203,6 +203,7 @@ class global {
 
 		// Write!
 		chrome.storage[(CLOUD > 0) ? `sync` : `local`].set(DATA_INJECTED);
+		(typeof LOG).includes(`undef`) ? false : LOG.clear();
 		return ((OPTIONS[`verify`] != null ? (OPTIONS[`verify`]) : true) ? verify(DATA_NAME, data) : true);
 	}
 
