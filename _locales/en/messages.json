@@ -217,6 +217,9 @@
 	"scrape_msg_ready": {
 		"message": "Loading complete, processing…"
 	},
+	"AI_message_title_done": {
+		"message": "Analysis:"
+	},
 	"AIkey_message_waiting_title": {
 		"message": "Waiting for your API key…"
 	},
