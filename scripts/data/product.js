@@ -4,8 +4,6 @@ Ask product information to Google Gemini. */
 // Import the storage management module.
 import {global, session, compare} from "/scripts/secretariat.js";
 import hash from "/scripts/utils/hash.js";
-import texts from "/scripts/mapping/read.js";
-import logging from "/scripts/logging.js";
 import {URLs} from "/scripts/utils/URLs.js";
 
 // Don't forget to set the class as export default.
@@ -58,7 +56,7 @@ export default class product {
 		if (Object.hasOwn(this.status, `update`) ? this.status[`update`] : true) {	
 			// Save the snip data. 
 			(this.snip) ? await global.write([`sites`, this.URL, `snip`], this.snip, 1) : false;
-	
+
 			// Write the analysis data to the storage.
 			return((this[`analysis`]) ? global.write([`sites`, this.URL, `analysis`], this.analysis, 1) : false);
 		}
