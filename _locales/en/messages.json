@@ -281,7 +281,13 @@
 		"message": "The product data has not been attached to the storage."
 	},
 	"error_msg_APImissing": {
-		"message": "You have not yet added the API keys. To continue, please add one in the options."
+		"message": "You haven’t added the API keys yet. To continue, please add one in the options."
+	},
+	"error_msg_modelInvalid": {
+		"message": "The model is invalid."
+	},
+	"error_msg_modelUnsupported": {
+		"message": "The model isn’t supported."
 	},
 
 	"AI_message_prompt": {
