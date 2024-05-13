@@ -89,5 +89,9 @@ body[role="window"] {
 }
 
 summary + details {
-     padding-top: 1em;
+	padding-top: 1em;
+}
+
+summary + details:not(:last-child) {
+	padding-bottom: 1em;
 }
