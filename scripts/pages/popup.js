@@ -47,6 +47,9 @@ class Page_Popup extends Page {
 			: ((this[`status`])
 				? this[`status`]
 				: {});
+
+		// Confirm completion by returning the status.
+		return (this[`status`]);
 	}
 
 	async loading() {
@@ -54,7 +57,7 @@ class Page_Popup extends Page {
 		this[`elements`][`loader`] = new Loader();
 	}
 
-	async switch() {
+	switch() {
 		if (this.elements[`frame`]) {
 			let PAGES = {
 				"results": "results.htm",
@@ -63,27 +66,18 @@ class Page_Popup extends Page {
 			}
 	
 			// Prepare all the necessary data. 
-			await this.update();
-	
-			// Make sure that the website has been selected!
-			if (this[`ref`]) {
-				// Set the relative chrome URLs
-				(Object.keys(PAGES)).forEach(PAGE => {
-					PAGES[PAGE] = chrome.runtime.getURL(`pages/popup/${PAGES[PAGE]}`);
-				});
-				
-				let PAGE = PAGES[(((this[`status`] && (typeof this[`status`]).includes(`obj`)) ? (this[`status`][`done`] >= 1) : false)
-					? ((this[`status`][`error`] && this[`status`][`error`] != {})
-						? `error`
-						: `results`)
-					: `loading`)];
-	
-				// Replace the iframe src with the new page.
-				(this.elements[`frame`].src != PAGE) ? this.elements[`frame`].src = PAGE : false;
-	
-				// The results page has its own container. 
-				this.elements[`container`].classList[(PAGE.includes(`results`)) ? `remove` : `add`](`container`);
-			};
+			this.update().then(() => {
+				// Make sure that the website has been selected!
+				if (this[`ref`]) {
+					let PAGE = chrome.runtime.getURL(`pages/popup/`.concat(PAGES[(this[`status`][`done`] <= -1 || this[`status`][`error`]) ? `error` : ((this[`status`][`done`] >= 1) ? `results` : `loading`)]));
+					
+					// Replace the iframe src with the new page.
+					(this.elements[`frame`].src != PAGE) ? this.elements[`frame`].src = PAGE : false;
+		
+					// The results page has its own container. 
+					this.elements[`container`].classList[(PAGE.includes(`results`)) ? `remove` : `add`](`container`);
+				};
+			});
 		}
 
 		// Also set the loader. 
