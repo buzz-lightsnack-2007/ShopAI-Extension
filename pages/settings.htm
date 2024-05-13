@@ -16,7 +16,7 @@
 		<main class="container">
 			<ul class="collapsible" data-collapsible="accordion">
 				<li>
-					<header class="collapsible-header waves-effect flow-text" accesskey="1" for="general" data-icon="cog"></header>
+					<header class="collapsible-header waves-effect" accesskey="1"><h1 class="flow-text" for="general" data-icon="cog"></h1></header>
 					<section class="collapsible-body">
 						<section class="input-group">
 							<legend for="general" class="flow-text"></legend>
@@ -49,17 +49,12 @@
 					</section>
 				</li>
 				<li>
-					<header class="collapsible-header waves-effect flow-text" for="filters" accesskey="2" data-icon="filter"></header>
+					<header class="collapsible-header waves-effect" accesskey="2"><h1 class="flow-text" for="filters" data-icon="filter"></h1></header>
 					<section class="collapsible-body">
 						<section class="input-group row">
 							<label class="input-description">
-								<legend
-									for="filters"
-									class="flow-text"
-								></legend>
-								<label
-									for="settings_filters_description"
-								></label>
+								<legend for="filters" class="flow-text"></legend>
+								<label for="settings_filters_description"></label>
 							</label>
 							<side class="input-field">
 								<button data-action="filters,update" title-for="settings_filters_update" data-enable="settings,filters" data-icon="refresh"></button>
@@ -74,13 +69,8 @@
 						</section>
 						<section class="input-group">
 							<label class="input-description">
-								<legend
-									for="analysis"
-									class="flow-text"
-								></legend>
-								<label
-									for="settings_analysis_description"
-								></label>
+								<legend for="analysis" class="flow-text"></legend>
+								<label for="settings_analysis_description"></label>
 							</label>
 							<div class="input-field">
 								<input type="password" data-store="settings,analysis,api,key" data-store-location="1" placeholder=" " class="validate" required />
@@ -90,29 +80,18 @@
 					</section>
 				</li>
 				<li>
-					<header class="collapsible-header waves-effect flow-text" for="storage" accesskey="3" data-icon="database"></header>
+					<header class="collapsible-header waves-effect" accesskey="3"><h1 class="flow-text" for="storage" data-icon="database"></h1></header>
 					<section class="collapsible-body">
 						<section class="input-group">
 							<label for="settings_storage_description" class="input-description"></label>
-							<div class="input-field">
-								<button
-									title-for="settings_storage_clear"
-									data-icon="delete"
-									data-enable="sites"
-									data-action="storage,clear"
-									class="btn waves-effect"
-								></button>
-							</div>
+							<side class="input-field">
+								<button title-for="settings_storage_clear" data-icon="delete" data-enable="sites" data-action="storage,clear" class="btn waves-effect"></button>
+							</side>
 						</section>
 					</section>
 				</li>
 				<li>
-					<header
-						class="collapsible-header waves-effect flow-text"
-						for="about"
-						accesskey="4"
-						data-icon="information"
-					></header>
+					<header class="collapsible-header waves-effect" accesskey="4"><h1 class="flow-text" for="about" data-icon="information"></h1></header>
 					<section class="collapsible-body">
 						<div class="row">
 							<side class="s3">
