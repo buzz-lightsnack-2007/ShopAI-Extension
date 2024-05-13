@@ -77,11 +77,13 @@ export default class processor {
 				this.product.save();
 			} catch(err) {
 				// Use the existing error, if any exists. 
-				(this.status.error) ? false : 
-				[`name`, `message`, `stack`].forEach((KEY) => {
-					this.status.error = err[KEY];
-				});
-	
+				if (!this.status.error) {
+					this.status.error = {};
+					[`name`, `message`, `stack`].forEach((KEY) => {
+						this.status.error[KEY] = err[KEY];
+					});
+				}
+				
 				// Display the error.
 				this.#notify(-1);
 			};
