@@ -11,10 +11,7 @@
 		"message": "The Story Begins",
 		"description": "Extension version name (not number)"
 	},
-	"GUI_welcome_headline": {
-		"message": "Welcome to ShopAI!",
-		"description": "Welcome message"
-	},
+
 	"GUI_welcome_version": {
 		"message": "You’ve got version $manifest_version$.",
 		"description": "Version number in welcome message",
@@ -89,8 +86,12 @@
 	"term_blocked": {
 		"message": "Blocked"
 	},
+	"term_hello": {
+		"message": "Hello!"
+	},
+
 	"page_opening": {
-		"message": "Opening..."
+		"message": "Opening…"
 	},
 
 	"settings_general_showApplicable": {
@@ -235,6 +236,21 @@
 	},
 	"AIkey_message_waiting_body": {
 		"message": "Please enter your API key in the settings. Loading will automatically continue once the key is entered."
+	},
+
+	"OOBE_welcome_headline_1": {
+		"message": "Welcome to ShopAI!",
+		"description": "Welcome message"
+	},
+	"OOBE_welcome_headline_2": {
+		"message": "Nice to meet you; this is ShopAI.",
+		"description": "Welcome message"
+	},
+	"OOBE_header_APISetup": {
+		"message": "Setup"
+	},
+	"OOBE_tip_seeAgain": {
+		"message": "Seeing this page repeatedly? Perhaps you might not have yet set up your API keys, that's all."
 	},
 	
 	"results_tip_1": {
