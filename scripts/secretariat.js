@@ -264,7 +264,7 @@ class global {
 								// Move the existing data into a new object to help in identifying.
 								DATA = {"all": DATA};
 
-								if ((((typeof (DATA[`all`])).includes(`obj`) && !Array.isArray(DATA[`all`])) ? Object.keys(DATA[`all`]) : false) ? Object.hasOwn(DATA[`all`], PATH[PATH.length - 1]) : false) {
+								if ((((typeof (DATA[`all`])).includes(`obj`) && !Array.isArray(DATA[`all`]) && DATA[`all`] != null) ? Object.keys(DATA[`all`]) : false) ? Object.hasOwn(DATA[`all`], PATH[PATH.length - 1]) : false) {
 									DATA[`modified`] = DATA[`all`];
 							
 									delete DATA[`modified`][PATH[PATH.length - 1]];
