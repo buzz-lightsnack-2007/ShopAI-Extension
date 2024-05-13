@@ -2,7 +2,6 @@
 Window and window content management */
 
 import texts from "../../mapping/read.js";
-import net from "/scripts/utils/net.js";
 import Window from "../window.js";
 import Tabs from "/scripts/GUI/tabs.js";
 import logging from '/scripts/logging.js';
@@ -15,48 +14,54 @@ export default class windowman {
 
 	// Prepare the window with its metadata.
 	constructor(OPTIONS) {
-		function headers(OPTIONS) {
+		const headers = (OPTIONS) => {
 			let LOAD_STATE = true;
 			let UI = {
-				CSS: ["/styles/external/fonts/materialdesignicons.min.css", "/styles/external/materialize/css/materialize.css", "/styles/ui.css"]
+				"CSS": ["/styles/external/fonts/materialdesignicons.min.css", "/styles/external/materialize/css/materialize.css", "/styles/ui.css"],
+				"scripts": ["/styles/external/materialize/js/materialize.js"]
 			};
 
 			// Add additional sources. 
-			(OPTIONS && (typeof OPTIONS).includes(`obj`))
-				? ((OPTIONS[`CSS`] != null)
-					? ((Array.isArray(OPTIONS[`CSS`]))
-						? UI[`CSS`] = [...UI[`CSS`], ...OPTIONS[`CSS`]]
-						: UI[`CSS`].push(OPTIONS[`CSS`]))
-					: null)
+			((OPTIONS && (typeof OPTIONS).includes(`obj`)) ? Object.keys(OPTIONS).length : false)
+				? (Object.keys(OPTIONS).forEach((key) => {
+					(Object.hasOwn(UI, key))
+						? ((Array.isArray(OPTIONS[key]))
+							? UI[key] = [...UI[key], ...OPTIONS[key]]
+							: UI[key].push(OPTIONS[key]))
+						: null;
+				}))
 				: null;
 
 			(UI[`CSS`]).forEach(async (source) => {
-				try {
-					let resource = false;
-					
-					try {
-						resource = await net.download(source, `text`, true);
-					} catch (err) {}
-
-					if (resource) {
-						let metadata_element = document.createElement(`link`);
-						metadata_element.setAttribute(`rel`, `stylesheet`);
-						metadata_element.setAttribute(`type`, `text/css`);
-						metadata_element.setAttribute(`href`, source);
-						document.querySelector(`head`).appendChild(metadata_element);
-					} else {
-						throw new ReferenceError((new texts(`error_msg_fileNotFound`, [source])).localized);
-					}
-				} catch(err) {
-					// Raise an alert. 
-					logging.error(err.name, err.message, err.stack, true, [source]);
-
-					// Stop loading the page when an error has occured; it's not going to work!
-					if ((await global.read(`debug`, -1) != null) ? await global.read(`debug`, -1) : true) {
-						window.close();
-					};
+				let METADATA = {
+					"href": source,
+					"rel": "stylesheet",
+					"type": "text/css"
 				};
-			})
+
+				let ELEMENT = document.createElement(`link`);
+				(Object.keys(METADATA)).forEach((key) => {
+					ELEMENT.setAttribute(key, METADATA[key]);
+				});
+
+				document.querySelector(`head`).appendChild(ELEMENT);
+			});
+
+			((UI[`scripts`] && Array.isArray(UI[`scripts`])) ? UI[`scripts`].length : false)
+				? (UI[`scripts`]).forEach(async (source) => {
+					let METADATA = {
+						"src": source
+					};
+
+					let ELEMENT = document.createElement(`script`);
+					(Object.keys(METADATA)).forEach((key) => {
+						ELEMENT.setAttribute(key, METADATA[key]);
+					});
+					document.querySelector(`head`).appendChild(ELEMENT);
+				})
+				: false;
+
+			this.header = UI;
 		};
 
 		/* Fill in data and events.  */
