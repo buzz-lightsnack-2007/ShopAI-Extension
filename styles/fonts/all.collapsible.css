@@ -1,0 +1,9 @@
+.collapsible-header h1, .collapsible-header h2, .collapsible-header h3, .collapsible-header h4, .collapsible-header h5, .collapsible-header h6 {
+    font-weight: bold;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0.5em 0;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+}
