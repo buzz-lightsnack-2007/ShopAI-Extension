@@ -39,13 +39,19 @@ class IconIndicator {
 										"BadgeBackgroundColor": ICON_COLORS[`error`]
 									}, {"tabId": ID}) : false;
 	
-								if ((STATUS[`done`] && (typeof STATUS[`done`]).includes(`num`)) ? STATUS[`done`] >= 1 : false) {
-									global.read([`sites`, LOCATION, `analysis`, `Rating`, `Trust`]).then(async (RESULTS) => {
+								if (STATUS[`done`] && (typeof STATUS[`done`]).includes(`num`)) {
+									(STATUS[`done`] >= 1)
+										? global.read([`sites`, LOCATION, `analysis`, `Rating`, `Trust`]).then(async (RESULTS) => {
 										(RESULTS) ? BrowserIcon.set({
 												"BadgeText": await (new texts(`extensionIcon_product_`.concat(RESULTS))).symbol,
 												"BadgeBackgroundColor": ICON_COLORS[`product_`.concat(RESULTS)]
 											}, {"tabId": ID}) : false;
-									})
+										})
+										: ((STATUS[`done`] > 0)
+											? BrowserIcon.set({
+												"BadgeText": String(parseFloat(STATUS[`done`] * 100)).concat(`%`),
+												"BadgeBackgroundColor": ICON_COLORS[`loading`]})
+											: false);
 								};
 							};
 						});
