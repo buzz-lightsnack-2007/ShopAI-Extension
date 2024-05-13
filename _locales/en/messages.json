@@ -258,6 +258,12 @@
 			}
 		}
 	},
+	"error_msg_GUI_title": {
+		"message": "Whoops"
+	},
+	"error_msg_GUI_body": {
+		"message": "An error has occured. When requesting for help, please refer to the code below."
+	},
 	"error_msg_fileNotFound": {
 		"message": "Could not find the file $file_path$.",
 		"description": "The error message template for a file not found exception",
@@ -329,5 +335,9 @@
 	},
 	"message_loading_10": {
 		"message": "Just making sure the internet doesn't break."
+	},
+
+	"delimiter_error": {
+		"message": ": "
 	}
 }
