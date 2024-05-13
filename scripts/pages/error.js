@@ -7,6 +7,7 @@ import Tabs from "/scripts/GUI/tabs.js";
 
 import {global, observe} from "/scripts/secretariat.js";
 import pointer from "/scripts/data/pointer.js";
+import texts from "/scripts/mapping/read.js";
 
 import logging from "/scripts/logging.js";
 
@@ -14,7 +15,7 @@ class Page_Error extends Page {
 	status = {};
 
 	constructor() {
-		super();
+		super({"headers": {"CSS": [`/styles/popup.css`]}});
 		this.content();
 		this.background();
 		this.events();
@@ -36,7 +37,7 @@ class Page_Error extends Page {
 		if (!this[`ref`]) {this[`ref`] = await pointer.read(`URL`)};
 
 		// Get all the data to be used here. 
-		let STORAGE_DATA = await global.read([`sites`, this[`ref`], `status`, `error`], -1)
+		let STORAGE_DATA = await global.read([`sites`, this[`ref`], `status`, `error`], -1);
 
 		// Update all other data. 
 		this[`status`][`error`] = ((STORAGE_DATA && (typeof STORAGE_DATA).includes(`obj`)) ? (Object.keys(STORAGE_DATA).length) : false)
@@ -45,6 +46,34 @@ class Page_Error extends Page {
 			: ((this[`status`][`error`])
 				? this[`status`][`error`]
 				: {});
+		
+		const parse = (error) => {
+			// If the error isn't the correct type, try to disect it assuming it's in the stack format. 
+			this[`status`][`error`] = {};
+
+			try {
+				const FIELDS = {
+					"name": (error.split(texts.localized(`delimiter_error`)))[0].trim(),
+					"message": (((error.split(`\n`))[0]).split(texts.localized(`delimiter_error`))).slice(1).join(texts.localized(`delimiter_error`)).trim(),
+					"stack": error.split(`\n`).slice(1).join(`\n`)
+				};
+				
+				(Object.keys(FIELDS)).forEach((KEY) => {
+					this[`status`][`error`][KEY] = (FIELDS[KEY]) ? FIELDS[KEY] : ``;
+				})
+			} catch(err) {
+				logging.error(err.name, err.message, err.stack);
+				this[`status`][`error`] = {
+					"name": texts.localized(`error_msg_GUI_title`),
+					"message": ``,
+					"stack": error
+				};
+			}
+		};
+
+		(STORAGE_DATA && (typeof STORAGE_DATA).includes(`str`))
+			? parse(STORAGE_DATA)
+			: false;
 	}
 
 	/*
