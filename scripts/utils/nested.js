@@ -44,7 +44,7 @@ nested.dictionary = class dictionary {
      @param {object} value the value to be used
      @return {object} the data
      */
-     static set(data, path, value) {
+     static set(data, path, value, options = {}) {
           let DATA = data, PATH = path, VALUE = value;
 
           // Convert path into an array if not yet set.
@@ -59,7 +59,11 @@ nested.dictionary = class dictionary {
                (DATA[PATH[`current`]] == null) ? DATA[PATH[`current`]] = {} : false;
                DATA[PATH[`current`]] = nested.dictionary.set(DATA[PATH[`current`]], PATH[`target`], VALUE);
           } else {
-               DATA[PATH[`current`]] = VALUE;
+               if ((typeof DATA[PATH[`current`]]).includes(`obj`) && (typeof VALUE).includes(`obj`) && !Array.isArray(DATA[PATH[`current`]]) && !Array.isArray(VALUE) && DATA[PATH[`current`]] && VALUE && ((options && (typeof options).includes(`obj`)) ? (options[`strict`] || options[`override`]) : true)) {
+                    Object.assign(DATA[PATH[`current`]], VALUE);
+               } else {
+                    DATA[PATH[`current`]] = VALUE;
+               };
           }
 
           // Return the value.
