@@ -1,10 +1,8 @@
 /* windowman
 Window and window content management */
 
-import texts from "../../mapping/read.js";
-import Window from "../window.js";
+import texts from "/scripts/mapping/read.js";
 import Tabs from "/scripts/GUI/tabs.js";
-import logging from '/scripts/logging.js';
 import {global, observe} from "/scripts/secretariat.js";
 import {URLs} from "/scripts/utils/URLs.js";
 
