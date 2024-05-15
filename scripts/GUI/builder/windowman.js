@@ -6,6 +6,7 @@ import Tabs from "/scripts/GUI/tabs.js";
 import {global, observe} from "/scripts/secretariat.js";
 import {URLs} from "/scripts/utils/URLs.js";
 import wait from "/scripts/utils/wait.js";
+import UI from "/scripts/GUI/builder/windowman.search.js";
 
 export default class windowman {
 	elements = {};
@@ -484,15 +485,19 @@ export default class windowman {
 			}
 		};
 		
-		/* Enable the searching interface. */
-		async function search() {
-			const search_GUI_manager = (await import(chrome.runtime.getURL(`scripts/GUI/builder/windowman.search.js`))).default;
-			return (search_GUI_manager.Search());
-		};
+		/*
+		Instantiate the extras. 
+		*/
+		const extras = () => {
+			// Add the search interface. 
+			(Object.keys(UI)).forEach((FEATURE) => {
+				this[FEATURE] = new UI[FEATURE]();
+			})
+		}
 		
 		fill();
 		write();
-		this[`search`] = search();
+		extras();
 		
 		// Update the input elements.
 		observe((what) => {
