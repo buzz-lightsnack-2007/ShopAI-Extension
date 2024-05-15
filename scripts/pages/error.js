@@ -116,21 +116,16 @@ class Page_Error extends Page {
 	Add event listeners to the page. 
 	*/
 	events () {
-		this[`elements`] = (this[`elements`]) ? this[`elements`] : {};
-		this[`elements`][`button`] = {};
-
-		document.querySelectorAll(`[data-action]`).forEach((ELEMENT) => {
-			let ACTION = ELEMENT.getAttribute(`data-action`);
-			this[`elements`][`button`][ACTION] = ELEMENT;
-
-			// Remove the data-action attribute.
-			ELEMENT.removeAttribute(`data-action`);
-		})
-
 		// Add an event listener to the refresh button. 
-		this[`elements`][`button`][`refresh`].addEventListener(`click`, () => {
-			this.send();
-		});
+		(this[`window`][`elements`][`interactive`][`action`] ? this[`window`][`elements`][`interactive`][`action`].length : false)
+			? (this[`window`][`elements`][`interactive`][`action`][`refresh`] ? this[`window`][`elements`][`interactive`][`action`][`refresh`].length : false)
+				? (this[`window`][`elements`][`interactive`][`action`][`refresh`]).forEach((ELEMENT) => {
+					ELEMENT.addEventListener(`click`, () => {
+						this.send();
+					})
+				})
+				: false
+			: false;
 	};
 
 	/*
@@ -140,7 +135,7 @@ class Page_Error extends Page {
 		try {
 			// Send a message to the content script. 
 			Tabs.query(null, 0).then((TAB) => {
-				chrome.tabs.sendMessage(TAB.id, {"refresh": "automatic"});
+				chrome.tabs.sendMessage(TAB.id, {"refresh": "manual"});
 			});
 		} catch(err) {
 			logging.error(err.name, err.message, err.stack);

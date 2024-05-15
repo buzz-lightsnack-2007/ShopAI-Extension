@@ -283,7 +283,25 @@ export default class windowman {
 					: false;
 			}
 
+			const actions = () => {
+				let TYPE = `action`;
+				this.elements[`interactive`][TYPE] = (this.elements[`interactive`][TYPE]) ? this.elements[`interactive`][TYPE] : {};
+
+				document.querySelector(`[data-${TYPE}]`)
+					? document.querySelectorAll(`[data-${TYPE}]`).forEach((ELEMENT) => {
+						// Store the button. 
+						this.elements[`interactive`][TYPE][ELEMENT.getAttribute(`data-${TYPE}`)] = ((this.elements[`interactive`][TYPE][ELEMENT.getAttribute(`data-${TYPE}`)]))
+							? this.elements[`interactive`][TYPE][ELEMENT.getAttribute(`data-${TYPE}`)]
+							: document.querySelectorAll(`[data-${TYPE}="${ELEMENT.getAttribute(`data-${TYPE}`)}"]`);
+
+						// Remove the property. 
+						(!(TYPE.includes(`store`))) ? ELEMENT.removeAttribute(`data-${TYPE}`) : false;
+					})
+					: false;
+			}
+
 			links();
+			actions();
 		}
 
 		this[`elements`] = appearance();
@@ -376,6 +394,9 @@ export default class windowman {
 							(this[`elements`][`linked`][`enable`][SOURCE] ? this[`elements`][`linked`][`enable`][SOURCE].length : false)
 								? this[`elements`][`linked`][`enable`][SOURCE].push(input_element)
 								: this[`elements`][`linked`][`enable`][SOURCE] = [input_element];
+
+							// Remove the attribute.
+							input_element.removeAttribute(`data-enable`);
 						}
 					});
 				};

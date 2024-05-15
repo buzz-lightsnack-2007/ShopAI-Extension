@@ -94,7 +94,7 @@ class Page_Popup extends Page {
 		
 		// Check if the frame is available.
 		if (this.elements[`frame`]) {
-			await this.switch();
+			this.switch();
 
 			// Call for scraping of data if global data does not indicate automatic scraping or if data doesn't exist. 
 			if (!await global.read([`settings`, `behavior`, `autoRun`]) && DATA[`status`] == null) {
@@ -123,28 +123,19 @@ class Page_Popup extends Page {
 	};
 
 	events() {
-		this[`elements`] = (this[`elements`]) ? this[`elements`] : {};
-		this[`elements`][`button`] = {};
+		let ACTIONS = {};
+		ACTIONS[`open,settings`] = () => {chrome.runtime.openOptionsPage();}
+		ACTIONS[`open,help`] = () => {new Window(`help.htm`);}
+		ACTIONS[`analysis,reload`] = () => {this.send({"refresh": "manual"});}
 
-		document.querySelectorAll(`[data-action]`).forEach((ELEMENT) => {
-			let ACTION = ELEMENT.getAttribute(`data-action`).trim();
-			this[`elements`][`button`][ACTION] = ELEMENT;
-
-			// Remove the data-action attribute.
-			ELEMENT.removeAttribute(`data-action`);
-		});
-
-		(this[`elements`][`button`][`open,settings`]) ? this[`elements`][`button`][`open,settings`].addEventListener("click", () => {
-			chrome.runtime.openOptionsPage();
-		}) : false;
-
-		(this[`elements`][`button`][`open,help`]) ? this[`elements`][`button`][`open,help`].addEventListener(`click`, () => {
-			new Window(`help.htm`);
-		}) : false; 
-
-		(this[`elements`][`button`][`analysis,reload`]) ? this[`elements`][`button`][`analysis,reload`].addEventListener(`click`, () => {
-			this.send({"refresh": "manual"});
-		}) : false;
+		// Add the event listeners. 
+		(Object.keys(ACTIONS)).forEach((NAME) => {
+			(this.window.elements[`interactive`][`action`][NAME] ? this.window.elements[`interactive`][`action`][NAME].length : false)
+				? this.window.elements[`interactive`][`action`][NAME].forEach((ELEMENT) => {
+					ELEMENT.addEventListener(`click`, ACTIONS[NAME]);
+				})
+				: false;
+		})
 	}
 }
 
