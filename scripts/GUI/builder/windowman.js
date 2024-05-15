@@ -6,8 +6,11 @@ import Window from "../window.js";
 import Tabs from "/scripts/GUI/tabs.js";
 import logging from '/scripts/logging.js';
 import {global, observe} from "/scripts/secretariat.js";
+import {URLs} from "/scripts/utils/URLs.js";
 
 export default class windowman {
+	elements = {};
+
 	static new(URL, height, width) {
 		this.window = chrome.windows.create({url: (URL.includes(`://`)) ? URL :  chrome.runtime.getURL(URL), type: "popup", width: width ? parseInt(width) : 600, height: height ? parseInt(height) : 600});
 	}
@@ -64,33 +67,51 @@ export default class windowman {
 			this.header = UI;
 		};
 
+		
+		
+		// Get the window.
+		this[`metadata`] = chrome.windows.getCurrent();
+		
+		headers(((OPTIONS != null && typeof OPTIONS == `object`) ? OPTIONS[`headers`] : false) ? OPTIONS[`headers`] : null);
+		this.design();
+	}
+
+	/*
+	Automatically set the design based on expected fields. 
+	*/
+	design () {
 		/* Fill in data and events.  */
 		function appearance() {
-			// Add missing classes to all elements.
-			function elements() {
-				// Add buttons elements.
-				function buttons() {
-					document.querySelectorAll(`button`).forEach((button) => {
-						if (!button.classList.contains(`btn`)) {
-							button.classList.add(`btn`);
-						}
-					});
+			// Add buttons elements.
+			function buttons() {
+				let INTERACTIVE_ELEMENTS = {};
 
-					[]
-						.concat(document.querySelectorAll(`a`), document.querySelectorAll(`button`), document.querySelectorAll(`textarea`), document.querySelectorAll(`input:not([type="checkbox"]):not([type="radio"]):not([type="range"])`))
-						.forEach((ELEMENT_TYPE) => {
-							ELEMENT_TYPE.forEach((button) => {
-								if (
-									button.classList
-										? !button.classList.contains(`waves-effect`)
-										: true
-								) {
-									button.classList.add(`waves-effect`);
-								}
-							});
-						});
-				}
-				buttons();
+				const SOURCES = {
+					"buttons": "button",
+					"links": "a",
+					"text boxes": `textarea, input:not([type="checkbox"]):not([type="radio"]):not([type="range"])`
+				};
+
+				(Object.keys(SOURCES)).forEach((TYPE) => {
+					INTERACTIVE_ELEMENTS[TYPE] = document.querySelectorAll(SOURCES[TYPE]);	
+
+					// Add the style as well. 
+					INTERACTIVE_ELEMENTS[TYPE].forEach((ELEMENT) => {
+						(ELEMENT.classList ? ELEMENT.classList.contains(`waves-effect`) : true)
+							? ELEMENT.classList.add(`waves-effect`)
+							: false;
+					})
+				});
+
+				(INTERACTIVE_ELEMENTS[`buttons`] ? INTERACTIVE_ELEMENTS[`buttons`].length : false)
+					? INTERACTIVE_ELEMENTS[`buttons`].forEach((BUTTON) => {
+						(!BUTTON.classList.contains(`btn`)) 
+							? BUTTON.classList.add(`btn`)
+							: false;
+					})
+					: false;
+
+				return INTERACTIVE_ELEMENTS;
 			}
 
 			function icons() {
@@ -188,216 +209,237 @@ export default class windowman {
 				return text_elements;
 			};
 
+			function sidenav() {
+				let SIDENAV_ALL = document.querySelectorAll(`.sidenav`);
+				let SIDENAV = {};
+
+				if (SIDENAV_ALL ? SIDENAV_ALL.length : false) {
+					SIDENAV_ALL.forEach((SIDEBAR_ELEMENT) => {
+						if (!(SIDEBAR_ELEMENT.getAttribute(`name`))) {
+							SIDEBAR_ELEMENT.setAttribute(`name`, `sidebar-`.concat(Math.floor(Math.random() * 1000)));
+						}
+
+						SIDENAV[SIDEBAR_ELEMENT.getAttribute(`name`)] = SIDEBAR_ELEMENT;
+						SIDENAV[SIDEBAR_ELEMENT.getAttribute(`name`)][`trigger`] = [...document.querySelectorAll(`[works-sidebar="${SIDEBAR_ELEMENT.getAttribute(`name`)}"]`), ...document.querySelectorAll(`[data-action="ui,open,navbar"]`)];
+
+						(SIDENAV[SIDEBAR_ELEMENT.getAttribute(`name`)][`trigger`] ? SIDENAV[SIDEBAR_ELEMENT.getAttribute(`name`)][`trigger`].length : false)
+							? (SIDENAV[SIDEBAR_ELEMENT.getAttribute(`name`)][`trigger`]).forEach((TRIGGER_ELEMENT) => {
+								TRIGGER_ELEMENT.addEventListener(`click`, () => {
+									M.Sidenav.getInstance(SIDENAV[SIDEBAR_ELEMENT.getAttribute(`name`)]).open();
+								})
+							})
+							: false;
+					});
+				}
+
+				return SIDENAV;
+			}
+
 			let ELEMENTS = {};
-			elements();
-			ELEMENTS[`text`] = text();
+			ELEMENTS[`interactive`] = buttons();
+			ELEMENTS[`texts`] = text();
 			ELEMENTS[`icons`] = icons();
+			ELEMENTS[`sidenav`] = sidenav();
 
 			return (ELEMENTS);
 		}
 
 		// Adds events to the window.
-		function events() {
-			/* Map buttons to their corresponding action buttons. */
-			function actions() {
-				function links() {
-					let buttons = document.querySelectorAll("button[href]");
-
-					if (buttons) {
-						buttons.forEach((button) => {
+		const events = () => {
+			const links = () => {
+				(this[`elements`][`interactive`][`buttons`] ? this[`elements`][`interactive`][`buttons`].length : false)
+					? this[`elements`][`interactive`][`buttons`].forEach((button) => {
+						if (button.hasAttribute(`href`)) {
 							// Get the data from the button.
-							let target = {};
-							target[`source`] = button.getAttribute(`href`);
-							target[`dimensions`] = {};
-							target[`dimensions`][`height`] = (button.getAttribute(`tab-height`)) ? parseInt(button.getAttribute(`tab-height`))
-							: null;
-							target[`dimensions`][`width`] = (button.getAttribute(`tab-width`)) ? parseInt(button.getAttribute(`tab-width`))
-							: null;
-							target[`path`] = (
-								!target[`source`].includes(`://`)
-								? window.location.pathname.split(`/`).slice(0, -1).join(`/`).concat(`/`)
-								: ``
-							).concat(target[`source`]);
+							let TARGET = {};
+							TARGET[`source`] = button.getAttribute(`href`);
+							TARGET[`dimensions`] = {};
+
+							// Get the dimensions of the window.
+							[`height`, `width`].forEach((DIMENSION) => {
+								TARGET[`dimensions`][DIMENSION] = (button.getAttribute(`tab-`.concat(DIMENSION)))
+									? parseInt(button.getAttribute(`tab-`.concat(DIMENSION)))
+									: null;
+
+								(button.getAttribute(`tab-`.concat(DIMENSION)))
+									? button.removeAttribute(`tab-`.concat(DIMENSION))
+									: false;
+							})
+
+							// Get the path of the target.
+							TARGET[`path`] = (
+								!URLs.test(TARGET[`source`])
+									? window.location.pathname.split(`/`).slice(0, -1).join(`/`).concat(`/`)
+									: ``
+							).concat(TARGET[`source`]);
 							
+							// Set the event itself. 
 							const event = () => {
-								// Get the correct path.
-								
-								new logging((new texts(`page_opening`)).localized, target[`path`]);
-
 								// Open the window as a popup. 
-								Tabs.create(target[`path`]);
+								Tabs.create(TARGET[`path`]);
 							};
-
-							button.addEventListener("click", event);
-							button.removeAttribute(`href`);
-						});
-					}
-				}
-
-				// Responsiveness to different screen sizes.
-				function resize() {
-					function sidebar() {
-						
-						if (document.querySelector(`.sidenav`)) {
-							(document.querySelectorAll(`.sidenav`)).forEach(function (sidebar_element) {
-								if (sidebar_element.getAttribute(`name`)) {
-									document.querySelector(`[works-sidebar="${sidebar_element.getAttribute(`name`)}"]`)
-									.addEventListener(`click`, () => {
-										M.Sidenav.getInstance(sidebar_element).open();
-									});
-								} else if (document.querySelector(`[data-action="ui,open,navbar"]`)) {
-									document.querySelector(`[data-action="ui,open,navbar"]`).forEach(function (button_element) {
-										button_element.addEventListener(`click`, () => {
-											M.Sidenav.getInstance(sidebar).open();
-										});
-									});
-								}
-							});
+							button.addEventListener(`click`, event);
 						}
-					}
-
-					sidebar();
-				}
-
-				resize();
-				links();
+					})
+					: false;
 			}
-			
-			actions();
+
+			links();
 		}
-		
-		// Get the window.
-		this[`metadata`] = chrome.windows.getCurrent();
-		
-		headers(((OPTIONS != null && typeof OPTIONS == `object`) ? OPTIONS[`headers`] : false) ? OPTIONS[`headers`] : null);
-		appearance();
+
+		this[`elements`] = appearance();
 		events();
 	}
 
 	/* Run this function if you would like to synchronize with data. */
 	async sync() {
-		async function fill() {
-			let input_elements = document.querySelectorAll("[data-store]");
+		this[`elements`][`linked`] = (this[`elements`][`linked`]) ? this[`elements`][`linked`] : {};
 
-			input_elements.forEach(function(input_element) {
-				// Gather data about the element.
-				// Get the corresponding storage data.
-				let data = {};
-				data[`source`] = input_element.getAttribute(`data-store`);
-				// data[`origin`] = (input_element.hasAttribute(`data-store-location`)) ? parseInt(input_element.getAttribute(`data-store-location`)) : -1
-				data[`value`] = global.read(data[`source`]);
+		const fill = () => {
+			const store = () => {
+				let ELEMENTS = document.querySelectorAll("[data-store]");
+				
+				if (ELEMENTS ? ELEMENTS.length : false) {
+					// Add the linked elements. 
+					this[`elements`][`linked`][`show`] = (this[`elements`][`linked`][`show`]) ? this[`elements`][`linked`][`show`] : {};
+	
+					ELEMENTS.forEach((input_element) => {
+						// Gather data about the element.
+						let data = {};
+						data[`source`] = input_element.getAttribute(`data-store`);
+	
+						// Store the remaining data about the element. 
+						input_element[`storage`] = {};
+						input_element[`storage`][`source`] = (input_element.hasAttribute(`data-store-location`)) ? parseInt(input_element.getAttribute(`data-store-location`)) : -1;
+						input_element.removeAttribute(`data-store-location`);
+		
+						(this[`elements`][`linked`][`show`][data[`source`]] ? this[`elements`][`linked`][`show`][data[`source`]].length : false)
+							? this[`elements`][`linked`][`show`][data[`source`]].push(input_element)
+							: this[`elements`][`linked`][`show`][data[`source`]] = [input_element];	
+					});	
+				};
+				
+				(this[`elements`][`linked`][`show`] ? Object.keys(Object.keys(this[`elements`][`linked`][`show`])).length : false)
+					? (Object.keys(this[`elements`][`linked`][`show`])).forEach((SOURCE) => {
+						(this[`elements`][`linked`][`show`][SOURCE] ? this[`elements`][`linked`][`show`][SOURCE].length : false) 
+							? global.read(SOURCE).then((value) => {
+								(this[`elements`][`linked`][`show`][SOURCE]).forEach((ELEMENT) => {
+									switch (ELEMENT.getAttribute(`type`).toLowerCase()) {
+										case `checkbox`:
+											ELEMENT.checked = value;
+											break;
+										case `progress`:
+										case `range`:
+											// Ensure that it is a positive floating-point number.
+											value = !value ? 0 : Math.abs(parseFloat(value));
+											value = (value > 100) ? value / 100 : value;
+		
+											// Set the attribute of the progress bar.
+											ELEMENT.setAttribute(`value`, value);
+											ELEMENT.setAttribute(`max`, 1);
+											break;
+										default:
+											ELEMENT.value = value ? value : ``;
+											break;
+									};	
+								})
+							})
+							: false;
+						
+					})
+					: false;
+			}
 
-				data[`value`].then(async function(value) {
-					switch (input_element.getAttribute(`type`).toLowerCase()) {
-						case `checkbox`:
-							input_element.checked = value;
-							break;
-						case `progress`:
-						case `range`:
-							// Ensure that it is a positive floating-point number.
-							value = !value ? 0 : Math.abs(parseFloat(value));
-							if (value > 100) {
-								value = value / 100;
-							}
+			const enable = () => {
+				// Get enabled elements. 
+				let ELEMENTS = document.querySelectorAll("[data-enable]");
+				if (ELEMENTS ? ELEMENTS.length : false) {
+					// Add the linked elements.
+					this[`elements`][`linked`][`enable`] = (this[`elements`][`linked`][`enable`]) ? this[`elements`][`linked`][`enable`] : {};
 
-							// Set the attribute of the progress bar.
-							input_element.setAttribute(`value`, value);
-							input_element.setAttribute(`max`, 1);
-							break;
-						default:
-							input_element.value = value ? value : ``;
-							break;
-					};
-				});
-			});
+					ELEMENTS.forEach(async (input_element) => {
+						if (input_element.getAttribute(`data-enable`)) {
+							// Get the source of the element.
+							let SOURCE = input_element.getAttribute(`data-enable`);
+
+							// Put the element into the linked elements list.
+							(this[`elements`][`linked`][`enable`][SOURCE] ? this[`elements`][`linked`][`enable`][SOURCE].length : false)
+								? this[`elements`][`linked`][`enable`][SOURCE].push(input_element)
+								: this[`elements`][`linked`][`enable`][SOURCE] = [input_element];
+						}
+					});
+				};
+
+				(this[`elements`][`linked`][`enable`] ? Object.keys(Object.keys(this[`elements`][`linked`][`enable`])).length : false)
+					? (Object.keys(this[`elements`][`linked`][`enable`])).forEach((SOURCE) => {
+						((this[`elements`][`linked`][`enable`][SOURCE]) ? this[`elements`][`linked`][`enable`][SOURCE].length : false) 
+							? global.read(SOURCE).then((DATA) => {
+								(this[`elements`][`linked`][`enable`][SOURCE]).forEach((input_element) => {
+									// Enable the element.
+									input_element.disabled = ((DATA) != null
+										? (typeof (DATA)).includes(`obj`)
+											? ((Array.isArray(DATA) ? DATA.length : (Object.keys(DATA)).length) <= 0)
+											: ((typeof DATA).includes(`bool`) ? false : !(!!(DATA)))
+										: true);
+									input_element.classList[(input_element.disabled) ? `add` : `remove`](`disabled`);
+
+									// If it is under a list element (usually in navigation bars), then also disable that element too. 
+									if ((input_element.parentElement.nodeName.toLowerCase()).includes(`li`)) {
+										input_element.parentElement.disabled = input_element.disabled;
+										input_element.parentElement.classList[(input_element.disabled) ? `add` : `remove`](`disabled`);
+									}
+								});
+							})
+							: false;
+					})
+					: false;
+			}
+
+			store();
+			enable();
 		}
 		
 		/* Add events related to storage. */
-		async function update() {
-			let input_elements = document.querySelectorAll("[data-store]");
+		const write = async () => {
+			if (this[`elements`][`linked`][`show`] ? Object.keys(this[`elements`][`linked`][`show`]).length : false) {
+				Object.keys(this[`elements`][`linked`][`show`]).forEach((SOURCE) => {
+					(this[`elements`][`linked`][`show`][SOURCE] ? this[`elements`][`linked`][`show`][SOURCE].length : false)
+						? this[`elements`][`linked`][`show`][SOURCE].forEach((ELEMENT) => {
+							ELEMENT[`type`] = ELEMENT.getAttribute(`type`).toLowerCase();
+							ELEMENT[`event`] = function () {};
 
-			input_elements.forEach((input_element) => {
-				// Gather data about the element.
-				// Get the corresponding storage data.
+							switch (ELEMENT[`type`]) {
+								case `checkbox`:
+									ELEMENT[`event`] = () => {
+										global.write(SOURCE, ELEMENT.checked, ELEMENT[`storage`][`source`]);
+									};
+									break;
+								default: 
+									ELEMENT[`event`] = () => {
+										if (ELEMENT[`type`].includes(`num`) || ELEMENT[`type`].includes(`range`)) {
+											ELEMENT.value = ((((ELEMENT.hasAttribute(`min`)) ? ELEMENT.value < parseFloat(ELEMENT.getAttribute(`min`)) : false))
+												? ELEMENT.getAttribute(`min`)
+												: (((ELEMENT.hasAttribute(`max`)) ? ELEMENT.value > parseFloat(ELEMENT.getAttribute(`max`)) : false)
+													? ELEMENT.getAttribute(`max`)
+													: ELEMENT.value))
+										};
 
-				let element = {};
-				element[`type`] = input_element.getAttribute(`type`).toLowerCase();
-				element[`event`] = function () {};
-				switch (element[`type`]) {
-					case `checkbox`:
-						element[`event`] = function () {
-							let UI_item = {};
-							UI_item[`source`] = this.getAttribute(`data-store`);
-							UI_item[`value`] = this.checked;
-							UI_item[`store`] = (this.hasAttribute(`data-store-location`)) ? parseInt(this.getAttribute(`data-store-location`)) : -1;
-							global.write(UI_item[`source`], UI_item[`value`], UI_item[`store`]);
-						};
-						break;
-					default:
-						element[`event`] = function () {
-							let UI_item = {};
-							UI_item[`source`] = this.getAttribute(`data-store`);
+										let VALUE = ELEMENT[`type`].includes(`num`)
+											? (ELEMENT.value % parseInt(ELEMENT.value) != 0
+												? parseFloat(ELEMENT.value)
+												: parseInt(ELEMENT.value))
+											: ELEMENT.value;
 
-							if (element[`type`].includes(`num`) || element[`type`].includes(`range`)) {
-								if ((this.hasAttribute(`min`)) ? this.value < parseFloat(this.getAttribute(`min`)) : false) {
-									this.value = this.getAttribute(`min`);
-								} else if((this.hasAttribute(`max`)) ? this.value > parseFloat(this.getAttribute(`max`)) : false) {
-									this.value = this.getAttribute(`max`);
-								};
+										global.write(SOURCE, VALUE, ELEMENT[`storage`][`source`]);
+									};
+									break;
 							};
 
-							UI_item[`value`] = element[`type`].includes(`num`)
-								? this.value % parseInt(this.value) != 0
-									? parseFloat(this.value)
-									: parseInt(this.value)
-								: this.value;
-							UI_item[`store`] = (this.hasAttribute(`data-store-location`)) ? parseInt(this.getAttribute(`data-store-location`)) : -1;
-							global.write(UI_item[`source`], UI_item[`value`], UI_item[`store`]);
-						};
-						break;
-				}
-
-				input_element.addEventListener(`change`, element[`event`]);
-			});
-		}
-		
-		/*
-			Update the interface based on the storage data changes.
-		*/
-		async function updates() {
-			// Get the storage data.
-			let storage_data = await global.read();
-
-			async function enable() {
-				let input_elements = document.querySelectorAll("[data-enable]");
-
-				if (input_elements) {
-					input_elements.forEach(async (input_element) => {
-						if (input_element.getAttribute("data-enable")) {
-							// Enable the element.
-							input_element.disabled = ((await global.read(input_element.getAttribute("data-enable"))) != null
-								? (typeof (await global.read(input_element.getAttribute("data-enable")))).includes(`obj`)
-									? (Object.keys(await global.read(input_element.getAttribute("data-enable")))).length <= 0
-									: !(!!(await global.read(input_element.getAttribute("data-enable"))))
-								: true);
-							(input_element.disabled) ? input_element.classList.add(`disabled`) : input_element.classList.remove(`disabled`);
-
-							// If it is under a list element (usually in navigation bars), then also disable that element too. 
-							if ((input_element.parentElement.nodeName.toLowerCase()).includes(`li`)) {
-								input_element.parentElement.disabled = input_element.disabled;
-								(input_element.disabled) ? input_element.parentElement.classList.add(`disabled`) : input_element.parentElement.classList.remove(`disabled`);
-							}
-						}
-					});
-				}
+							ELEMENT.addEventListener(`change`, ELEMENT[`event`]);
+						})
+						: false;
+				});
 			}
-
-			// Update the input elements.
-			observe((what) => {
-				enable();
-			});
-
-			enable();
 		};
 		
 		/* Enable the searching interface. */
@@ -405,10 +447,14 @@ export default class windowman {
 			const search_GUI_manager = (await import(chrome.runtime.getURL(`scripts/GUI/builder/windowman.search.js`))).default;
 			return (search_GUI_manager.Search());
 		};
-
+		
 		fill();
-		update();
-		updates();
+		write();
 		this[`search`] = search();
+		
+		// Update the input elements.
+		observe((what) => {
+			fill();
+		});
 	}
 }
