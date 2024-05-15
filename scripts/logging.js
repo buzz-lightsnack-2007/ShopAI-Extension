@@ -18,8 +18,9 @@ export default class logging {
 
 	@param {string} TITLE the title
 	@param {string} MESSAGE the message
-	@param {bool} PRIORITY automatically dismiss other, older messages */
-	constructor(TITLE, MESSAGE, PRIORITY = false) {
+	@param {bool} OPTIONS the options; if boolean, clear the current message
+	*/
+	constructor(TITLE, MESSAGE, OPTIONS = {}) {
 		// Set this message's properties. 
 		if (!MESSAGE || (typeof MESSAGE).includes(`undef`)) {
 			this.message = TITLE;
@@ -27,8 +28,6 @@ export default class logging {
 			this.title = TITLE;
 			this.message = MESSAGE;
 		}
-
-		(PRIORITY) ? this.clear() : false;
 
 		// Display the message. 
 		if (MESSAGE) {
@@ -38,11 +37,18 @@ export default class logging {
 		}
 
 		try {
-			M.toast({ text: (MESSAGE ? (this.title).concat(`\n`) : ``).concat(this.message) });
+			(((typeof OPTIONS).includes(`bool`) ? OPTIONS : false) || ((typeof OPTIONS).includes(`obj`) ? OPTIONS[`priority`] : false))
+				? this.clear()
+				: false;
+
+			(((typeof OPTIONS).includes(`obj`) ? Object.hasOwn(OPTIONS, `silent`) : false) ? !OPTIONS[`silent`] : true)
+				? M.toast({ text: (MESSAGE ? (this.title).concat(`\n`) : ``).concat(this.message) })
+				: false;
+
 		} catch (err) {}
 	}
 
-	static log(message) {
+	static log(title, message, priority) {
 		return(new logging(message));
 	}
 
