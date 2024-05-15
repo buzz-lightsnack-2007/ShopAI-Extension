@@ -71,7 +71,7 @@ class global {
 	@param {string} TERM the term to search
 	@param {Array} ADDITIONAL_PLACES additional places to search
 	@param {object} OPTIONS the options
-	@return {Array} the results
+	@return {object} the results
 	*/
 	static async search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = 0, OPTIONS = {}) {
 		let DATA = await global.read(SOURCE, (OPTIONS[`cloud`] != null) ? OPTIONS[`cloud`] : 0);
