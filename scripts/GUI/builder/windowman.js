@@ -5,6 +5,7 @@ import texts from "/scripts/mapping/read.js";
 import Tabs from "/scripts/GUI/tabs.js";
 import {global, observe} from "/scripts/secretariat.js";
 import {URLs} from "/scripts/utils/URLs.js";
+import wait from "/scripts/utils/wait.js";
 
 export default class windowman {
 	elements = {};
@@ -291,6 +292,11 @@ export default class windowman {
 
 	/* Run this function if you would like to synchronize with data. */
 	async sync() {
+		// Prepare flags. 
+		this[`state`] = {};
+		this[`state`][`read/write`] = 0;
+
+		// Set the linked elements. 
 		this[`elements`][`linked`] = (this[`elements`][`linked`]) ? this[`elements`][`linked`] : {};
 
 		const fill = () => {
@@ -314,38 +320,44 @@ export default class windowman {
 						(this[`elements`][`linked`][`show`][data[`source`]] ? this[`elements`][`linked`][`show`][data[`source`]].length : false)
 							? this[`elements`][`linked`][`show`][data[`source`]].push(input_element)
 							: this[`elements`][`linked`][`show`][data[`source`]] = [input_element];	
+
+						// Remove the attribute.
+						input_element.removeAttribute(`data-store`);
 					});	
 				};
-				
-				(this[`elements`][`linked`][`show`] ? Object.keys(Object.keys(this[`elements`][`linked`][`show`])).length : false)
-					? (Object.keys(this[`elements`][`linked`][`show`])).forEach((SOURCE) => {
-						(this[`elements`][`linked`][`show`][SOURCE] ? this[`elements`][`linked`][`show`][SOURCE].length : false) 
-							? global.read(SOURCE).then((value) => {
-								(this[`elements`][`linked`][`show`][SOURCE]).forEach((ELEMENT) => {
-									switch (ELEMENT.getAttribute(`type`).toLowerCase()) {
-										case `checkbox`:
-											ELEMENT.checked = value;
-											break;
-										case `progress`:
-										case `range`:
-											// Ensure that it is a positive floating-point number.
-											value = !value ? 0 : Math.abs(parseFloat(value));
-											value = (value > 100) ? value / 100 : value;
-		
-											// Set the attribute of the progress bar.
-											ELEMENT.setAttribute(`value`, value);
-											ELEMENT.setAttribute(`max`, 1);
-											break;
-										default:
-											ELEMENT.value = value ? value : ``;
-											break;
-									};	
+
+				// Wait until this[`state`][`read/write`] is >= 0; don't clash. 
+				wait((this[`state`][`read/write`] ? this[`state`][`read/write`] >= 0 : true)).then(() => {
+					(this[`elements`][`linked`][`show`] ? Object.keys(Object.keys(this[`elements`][`linked`][`show`])).length : false)
+						? (Object.keys(this[`elements`][`linked`][`show`])).forEach((SOURCE) => {
+							(this[`elements`][`linked`][`show`][SOURCE] ? this[`elements`][`linked`][`show`][SOURCE].length : false) 
+								? global.read(SOURCE).then((value) => {
+									(this[`elements`][`linked`][`show`][SOURCE]).forEach((ELEMENT) => {
+										switch (ELEMENT.getAttribute(`type`).toLowerCase()) {
+											case `checkbox`:
+												ELEMENT.checked = value;
+												break;
+											case `progress`:
+											case `range`:
+												// Ensure that it is a positive floating-point number.
+												value = !value ? 0 : Math.abs(parseFloat(value));
+												value = (value > 100) ? value / 100 : value;
+			
+												// Set the attribute of the progress bar.
+												ELEMENT.setAttribute(`value`, value);
+												ELEMENT.setAttribute(`max`, 1);
+												break;
+											default:
+												ELEMENT.value = value ? value : ``;
+												break;
+										};	
+									})
 								})
-							})
-							: false;
-						
-					})
-					: false;
+								: false;
+							
+						})
+						: false;
+				})
 			}
 
 			const enable = () => {
@@ -409,11 +421,19 @@ export default class windowman {
 							switch (ELEMENT[`type`]) {
 								case `checkbox`:
 									ELEMENT[`event`] = () => {
+										// Set flag to prevent reading. 
+										this[`state`][`read/write`] = -1;
 										global.write(SOURCE, ELEMENT.checked, ELEMENT[`storage`][`source`]);
+										
+										// Unlock reading. 
+										this[`state`][`read/write`] = 0;
 									};
 									break;
 								default: 
 									ELEMENT[`event`] = () => {
+										// Set flag to write to prevent reading.
+										this[`state`][`read/write`] = -1;
+
 										if (ELEMENT[`type`].includes(`num`) || ELEMENT[`type`].includes(`range`)) {
 											ELEMENT.value = ((((ELEMENT.hasAttribute(`min`)) ? ELEMENT.value < parseFloat(ELEMENT.getAttribute(`min`)) : false))
 												? ELEMENT.getAttribute(`min`)
@@ -429,6 +449,9 @@ export default class windowman {
 											: ELEMENT.value;
 
 										global.write(SOURCE, VALUE, ELEMENT[`storage`][`source`]);
+
+										// Finish writing. 
+										this[`state`][`read/write`] = 0;
 									};
 									break;
 							};
