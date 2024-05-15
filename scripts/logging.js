@@ -43,11 +43,7 @@ export default class logging {
 	}
 
 	static log(message) {
-		console.log(message);
-		
-		try {
-			M.toast({ text: message });
-		} catch (err) {}
+		return(new logging(message));
 	}
 
 	/*
