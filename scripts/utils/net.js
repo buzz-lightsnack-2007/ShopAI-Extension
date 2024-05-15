@@ -27,7 +27,7 @@ export default class net {
 		
 		try {
 			// Fetch the file. Add headers when defined. 
-			CONNECT = await fetch(URL, {method: `POST`, headers: HEADERS});
+			(Object.keys(HEADERS).length) ? CONNECT = await fetch(URL, {method: `POST`, headers: HEADERS}) : CONNECT = await fetch(URL);
 			
 			if (CONNECT.ok && !VERIFY_ONLY) {
 				DATA = await CONNECT[(TYPE.toLowerCase().includes('blob')) ? `blob` : `text`]();
