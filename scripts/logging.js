@@ -32,9 +32,9 @@ export default class logging {
 
 		// Display the message. 
 		if (MESSAGE) {
-			console.log('%c%s%c\n%s', 'font-weight: bold;', this.title, ``, this.message);
+			console.log(`%c%s\n%c%s`, `font-weight: bold; font-family: system-ui;`, this.title, `font-family: system-ui;`, this.message);
 		} else {
-			console.log(this.message);
+			console.log(`%c%s`, `font-family: system-ui`, this.message);
 		}
 
 		try {
@@ -57,7 +57,11 @@ export default class logging {
 	@param {boolean} critical the critical nature
 	*/
 	static warn(message, critical = false) {
-		console.warn(message);
+		// Depackage the shortcut method of sending the error message, if it is. 
+		((typeof message).includes(`obj`))
+			? console.error(`%c%s: %c%s`, `font-weight: bold; font-family: system-ui;`, message.name, `font-family: system-ui`, message.message)
+			: console.error(`%c%s`, `font-family: system-ui;`, message);
+		
 		try {
 			(critical) ? alert(message) : M.toast({ text: message });
 		} catch(err) {};
@@ -79,7 +83,9 @@ export default class logging {
 		};
 
 		// Display the error message.
-		(ERROR_CODE && ERROR_MESSAGE && ERROR_STACK) ? console.error(`${ERROR_CODE}: ${ERROR_MESSAGE}\n${ERROR_STACK}`) : console.error(ERROR_MESSAGE);
+		(ERROR_CODE && ERROR_MESSAGE && ERROR_STACK)
+			? console.error(`%c%s: %c%s\n%c%s`, `font-weight: bold; font-family: system-ui;`, ERROR_CODE, `font-family: system-ui`, ERROR_MESSAGE, ``, ERROR_STACK)
+			: console.error(ERROR_MESSAGE);
 		
 		try {
 			(critical) ? alert(texts.localized(`error_msg_GUI`, false, [String(ERROR_CODE), ERROR_MESSAGE])) : M.toast({ text: ERROR_MESSAGE });
