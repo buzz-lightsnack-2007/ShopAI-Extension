@@ -365,7 +365,6 @@ export default class windowman {
 												// Set the attribute of the progress bar.
 												ELEMENT.setAttribute(`value`, value);
 												ELEMENT.setAttribute(`max`, 1);
-												break;
 											default:
 												ELEMENT.value = value ? value : ``;
 												break;
