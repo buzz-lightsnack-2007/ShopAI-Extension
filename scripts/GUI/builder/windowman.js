@@ -6,7 +6,7 @@ import Tabs from "/scripts/GUI/tabs.js";
 import {global, observe} from "/scripts/secretariat.js";
 import {URLs} from "/scripts/utils/URLs.js";
 import wait from "/scripts/utils/wait.js";
-import UI from "/scripts/GUI/builder/windowman.search.js";
+import UI from "/scripts/GUI/builder/windowman.extras.js";
 
 export default class windowman {
 	elements = {};
@@ -308,9 +308,42 @@ export default class windowman {
 			actions();
 		}
 
+		/*
+		Instantiate the extras. 
+		*/
+		const extras = () => {
+			// Add the search interface. 
+			(Object.keys(UI)).forEach((FEATURE) => {
+				this.extra(FEATURE, (this[`options`] && (typeof this[`options`]).includes(`obj`)) ? this[`options`][FEATURE] : null);
+			})
+		}
+
+		// Add the elements.
 		this[`elements`] = appearance();
 		events();
+
+		// Add the extras. 
+		(((this[`options`] && (typeof this[`options`]).includes(`obj`)) ? Object.hasOwn(this[`options`], `automatic`) : false) ? this[`options`][`automatic`] : true)
+			? extras()
+			: false;
 	}
+
+	/*
+	Instantiate the extras. 
+
+	@param {string} name The name of the extra UI feature
+	@param {object} options The options for the extra UI feature
+	*/
+	extra(name, options) {
+		(Object.keys(UI)).includes(name)
+			? 
+				// De-instantiate the feature if a cancel option is passed. 
+				(((options && (typeof options).includes(`obj`)) ? options[`cancel`] : false)
+					? delete this[name]
+					: (this[name] = (this[name]) ? this[name] : new UI[name](options))
+				)
+			: false;
+	};
 
 	/* Run this function if you would like to synchronize with data. */
 	async sync() {
@@ -486,16 +519,6 @@ export default class windowman {
 				});
 			}
 		};
-		
-		/*
-		Instantiate the extras. 
-		*/
-		const extras = () => {
-			// Add the search interface. 
-			(Object.keys(UI)).forEach((FEATURE) => {
-				this[FEATURE] = new UI[FEATURE]();
-			})
-		}
 		
 		fill();
 		write();
