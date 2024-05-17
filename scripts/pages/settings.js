@@ -8,14 +8,15 @@ import Page from "/scripts/pages/page.js";
 import texts from "/scripts/mapping/read.js";
 import filters from "/scripts/filters.js";
 import logging from "/scripts/logging.js";
+import {URLs} from "/scripts/utils/URLs.js";
 
 class Page_Settings extends Page {
 	data = {};
 
 	constructor() {
 		super();
-		(this.events) ? this.events() : false;
-	}
+		this.events();
+	};
 
 	/*
 	Define the mapping of each button.
@@ -23,77 +24,81 @@ class Page_Settings extends Page {
 	@param {object} window the window
 	*/
 	events() {
-		(document.querySelector(`[data-action="filters,update"]`))
-			? document.querySelector(`[data-action="filters,update"]`).addEventListener(`click`, async () => {
-					// Import the filters module.
-					this.data.filters = (this.data.filters) ? this.data.filters : new filters();
+		if ((Object.keys(this.window.elements[`interactive`][`action`])).length) {
+			// Instantiate the filters module, since it's needed for some of the actions below. 
+			this.data.filters = (this.data.filters) ? this.data.filters : new filters();
 
-					// Update all of the filters. 
-					this.data.filters.update(`*`);
-				})
-			: false;
-	
-		(document.querySelector(`[data-action="filters,add,one"]`))
-			? document.querySelector(`[data-action="filters,add,one"]`).addEventListener(`click`, async () => {
-				// Import the filters module.
-				this.data.filters = (this.data.filters) ? this.data.filters : new filters();
-				// Request for the filter URL. 
-				let FILTER_SOURCE = prompt(texts.localized(`settings_filters_add_prompt`));
+			
+			// Set the actions. 
+			let ACTIONS = {};
+			ACTIONS[`filters,update`] = async () => {this.data.filters.update(`*`);};
+			ACTIONS[`filters,add,one`] = () => {
+				let SOURCE = ``;
 
-				// Update the filter if the source is not empty.
-				if (FILTER_SOURCE ? FILTER_SOURCE.trim() : false) {
-					FILTER_SOURCE = FILTER_SOURCE.trim().split(`, `);
-					this.data.filters.update(FILTER_SOURCE);
-				};
-			})
-			: false;
-		
-		(document.querySelector(`[data-action="filters,update,one"]`))
-			? document.querySelector(`[data-action="filters,update,one"]`).addEventListener(`click`, async () => {
-					this.data.filters = (this.data.filters) ? this.data.filters : new filters();
-	
-					// Open text input window for adding a filter.
-					let filter_source = (document.querySelector(`[data-result-linked="filters"] [data-result-content="*"]`)) ? document.querySelector(`[data-result-linked="filters"] [data-result-content="*"]`).innerText : prompt(texts.localized(`settings_filters_add_prompt`));
-					if (filter_source ? filter_source.trim() : false) {
-						this.data.filters.update(filter_source.trim());
+				while (true) {
+					SOURCE = prompt(texts.localized(`settings_filters_add_prompt`), SOURCE);
+
+					// Update the filter if the source is not empty.
+					if (SOURCE ? SOURCE.trim() : false) {
+						SOURCE = SOURCE.trim().split(`, `);
+
+						// Verify user inputs are valid. 
+						let VALID = true;
+
+						// Check if the URL is valid.
+						SOURCE.forEach((LOCATION) => {
+							VALID = (URLs.test(LOCATION));
+						});
+
+						// Update the filter if the source is valid.
+						if (VALID) {
+							return(this.data.filters.update(SOURCE));
+						} else {
+							if (!confirm(texts.localized(`error_msg_notURL_syntax`))) {
+								return (false);
+							};
+						}
+					} else {
+						return (false);
 					};
-				})
-			: false;
-		
-		if (document.querySelector(`[data-action="filters,delete,one"]`)) {
-			document.querySelector(`[data-action="filters,delete,one"]`).addEventListener(`click`, async () => {
-				this.data.filters = (this.data.filters) ? this.data.filters : new filters();
-	
-					// Open text input window for adding a filter.
-					let filter_source = (document.querySelector(`[data-result-linked="filters"] [data-result-content="*"]`)) ? document.querySelector(`[data-result-linked="filters"] [data-result-content="*"]`).innerText : prompt(texts.localized(`settings_filters_remove_prompt`));
-					if (filter_source ? filter_source.trim() : false) {
-						this.data.filters.remove(filter_source.trim());
-					}
-				});
-		}
-		
-		// The extension icon cache doesn't clear by itself. 
-		(document.querySelector(`[data-store="settings,general,showApplicable"]`))
-			? document.querySelectorAll(`[data-store="settings,general,showApplicable"]`).forEach((ELEMENT) => {
-				ELEMENT.addEventListener(`change`, () => {
-					!(ELEMENT.checked)
-						? new logging(texts.localized(`settings_restartToApply`), texts.localized(`settings_restartToApply_iconChange`), true)
-						: false;
-				})
-			}) 
-			: false;
-	
-		(document.querySelector(`[data-action="storage,clear"]`)) 
-			? document.querySelector(`[data-action="storage,clear"]`).addEventListener(`click`, async () => {
-					await global.forget(`sites`);
-				})
-			: false;		
-
-		(document.querySelectorAll(`[data-action]`)) 
-			? (document.querySelectorAll(`[data-action]`)).forEach((ELEMENT) => {
-				ELEMENT.removeAttribute(`data-action`);
+				}
+			};
+			ACTIONS[`filters,update,one`] = () => {
+				// Update the selected filter. 
+				return((this.window.search.filters.selected) ? this.data.filters.update(this.window.search.filters.selected) : false)
+			};
+			ACTIONS[`filters,delete,one`] = () => {
+				// Remove the selected filter. 
+				return((this.window.search.filters.selected) ? this.data.filters.remove(this.window.search.filters.selected) : false)
+			}
+			ACTIONS[`storage,clear`] = () => {
+				return(global.forget(`sites`));
+			}
+			
+			// Add the event listeners. 
+			(Object.keys(ACTIONS)).forEach((NAME) => {
+				(this.window.elements[`interactive`][`action`][NAME] ? this.window.elements[`interactive`][`action`][NAME].length : false)
+					? this.window.elements[`interactive`][`action`][NAME].forEach((ELEMENT) => {
+						ELEMENT.addEventListener(`click`, ACTIONS[NAME]);
+					})
+					: false;
 			})
-			: false;
+		};
+
+		if (this.window.elements[`linked`] ? (this.window.elements[`linked`][`show`] ? Object.keys(this.window.elements[`linked`][`show`]).length : false) : false) {
+			(this.window.elements[`linked`][`show`][`settings,general,showApplicable`] ? this.window.elements[`linked`][`show`][`settings,general,showApplicable`].length : false)
+				? (this.window.elements[`linked`][`show`][`settings,general,showApplicable`]).forEach((ELEMENT) => {
+					ELEMENT.addEventListener(`change`, () => {
+						// The extension icon cache doesn't clear by itself. 
+						ELEMENT.addEventListener(`change`, () => {
+							!(ELEMENT.checked)
+								? new logging(texts.localized(`settings_restartToApply`), texts.localized(`settings_restartToApply_iconChange`), true)
+								: false;
+						})
+					});
+				})
+				: false;
+		}
 	}
 }
 
