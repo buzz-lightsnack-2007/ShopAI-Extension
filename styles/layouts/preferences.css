@@ -2,21 +2,21 @@
      
 }*/
 
-article [data-result-content="*"] {
+article[data-result-linked="filters"] > h2 {
      display: none;
 }
 
-a > [data-result-content="*"] {
+a[data-result-linked="filters"] > * {
      display: none;
 }
 
 @media only screen and (max-width: 992px) {
-     article [data-result-content="*"] {display: block;}
+     article[data-result-linked="filters"] > h2 {display: block;}
 }
 
 
 @media only screen and (min-width: 992px) {
-	a > [data-result-content="*"] {
+	a[data-result-linked="filters"] > * {
 		display: block;
 	}
 }
