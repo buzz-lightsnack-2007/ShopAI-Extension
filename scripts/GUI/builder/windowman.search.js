@@ -53,7 +53,10 @@ class Search {
 	
 									// Get the name of the element. 
 									let NAME = ELEMENT.getAttribute(LINKED_SOURCES[COMPONENT]);
-	
+									(ELEMENT.getAttribute(`data-store-location`))
+										? ELEMENT[`data store location`] = ELEMENT.getAttribute(`data-store-location`)
+										: false;
+
 									// Set the element. 
 									this[SOURCE][`elements`][COMPONENT][NAME] = (this[SOURCE][`elements`][COMPONENT][NAME] ? this[SOURCE][`elements`][COMPONENT][NAME].length : false)
 										? (this[SOURCE][`elements`][COMPONENT][NAME].includes(ELEMENT)
@@ -63,7 +66,9 @@ class Search {
 									
 	
 									// Remove the attribute. 
-									ELEMENT.removeAttribute(LINKED_SOURCES[COMPONENT]);
+									[LINKED_SOURCES[COMPONENT], `data-store-location`].forEach((ATTRIBUTE) => {
+										ELEMENT.removeAttribute(ATTRIBUTE);
+									})
 								})
 								: false;
 						})
@@ -450,7 +455,7 @@ class Search {
 								DATA[`target`] = (DATA[`source`] != `*`)
 									? ((DATA[`source`][0] == `` || DATA[`source`][0] == `/`)
 										? [...(DATA[`source`].slice(1)), ...[item]]
-										: [...[item], ...(DATA[`source`])])
+										: [...source.split(`,`), ...[item], ...(DATA[`source`])])
 									: DATA[`source`];
 								DATA[`value`] = (DATA[`source`] != `*`)
 									? ((nested.dictionary.get(details, DATA[`source`]) != null)
@@ -487,7 +492,7 @@ class Search {
 												case `radio`:
 													ELEMENT.func = () => {
 														this[`state`][`read/write`] = -1; 
-														this[`state`][`last result`] = global.write(DATA[`target`], ELEMENT.checked);
+														this[`state`][`last result`] = global.write(DATA[`target`], ELEMENT.checked, (ELEMENT[`data store location`] ? ELEMENT[`data store location`] : -1));
 
 														this[`state`][`read/write`] = 0; 
 														return(this[`state`][`last result`]);	
@@ -504,7 +509,7 @@ class Search {
 															this[`state`][`last result`] = false;
 
 															try {
-																this[`state`][`last result`] = global.write(DATA[`target`], JSON.parse(ELEMENT.value.trim()));
+																this[`state`][`last result`] = global.write(DATA[`target`], JSON.parse(ELEMENT.value.trim()), (ELEMENT[`data store location`] ? ELEMENT[`data store location`] : -1));
 															} catch(err) {
 																// The JSON isn't valid.
 																logging.error(err.name, texts.localized(`error_msg_notJSON_syntax`), err.stack, false);
@@ -526,7 +531,7 @@ class Search {
 																)
 																: ELEMENT.value.trim());
 		
-															this[`state`][`last result`] = global.write(DATA[`target`], ELEMENT.val);
+															this[`state`][`last result`] = global.write(DATA[`target`], ELEMENT.val, (ELEMENT[`data store location`] ? ELEMENT[`data store location`] : -1));
 															this[`state`][`read/write`] = 0;
 															
 															delete ELEMENT.val;
