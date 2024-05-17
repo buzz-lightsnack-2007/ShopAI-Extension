@@ -197,6 +197,21 @@
 		"message": "The icon change doesn't happen automatically."
 	},
 
+	"search_found_heading": {
+		"message": "Found the following:"
+	},
+	"search_notfound_heading": {
+		"message": "Didn't find anything."
+	},
+	"search_selected_heading": {
+		"message": "$item$:",
+		"placeholders": {
+			"item": {
+				"content": "$1"
+			}
+		}
+	},
+
 	"saving_current": {
 		"message": "Saving…"
 	},
@@ -289,6 +304,9 @@
 				"description": "The file path"
 			}
 		}
+	},
+	"error_msg_notURL_syntax": {
+		"message": "Double check your URLs and try again."
 	},
 	"error_msg_notJSON": {
 		"message": "The file has been downloaded, but it is not the correct file type."

@@ -1,256 +1,574 @@
-import {global, observe} from "/scripts/secretariat.js";
+import {global, background} from "/scripts/secretariat.js";
 import logging from "/scripts/logging.js"
 import texts from "/scripts/mapping/read.js";
+import nested from "/scripts/utils/nested.js";
+import wait from "/scripts/utils/wait.js";
 
+class Search {
+	state = {};
 
-export default class UI {
-	static Search() {
+	constructor () {
 		if (document.querySelectorAll(`[data-result]`)) {
-			/* 
-				Display the search result. 
-				
-				@param {object} ELEMENT_TARGET the target element
-				@param {object} RESULTS the results
-				@param {object} TITLE_FIELD the title field for each result
-			*/
-			var SEARCH = {};
+			this.#get();
+			this.#set();
+		};
+	};
+
+	/*
+	Include all relevant DOM elements into this object. 
+	*/
+	#get() {
+		document.querySelectorAll(`[data-result]`).forEach((ELEMENT) => {
+			let SOURCE = ELEMENT.getAttribute(`data-result`);
 			
-			function display(TARGET_NAME, RESULTS, TITLE_FIELD) {
+			if (SOURCE != `state`) {
+				this[SOURCE] = (!this[SOURCE])
+					? {}
+					: this[SOURCE];
 	
-				if (document.querySelectorAll(`[data-results-list="${TARGET_NAME}"]`)) {
-					(document.querySelectorAll(`[data-results-list="${TARGET_NAME}"]`)).forEach(function (ELEMENT_TARGET) {
-						// Set the target element to the correct data structure (lists). 
-						TARGET_NAME = (!Array.isArray(TARGET_NAME)) ? TARGET_NAME.split(`,`) : TARGET_NAME;
-						
-						// Clear the target element.
-						ELEMENT_TARGET.innerHTML = ``;
-	
-						function setSelected(element) {
-							SEARCH[TARGET_NAME][`selected`] = (element) ? (Object.keys(RESULTS))[(Array.prototype.slice.call(element.parentElement.parentElement.querySelectorAll(`a`))).indexOf(element)] : null;
-							
-							// Array.prototype.slice.call(element.parentElement.children)
-							if (element) {
-								(element.parentElement).parentElement.querySelectorAll(`li`).forEach((element_others) => {
-									element_others.classList.remove(`active`);
-								});
-								element.parentElement.classList.add(`active`)
-							};							
-						}
-	
-						// Display the results.
-						if ((RESULTS != null && (typeof RESULTS).includes(`obj`) && !Array.isArray(RESULTS)) ? Object.keys(RESULTS).length > 0 : false) {
-							let ACCESS_KEYS = {"top": ["1", "2", "3", "4", "5", "6", "7", "8", "9"], "nav": ["<", ">"]};
-							(Object.keys(RESULTS)).forEach((result) => {
-								let result_element = document.createElement(`li`);
-								let result_title = document.createElement(`a`);
-								result_title.classList.add(`waves-effect`);
-								result_title.innerText = (RESULTS[result][TITLE_FIELD]) ? RESULTS[result][TITLE_FIELD] : result;
-								
-								function accessKey(ELEMENT) {
-									if (!ELEMENT) {
-										let RESULT_INDEX = (Object.keys(RESULTS)).indexOf(result);
-										if (RESULT_INDEX < ACCESS_KEYS[`top`].length) {
-											result_title.setAttribute(`accesskey`, ACCESS_KEYS[`top`][RESULT_INDEX]);
-										}
-									} else {
-										let ELEMENT_INDEX = (new Array((ELEMENT.parentElement).querySelectorAll(`*`))).indexOf(ELEMENT);
-										if (ELEMENT_INDEX >= ACCESS_KEYS[`top`].length) {
-											if (((ELEMENT.parentElement).querySelectorAll(`*`)).length > ELEMENT_INDEX + 1) {
-												((ELEMENT.parentElement).querySelectorAll(`*`))[ELEMENT_INDEX + 1].setAttribute(`accesskey`, ACCESS_KEYS[`nav`][1])
-											};
-											if ((((ELEMENT.parentElement).querySelectorAll(`*`))[ELEMENT_INDEX - 1].getAttribute(`accesskey`)) ? !(ACCESS_KEYS[`top`].includes(((ELEMENT.parentElement).querySelectorAll(`*`))[ELEMENT_INDEX - 1].getAttribute(`accesskey`))) : true) {
-												((ELEMENT.parentElement).querySelectorAll(`*`))[ELEMENT_INDEX - 1].setAttribute(`accesskey`, ACCESS_KEYS[`nav`][1])
-											};
-											// Set the quick return access key. 
-											ELEMENT.setAttribute(`accesskey`, `0`);
-										} 
-									}
-								}
-	
-								result_title.addEventListener(`click`, function () {
-									setSelected(this);
-									pick(result, RESULTS[result], TARGET_NAME);
-	
-									// Set the access key.
-									accessKey(this);
-								});
-								
-								accessKey();
-								result_element.appendChild(result_title);
-								ELEMENT_TARGET.appendChild(result_element);
-	
-								if ((SEARCH[TARGET_NAME]) ? SEARCH[TARGET_NAME][`selected`] == result : false) {
-									setSelected(result_title);
-									pick(result, RESULTS[result], TARGET_NAME);
-								}
-							});
-						}
-					});
-				}
-			}
-	
-			/* Function to execute when a search result item has been picked. 
-	
-			@param {string} NAME the name of the currently selected data
-			@param {object} ITEM the item picked
-			@param {string} AREA the ID of the search
-			*/
-			async function pick(NAME, ITEM, AREA) {
-				if (AREA) {
-					let CONTAINERS = (document.querySelectorAll(`[data-result-linked="${AREA}"]`));
-				
-					if (CONTAINERS) {
-						(CONTAINERS).forEach((CONTAINER) => {
-							CONTAINER.disabled = (ITEM != null) ? !((typeof ITEM).includes(`obj`) && !Array.isArray(ITEM)) : true;
-							([].concat(CONTAINER.querySelectorAll(`[data-result-content]`), CONTAINER.querySelectorAll(`[data-result-store]`), document.querySelectorAll(`[data-result-enable]`))).forEach(async function (ELEMENTS) {
-								if (ELEMENTS) {
-									(ELEMENTS).forEach(async function(ELEMENT) {
-										ELEMENT.disabled = CONTAINER.disabled;
-										if (!ELEMENT.disabled) {
-											if (ELEMENT.getAttribute(`data-result-store`) && ELEMENT.type) {
-												// Init updater function.
-												ELEMENT[`function`] = function() {};
-									  
-												var DATA = {};
-	
-												DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
-												DATA[`value`] = ((Object.keys(ITEM).includes(ELEMENT.getAttribute(`data-result-store`))) ? ITEM[ELEMENT.getAttribute(`data-result-store`)] : await global.read(DATA[`target`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1));
-	
-												switch (ELEMENT[`type`]) {
-													case `checkbox`:
-														ELEMENT.checked = (DATA[`value`]);
-														
-														ELEMENT[`function`] = function() {
-															DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
-															global.write(DATA[`target`], ELEMENT.checked, (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
-														};
-														break;
-													default:
-														if ((typeof (ITEM[ELEMENT.getAttribute(`data-result-store`)])).includes(`obj`)) {
-															ELEMENT.value = JSON.stringify(DATA[`value`]);
-	
-															ELEMENT[`function`] = function() {
-																try {
-																	DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
-																	DATA[`value`] = JSON.parse(ELEMENT.value.trim());
-																	global.write(DATA[`target`], DATA[`value`], (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
-																} catch(err) {
-																	// The JSON isn't valid.
-																	logging.error(err.name, texts.localized(`error_msg_notJSON_syntax`), err.stack, false);
-																};
-															}
-														} else {
-															ELEMENT.value = DATA[`value`];
-	
-															ELEMENT[`function`] = function() {
-																DATA[`target`] = ((ELEMENT.getAttribute(`data-result-store`).split(`,`))[0] == ``) ? [...(ELEMENT.getAttribute(`data-result-store`).split(`,`).slice(1)), ...[NAME]] : [...AREA, ...[NAME], ...(ELEMENT.getAttribute(`data-result-store`).split(`,`))];
-																global.write(DATA[`target`], ELEMENT.value.trim(), (ELEMENT.hasAttribute(`data-store-location`)) ? parseInt(ELEMENT.getAttribute(`data-store-location`)) : -1);
-															}
-														}
-														break;
-												}
-	
-												if (ELEMENT.nodeName.toLowerCase().includes(`textarea`)) {
-													ELEMENT.addEventListener(`blur`, ELEMENT[`function`]);
-												} else {
-													ELEMENT.addEventListener(`change`, ELEMENT[`function`]);
-												}
-											} else if (ELEMENT.getAttribute(`data-result-content`) || ELEMENT.getAttribute(`data-result-store`)) {
-												ELEMENT.innerText = (ITEM[ELEMENT.getAttribute(`data-result-content`)] || ELEMENT.getAttribute(`data-result-content`).includes(`*`))
-												? ((ELEMENT.getAttribute(`data-result-content`).includes(`*`))
-													? NAME
-													: ITEM[ELEMENT.getAttribute(`data-result-content`)])
-												: ((ITEM[ELEMENT.getAttribute(`data-result-store`)])
-													? (ITEM[ELEMENT.getAttribute(`data-result-store`)])
-													:  null) /*global.read(((ITEM[(ELEMENT.getAttribute(`data-result-store`).split(`,`))])[ITEM])));*/
-											}
-										} else {
-											if (ELEMENT.getAttribute(`data-result-store`) && ELEMENT.type) {
-												switch (ELEMENT[`type`]) {
-													case `checkbox`:
-														ELEMENT.checked = false;
-														break;
-													case `range`: 
-													case `number`: 
-														ELEMENT.value = 0;
-														break;
-													default:
-														ELEMENT.value = ``;
-														break;
-												}
-											} else if (ELEMENT.getAttribute(`data-result-content`) || ELEMENT.getAttribute(`data-result-store`)) {
-												ELEMENT.innerText = ``;
-											}
-	
-											// Disable the list element if in case it is a clickable element. 
-											if ((ELEMENT.parentElement.nodeName.toLowerCase()).includes(`li`)) {
-												ELEMENT.parentElement.disabled = CONTAINER.disabled;
-											}
-										};
-									})
-								}
-							})
-						})
-					}
-				}
-			}
-			
-			async function find(element) {
-				if (element.getAttribute(`data-result`)) {
-					if (!SEARCH[element.getAttribute(`data-result`)]) {
-						SEARCH[element.getAttribute(`data-result`)] = {};
-					}
-					SEARCH[element.getAttribute(`data-result`)][`criteria`] = element.value.trim();
+				const elements = () => {
+					this[SOURCE][`elements`] = (this[SOURCE][`elements`]) ? this[SOURCE][`elements`] : {};
 					
-					if (SEARCH[element.getAttribute(`data-result`)][`criteria`]) {
-						if (
-							element.getAttribute(`data-results-filters`)
-								? element.getAttribute(`data-results-filters`).trim()
-								: false
-						) {
-							SEARCH[element.getAttribute(`data-result`)][`additional criteria`] = element
-								.getAttribute(`data-results-filters`)
-								.split(`,`);
-						}
-						SEARCH[element.getAttribute(`data-result`)][`results`] = await global.search(element.getAttribute(`data-result`), SEARCH[element.getAttribute(`data-result`)][`criteria`], SEARCH[element.getAttribute(`data-result`)][`additional criteria`]);
-					} else {
-						SEARCH[element.getAttribute(`data-result`)][`results`] = await global.read(element.getAttribute(`data-result`));
+					// First, add the search box. 
+					this[SOURCE][`elements`][`search box`] = (this[SOURCE][`elements`][`search box`])
+						? this[SOURCE][`elements`][`search box`].push(ELEMENT)
+						: [ELEMENT]; 
+	
+					let SOURCES = {
+						"results list": `[data-results-list="${SOURCE}"]`,
+						"container": `[data-result-linked="${SOURCE}"]`,
+						"enable": `[data-result-enable]`
 					};
 	
-					display(element.getAttribute(`data-result`), SEARCH[element.getAttribute(`data-result`)][`results`], `name`);
-						 
-					// Make sure it compensates vanished objects and no results detection. 
-					if (
-							 ((!(SEARCH[element.getAttribute(`data-result`)][`selected`]) || (typeof SEARCH[element.getAttribute(`data-result`)][`results`]).includes(`obj`) && SEARCH[element.getAttribute(`data-result`)][`results`] != null)
-						? (((SEARCH[element.getAttribute(`data-result`)][`results`] != null) ? (Object.keys(SEARCH[element.getAttribute(`data-result`)][`results`]).length <= 0) : false)
-							|| !((SEARCH[element.getAttribute(`data-result`)][`selected`])))
-						: true) || 
-						(((((typeof SEARCH[element.getAttribute(`data-result`)][`results`]).includes(`obj`) && SEARCH[element.getAttribute(`data-result`)][`results`] != undefined && SEARCH[element.getAttribute(`data-result`)][`results`]) ? Object.keys(SEARCH[element.getAttribute(`data-result`)][`results`]).length : false) && SEARCH[element.getAttribute(`data-result`)][`selected`])
-							? !(Object.keys(SEARCH[element.getAttribute(`data-result`)][`results`]).includes(SEARCH[element.getAttribute(`data-result`)][`selected`])) 
-							: false)
-					) {
-						pick(null, null, element.getAttribute(`data-result`));
+					const linked = () => {
+						let LINKED_SOURCES = {
+							"content": "data-result-content",
+							"fields": "data-result-store"
+						};
+	
+						(Object.keys(LINKED_SOURCES)).forEach((COMPONENT) => {
+							(document.querySelector(SOURCES[`container`].concat(` [`, LINKED_SOURCES[COMPONENT], `]`)))
+								? (document.querySelectorAll(SOURCES[`container`].concat(` [`, LINKED_SOURCES[COMPONENT], `]`))).forEach((ELEMENT) => {
+									this[SOURCE][`elements`][COMPONENT] = (this[SOURCE][`elements`][COMPONENT] && !(Array.isArray(this[SOURCE][`elements`][COMPONENT])) && (typeof this[SOURCE][`elements`][COMPONENT]).includes(`obj`)) ? this[SOURCE][`elements`][COMPONENT] : {};
+	
+									// Get the name of the element. 
+									let NAME = ELEMENT.getAttribute(LINKED_SOURCES[COMPONENT]);
+	
+									// Set the element. 
+									this[SOURCE][`elements`][COMPONENT][NAME] = (this[SOURCE][`elements`][COMPONENT][NAME] ? this[SOURCE][`elements`][COMPONENT][NAME].length : false)
+										? (this[SOURCE][`elements`][COMPONENT][NAME].includes(ELEMENT)
+											? false
+											: [...this[SOURCE][`elements`][COMPONENT][NAME], ELEMENT])
+										: [ELEMENT];
+									
+	
+									// Remove the attribute. 
+									ELEMENT.removeAttribute(LINKED_SOURCES[COMPONENT]);
+								})
+								: false;
+						})
 					}
 	
-					
+					if (SOURCES ? Object.keys(SOURCES) : false) {
+						(Object.keys(SOURCES)).forEach((COMPONENT) => {
+							(document.querySelector(SOURCES[COMPONENT]))
+								? this[SOURCE][`elements`][COMPONENT] = document.querySelectorAll(SOURCES[COMPONENT])
+								: false;
+						})
+						linked();
+					}
 				}
+	
+				// Get relevant data. 	
+				const attributes = () => {
+					// Accumulate all search criteria where possible. 
+					(ELEMENT.hasAttribute(`data-results-filters`))
+						? this[SOURCE][`additional criteria`] = (this[SOURCE][`additional criteria`]) ? [...this[SOURCE][`additional criteria`], ...ELEMENT.getAttribute(`data-results-filters`).split(`,`)] : ELEMENT.getAttribute(`data-results-filters`).split(`,`)
+						: false;
+					(ELEMENT.hasAttribute(`data-show`))
+						? this[SOURCE][`preview`] = ELEMENT.getAttribute(`data-show`)
+						: false;
+		
+					// Remove attributes only used during construction, simultaneously protecting against edited HTML from the debugger. 
+					[`data-result`, `data-results-filters`, `data-show`].forEach((ATTRIBUTE) => {
+						ELEMENT.removeAttribute(ATTRIBUTE);
+					});
+				}
+	
+				elements();
+				attributes();
 			}
-	
-			document.querySelectorAll(`[data-result]`).forEach((element) => {
-				/* GUI changes to find
-				
-				@param {object} ELEMENT the element to change
-				*/
-				
-				element.addEventListener(`change`, async function () {find(element)});
-				find(element);
+		});
 
-				observe(() => {
-					new logging(texts.localized(`saving_reload_title`), texts.localized(`saving_reload_body`));
+	};
+
+	/*
+	Set the functions of the relevant elements. 
+	*/
+	#set() {
+		(Object.keys(this)).forEach((SOURCE) => {
+			if (SOURCE != `state`) {
+				this[SOURCE][`elements`][`search box`].forEach((ELEMENT) => {
+					ELEMENT.addEventListener(`change`, () => {this.run({"name": SOURCE, "element": ELEMENT}, null, {"auto sync": true});});
 				});
-			});
+
+				// Set the state. 
+				this[SOURCE][`scripts`] = {"background": {}};
 	
-			return (SEARCH);
-		}
+				// Find the data.
+				this.run({"name": SOURCE}, `*`, {"auto sync": true});
+				this.pick(SOURCE, null);
+			}
+		});
+	};
+
+	/*
+	Run a search. 
+
+	@param {object} source the source data
+	@param {object} data the data to find for
+	@param {object} options the options to use
+	*/
+	async run(source, data, options) {
+		const show = () => {
+			return(new Promise((resolve, reject) => {
+				Object.keys(this).includes(source[`name`]) ? resolve(
+					this.find(source, data).then((results) => {
+						return(this.display(source[`name`], results, (this[source[`name`]][`preview`]) ? (this[source[`name`]][`preview`]) : `name`));
+					}))
+				: reject();
+			}));
+		};
+
+		show().then(() => {
+			if (((typeof options).includes(`obj`) && options) ? options[`auto sync`] : false) {
+				// Set the refresh function.
+				let item  = this[source[`name`]][`selected`];
+
+				this[source[`name`]][`scripts`][`refresh`] = () => {
+					wait((this[`state`][`read/write`] ? this[`state`][`read/write`] >= 0 : true)).then(
+						() => {
+							if (this[source][`selected`] == item) {
+								show()
+							} else if (this[source[`name`]][`scripts`][`background`][`refresh`]) {
+								this[source[`name`]][`scripts`][`background`][`refresh`].cancel();
+							};
+						}
+					);
+				};
+
+				this[source[`name`]][`scripts`][`background`][`refresh`] = new background(() => {this[source[`name`]][`scripts`][`refresh`]});
+			};
+		}).catch((err) => {
+			logging.error(err);
+		});
+	};
+
+	/*
+	Find the data. 
+
+	@param {object} source the source data
+	@param {string} data the data to find for
+	@param {object} the results, with their corresponding name as the key
+	*/
+	async find (source, data) {
+		((((typeof source).includes(`str`) ? source.trim() : false) || Array.isArray(source)) && source)
+			? source = {"name": source}
+			: false;
+
+		// Set the primary search criteria. 
+		if (data && data != `*`) {
+			// Having data filled means an override. 
+			this[source[`name`]][`criteria`] = ((typeof data).includes(`str`)) ? data.trim() : data;
+		} else if ((source[`element`]) ? source[`element`].value.trim() : false) {
+			// There is an element to use. 
+			this[source[`name`]][`criteria`] = source[`element`].value.trim();
+		} else if (this[source[`name`]][`elements`][`search box`] ? this[source[`name`]][`elements`][`search box`].length : false) {
+			// No element defined, look for every box. 
+			(this[source[`name`]][`elements`][`search box`]).forEach((ELEMENT) => {
+				this[source[`name`]][`criteria`] = (ELEMENT.type.includes(`num`) || ELEMENT.type.includes(`range`))
+					? ((parseFloat(ELEMENT.value.trim()) != parseInt(ELEMENT.value.trim()))
+						? parseFloat(ELEMENT.value.trim())
+						: parseInt(ELEMENT.value.trim()))
+					: ELEMENT.value.trim();
+
+				this[source[`name`]][`criteria`] = (this[source[`name`]][`criteria`] != ``) ? this[source[`name`]][`criteria`] : null;
+			})
+		} else {
+			this[source[`name`]][`criteria`] = null;
+		};
+
+		// Find. 
+		this[source[`name`]][`results`] = await ((this[source[`name`]][`criteria`] != null)
+			? ((this[source[`name`]][`additional criteria`] ? this[source[`name`]][`additional criteria`].length : false)
+				? global.search(source[`name`], this[source[`name`]][`criteria`], this[source[`name`]][`additional criteria`])
+				: global.search(source[`name`], this[source[`name`]][`criteria`]))
+			: global.read(source[`name`]));
+
+		// Return the data. 
+		return (this[source[`name`]][`results`]);
 	}
-}
+
+	/*
+	Display the search results. 
+
+	@param {string} source the source data
+	@param {object} data the data to display
+	@param {string} title the field to display
+	*/
+	display(source, data, title) {
+		if (source ? (Array.isArray(source) ? source.length : String(source)) : false) {
+			source = (Array.isArray(source)) ? source.join(`,`) : String(source);
+
+			// Get the data. 
+			data = (data && ((typeof data).includes(`obj`))) ? data : this[source][`results`];
+
+			const gui_output = () => {
+				// Prepare the elements we will need. 
+				if (this[source][`elements`][`results list`] ? this[source][`elements`][`results list`].length : false) {
+					const design = () => {
+						// Prepare the access keys. 
+						let ACCESS_KEYS = {"top": ["1", "2", "3", "4", "5", "6", "7", "8", "9"], "nav": ["<", ">"]};
+						
+						/*
+						Add the selected state. 
+						*/
+						const select = (element) => {
+							if (element) {
+								// Remove all active classes.
+								(element.parentElement).parentElement.querySelectorAll(`li`).forEach((ELEMENT) => {
+									ELEMENT.classList.remove(`active`);
+								});
+		
+								// Add the active. 
+								element.parentElement.classList.add(`active`);
+	
+								return (element);
+							};							
+						};
+	
+						/*
+						Add the access keys (shortcut). 
+	
+						@param {string} name the name of the element
+						@param {object} ELEMENT the element to add the access key to
+						@param {object} state the current state of the element
+						*/
+						const shortcut = (name, element, state) => {
+							let RESULT_INDEX = (Object.keys(data)).indexOf(name);
+	
+							if (RESULT_INDEX >= 0) {
+								if (state.includes(`config`)) {
+									((RESULT_INDEX < ACCESS_KEYS[`top`].length) && (RESULT_INDEX >= 0))
+										? element.setAttribute(`accesskey`, ACCESS_KEYS[`top`][RESULT_INDEX])
+										: false;
+
+									return (element);
+								} else if (state.includes(`execute`)) {
+									let ELEMENT = {"selected": element};
+									ELEMENT[`neighbors`] = (ELEMENT[`selected`].parentElement.parentElement).querySelectorAll(`a`);
+		
+									// Remove elements with accesskeys in nav. 
+									(ELEMENT[`neighbors`]).forEach((OTHER) => {
+										(OTHER.getAttribute(`accesskey`) ? (ACCESS_KEYS[`nav`].includes(OTHER.getAttribute(`accesskey`))) : false)
+											? OTHER.removeAttribute(`accesskey`)
+											: false;
+									})
+		
+									if ((RESULT_INDEX + 1 >= ACCESS_KEYS[`top`].length) && (RESULT_INDEX + 1 < ELEMENT[`neighbors`].length)) {
+										ELEMENT[`neighbors`][RESULT_INDEX + 1].setAttribute(`accesskey`, ACCESS_KEYS[`nav`][1])
+									}
+		
+									(RESULT_INDEX > ACCESS_KEYS[`top`].length)
+										? (ELEMENT[`neighbors`])[RESULT_INDEX - 1].setAttribute(`accesskey`, ACCESS_KEYS[`nav`][0])
+										: false;
+		
+									(RESULT_INDEX >= ACCESS_KEYS[`top`].length)
+										? ELEMENT[`selected`].setAttribute(`accesskey`, `0`)
+										: false;
+		
+									return (ELEMENT);
+								}
+							}
+						}
+	
+						let ELEMENTS = [];
+	
+						(data ? Object.keys(data).length : false)
+							? (Object.keys(data)).forEach((RESULT) => {
+								let ELEMENTS_RESULT = {}
+								ELEMENTS_RESULT[`container`] = document.createElement(`li`);
+								ELEMENTS_RESULT[`title`] = document.createElement(`a`);
+	
+								// Add the classes. 
+								ELEMENTS_RESULT[`title`].classList.add(`waves-effect`);
+								ELEMENTS_RESULT[`title`].textContent = String((title && data[RESULT][title]) ? data[RESULT][title] : RESULT);
+	
+								// Add the action. 
+								ELEMENTS_RESULT[`title`].addEventListener(`click`, () => {
+									// Set the visual state. 
+									select(ELEMENTS_RESULT[`title`]);
+									shortcut(RESULT, ELEMENTS_RESULT[`title`], `execute`);
+									
+									// Pick the data.
+									this.pick(source, RESULT, data[RESULT]);
+								});
+	
+								// Add the shortcut. 
+								ELEMENTS_RESULT[`title`] = shortcut(RESULT, ELEMENTS_RESULT[`title`], `config`);
+
+								// Add the elements to the container.
+								ELEMENTS_RESULT[`container`].appendChild(ELEMENTS_RESULT[`title`]);
+								ELEMENTS.push(ELEMENTS_RESULT[`container`]);
+							})
+						: false;
+						
+						return (ELEMENTS);
+					}
+	
+					let TEMPLATE = design();
+					(this[source][`elements`][`results list`]).forEach((ELEMENT_TARGET) => {
+						// Clear the target element.
+						ELEMENT_TARGET.innerHTML = ``;
+						(TEMPLATE.length)
+							? TEMPLATE.forEach((ELEMENT) => {
+								ELEMENT_TARGET.appendChild(ELEMENT);
+							})
+							: this.pick(source, null);
+					})
+				};
+			}
+
+			/*
+			Display the search results in the log. 
+			*/
+			function log (data, title) {
+				if (Object.keys(data).length) {
+					let RESULT_STRING = ``;
+					(Object.keys(data)).forEach((RESULT_KEY) => {
+						RESULT_STRING += RESULT_KEY.concat(((title) ? data[RESULT_KEY][title] : false) ? `: `.concat(data[RESULT_KEY][title]) : ``, `\n`);
+					})
+
+					new logging(texts.localized(`search_found_heading`), RESULT_STRING, {"silent": true});
+				} else {
+					new logging(texts.localized(`search_notfound_heading`));
+				}
+			};
+
+			log(data, title);
+			gui_output();
+		}
+	};
+
+	/*
+	Pick a result from the search.
+
+	@param {string} source the name of the source
+	@param {object} item the item picked
+	@param {string} details the details of the selected item
+	*/
+	pick(source, item, details) {
+		// Fill in the details if it's missing when the item and source isn't. 
+		if (!details && (source && item)) {
+			(Object.hasOwn(this[source][`results`], item))
+			? details = this[source][`results`][item]
+			: false;
+		};
+
+		const set = () => {
+			this[source][`selected`] = item;
+			
+			// Set the background state.
+			nested.dictionary.get(this, [source, `scripts`, `background`, `selected`])
+				? this[source][`scripts`][`background`][`selected`].cancel()
+				: false;
+			if (!EMPTY) {
+				this[source][`scripts`][`reader`] = wait((this[`state`][`read/write`] ? this[`state`][`read/write`] >= 0 : true)).then(
+					() => {(this[source][`selected`] == item) ? gui_display() : false;}
+				);
+	
+				// Reset the background. 
+				this[source][`scripts`][`background`][`selected`] = new background(() => {this[source][`scripts`][`reader`]});
+			}
+		}
+
+		const gui_display = () => {
+			const enable = () => {
+				let DISABLED = EMPTY;
+				let TARGETS = [];
+				TARGETS = [...((this[source][`elements`][`container`] ? this[source][`elements`][`container`].length : false) ? this[source][`elements`][`container`] : []), ...((this[source][`elements`][`enable`] ? this[source][`elements`][`enable`].length : false) ? this[source][`elements`][`enable`] : [])];
+
+				[`content`, `fields`].forEach((ELEMENTS) => {
+					(this[source][`elements`][ELEMENTS] ? Object.keys(this[source][`elements`][ELEMENTS]).length : false)
+					? Object.keys(this[source][`elements`][ELEMENTS]).forEach((SOURCE) => {
+						(this[source][`elements`][ELEMENTS][SOURCE] ? this[source][`elements`][ELEMENTS][SOURCE].length : false)
+						? TARGETS = [...TARGETS, ...this[source][`elements`][ELEMENTS][SOURCE]]
+						: false;
+					})
+					: false;
+				});
+
+				(TARGETS.length)
+					? (TARGETS).forEach((ELEMENT) => {
+						ELEMENT.disabled = DISABLED;
+					})
+					: false;
+			};
+
+			const fill = () => {
+				[`content`, `fields`].forEach((ELEMENTS) => {
+					(this[source][`elements`][ELEMENTS] ? Object.keys(this[source][`elements`][ELEMENTS]).length : false)
+					? Object.keys(this[source][`elements`][ELEMENTS]).forEach(async (SOURCE) => {
+						if ((this[source][`elements`][ELEMENTS][SOURCE]) ? this[source][`elements`][ELEMENTS][SOURCE].length : false) {
+							if (EMPTY) {
+								this[source][`elements`][ELEMENTS][SOURCE].forEach((ELEMENT) => {
+									if ((ELEMENT.nodeName.toLowerCase()).includes(`input`) || (ELEMENT.nodeName.toLowerCase()).includes(`textarea`) || (ELEMENT.nodeName.toLowerCase()).includes(`progress`)) {
+										switch (ELEMENT.type) {
+											case `checkbox`:
+											case `radio`:
+												ELEMENT.checked = false;
+												break;
+											default: 
+												ELEMENT.value = ``;
+										};
+		
+										if ((ELEMENT.nodeName.toLowerCase()).includes(`input`) || (ELEMENT.nodeName.toLowerCase()).includes(`textarea`)) {
+											// Check if the element has an event listener and remove it.
+											(ELEMENT.func)
+												? [`change`, `blur`].forEach((EVENT) => {
+													ELEMENT.removeEventListener(EVENT, ELEMENT.func)
+												})
+												: false;
+										}
+									} else {
+										ELEMENT.innerText = ``;
+									};
+								})
+							} else {
+								let DATA = {};
+								DATA[`source`] = (SOURCE != `*`) ? SOURCE.split(`,`) : SOURCE;
+								DATA[`target`] = (DATA[`source`] != `*`)
+									? ((DATA[`source`][0] == `` || DATA[`source`][0] == `/`)
+										? [...(DATA[`source`].slice(1)), ...[item]]
+										: [...[item], ...(DATA[`source`])])
+									: DATA[`source`];
+								DATA[`value`] = (DATA[`source`] != `*`)
+									? ((nested.dictionary.get(details, DATA[`source`]) != null)
+										? nested.dictionary.get(details, DATA[`source`])
+										: await global.read(DATA[`target`]))
+									: ((typeof item).includes(`str`)
+										? item.trim()
+										: item);
+								
+								this[source][`elements`][ELEMENTS][SOURCE].forEach((ELEMENT) => {
+									if ((ELEMENT.nodeName.toLowerCase()).includes(`input`) || (ELEMENT.nodeName.toLowerCase()).includes(`textarea`) || (ELEMENT.nodeName.toLowerCase()).includes(`progress`)) {
+		
+										switch (ELEMENT.type) {
+											case `checkbox`:
+											case `radio`:
+												ELEMENT.checked = (DATA[`value`]);
+												break;
+											default: 
+												ELEMENT.value = DATA[`value`];
+										};
+		
+										if ((DATA[`source`] != `*`) && (ELEMENT.nodeName.toLowerCase()).includes(`input`) || (ELEMENT.nodeName.toLowerCase()).includes(`textarea`)) {
+											// Remove the existing function. 
+											(ELEMENT.func)
+												? [`change`, `blur`].forEach((EVENT) => {
+													ELEMENT.removeEventListener(EVENT, ELEMENT.func)
+												})
+												: false;
+											
+											// Add the new function. 
+											ELEMENT.func = () => {};
+											switch (ELEMENT.type) {
+												case `checkbox`:
+												case `radio`:
+													ELEMENT.func = () => {
+														this[`state`][`read/write`] = -1; 
+														this[`state`][`last result`] = global.write(DATA[`target`], ELEMENT.checked);
+
+														this[`state`][`read/write`] = 0; 
+														return(this[`state`][`last result`]);	
+													};
+		
+													ELEMENT.checked = (DATA[`value`]);
+													break;
+												default: 
+													if ((typeof DATA[`value`]).includes(`obj`) && !Array.isArray(DATA[`value`])) {
+														ELEMENT.value = JSON.stringify(DATA[`value`]);
+														
+														ELEMENT.func = () => {
+															this[`state`][`read/write`] = -1;
+															this[`state`][`last result`] = false;
+
+															try {
+																this[`state`][`last result`] = global.write(DATA[`target`], JSON.parse(ELEMENT.value.trim()));
+															} catch(err) {
+																// The JSON isn't valid.
+																logging.error(err.name, texts.localized(`error_msg_notJSON_syntax`), err.stack, false);
+															};
+
+															this[`state`][`read/write`] = 0;
+															return(this[`state`][`last result`]);
+														}
+													} else {
+														ELEMENT.value = DATA[`value`];
+													
+														ELEMENT.func = () => {
+															this[`state`][`read/write`] = -1;
+
+															ELEMENT.val = ((ELEMENT.type.includes(`num`) || ELEMENT.type.includes(`range`))
+																? ((parseFloat(ELEMENT.value.trim()) != parseInt(ELEMENT.value.trim()))
+																	? parseFloat(ELEMENT.value.trim())
+																	: parseInt(ELEMENT.value.trim())
+																)
+																: ELEMENT.value.trim());
+		
+															this[`state`][`last result`] = global.write(DATA[`target`], ELEMENT.val);
+															this[`state`][`read/write`] = 0;
+															
+															delete ELEMENT.val;
+															return (this[`state`][`last result`]);
+														}
+													};
+											};
+		
+											(ELEMENT.nodeName.toLowerCase().includes(`textarea`))
+												? ELEMENT.addEventListener(`blur`, ELEMENT.func)
+												: false;
+		
+											ELEMENT.addEventListener(`change`, ELEMENT.func);
+										}
+									} else {
+										ELEMENT.innerText = DATA[`value`];
+									};
+								})
+							}
+							
+						}
+					})
+					: false;
+				});
+			}
+
+			enable();
+			fill();			
+		}
+
+
+		const log = () => {
+			(!EMPTY)
+				? new logging (texts.localized(`search_selected_heading`, false, [item]), ((typeof details).includes(`obj`) && !Array.isArray(details)) ? JSON.stringify(details) : String(details), {"silent": true})
+				: false;
+		};
+
+		let EMPTY = (item == null) ? true : ((details != null) ? !((typeof details).includes(`obj`) && !Array.isArray(details)) : true)
+		set();
+		log();
+		gui_display();
+	}
+};
+
+export { Search };
