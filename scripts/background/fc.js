@@ -2,7 +2,7 @@
 This script provides installation run scripts.
 */
 
-import { template, global, observe } from "../secretariat.js";
+import { template, global, background} from "../secretariat.js";
 import filters from "../filters.js";
 import pointer from "../data/pointer.js";
 let config = chrome.runtime.getURL("config/config.json");
@@ -96,7 +96,6 @@ export default class fc {
 				let UPDATER = updater_set();
 
 				let updater_interval = async () => {
-					
 					if ((await global.read([`settings`, `sync`, `duration`])) ? (await global.read([`settings`, `sync`, `duration`] * (60 ** 2) * 1000 != DURATION_PREFERENCES[`duration`])) : false) {
 						DURATION_PREFERENCES[`duration`] = await global.global.read([`settings`, `sync`, `duration`]) * (60 ** 2) * 1000;
 
@@ -106,7 +105,7 @@ export default class fc {
 					}
 				};
 
-				observe(updater_cancel);
+				new background(updater_cancel);
 			};
 		})
 

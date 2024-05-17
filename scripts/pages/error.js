@@ -5,7 +5,7 @@ Display the error screen details.
 import Page from "/scripts/pages/page.js";
 import Tabs from "/scripts/GUI/tabs.js";
 
-import {global, observe} from "/scripts/secretariat.js";
+import {global, background} from "/scripts/secretariat.js";
 import pointer from "/scripts/data/pointer.js";
 import texts from "/scripts/mapping/read.js";
 
@@ -23,7 +23,7 @@ class Page_Error extends Page {
 
 	async background() {
 		// Wait until a change in the session storage.
-		observe(async (changes) => {
+		new background(async (changes) => {
 			await this.update();
 			this.fill();
 		});

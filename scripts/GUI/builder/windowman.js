@@ -3,7 +3,7 @@ Window and window content management */
 
 import texts from "/scripts/mapping/read.js";
 import Tabs from "/scripts/GUI/tabs.js";
-import {global, observe} from "/scripts/secretariat.js";
+import {global, background} from "/scripts/secretariat.js";
 import {URLs} from "/scripts/utils/URLs.js";
 import wait from "/scripts/utils/wait.js";
 import UI from "/scripts/GUI/builder/windowman.extras.js";
@@ -66,7 +66,7 @@ export default class windowman {
 
 			return (UI);
 		};
-		
+
 		// Get the window.
 		this[`metadata`] = chrome.windows.getCurrent();
 		this[`options`] = OPTIONS;
@@ -75,7 +75,7 @@ export default class windowman {
 		this[`headers`] = headers(((this[`options`] && (typeof this[`options`]).includes(`obj`)) ? this[`options`][`headers`] : false) ? this[`options`][`headers`] : null);
 		
 		if (((this[`options`] && (typeof this[`options`]).includes(`obj`)) ? Object.hasOwn(this[`options`], `automatic`) : false) ? this[`options`][`automatic`] : true) {
-		this.design();
+			this.design();
 		};
 	}
 
@@ -348,6 +348,7 @@ export default class windowman {
 	/* Run this function if you would like to synchronize with data. */
 	async sync() {
 		// Prepare flags. 
+		this[`storage`] = {}
 		this[`state`] = {};
 		this[`state`][`read/write`] = 0;
 
@@ -522,11 +523,11 @@ export default class windowman {
 		
 		fill();
 		write();
-		extras();
 		
 		// Update the input elements.
-		observe((what) => {
-			fill();
+		this[`storage`][`background`] = () => {fill();}
+		new background((DATA) => {
+			this[`storage`][`background`]();
 		});
 	}
 }

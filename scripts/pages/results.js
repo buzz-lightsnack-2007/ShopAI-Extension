@@ -4,7 +4,7 @@ Results.js
 Fills the page with the results of the analysis.
 */
 
-import {global, observe} from "/scripts/secretariat.js";
+import {global, background} from "/scripts/secretariat.js";
 import Page from "/scripts/pages/page.js";
 import nested from "../utils/nested.js";
 
@@ -18,7 +18,7 @@ class Page_Results extends Page {
 
      async background() {
 		// Wait until a change in the session storage.
-		observe((changes) => {
+		new background((changes) => {
                this.update();
 			this.content();
 			// First, update site data but retain the URL. 

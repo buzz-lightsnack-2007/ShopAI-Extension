@@ -1,7 +1,7 @@
 import BrowserIcon from '/scripts/GUI/browsericon.js';
 import Tabs from '/scripts/GUI/tabs.js';
 import texts from "/scripts/mapping/read.js";
-import {global, observe} from "/scripts/secretariat.js";
+import {global, background} from "/scripts/secretariat.js";
 import {URLs} from "/scripts/utils/URLs.js";
 
 const CONFIG = chrome.runtime.getURL("styles/colors/icon.json");
@@ -63,7 +63,7 @@ class IconIndicator {
 						}, {"tabId": TAB.id});
 		
 					showDetails(LOCATION, TAB.id);
-					observe((changes) => {
+					new background((changes) => {
 						showDetails(LOCATION, TAB.id);
 					});
 				})

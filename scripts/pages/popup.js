@@ -3,7 +3,7 @@
 */
 
 // Import modules.
-import {global, observe} from "/scripts/secretariat.js";
+import {global, background} from "/scripts/secretariat.js";
 import Window from "/scripts/GUI/window.js";
 import Page from "/scripts/pages/page.js";
 import Loader from "/scripts/GUI/loader.js";
@@ -20,7 +20,7 @@ class Page_Popup extends Page {
 
 	async background() {
 		// Wait until a change in the session storage.
-		observe((changes) => {
+		new background((changes) => {
 			this.update();
 			this.switch();
 		});

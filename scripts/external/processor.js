@@ -4,7 +4,7 @@ Process the information on the website and display it on screen.
 
 import scraper from "/scripts/external/scraper.js";
 import product from "/scripts/data/product.js";
-import {global, observe} from "/scripts/secretariat.js";
+import {global, background} from "/scripts/secretariat.js";
 import logging from "/scripts/logging.js";
 import texts from "/scripts/mapping/read.js";
 import {URLs} from "/scripts/utils/URLs.js";
@@ -92,17 +92,16 @@ export default class processor {
 		const wait = async () => {
 			let RUN = false;
 			if (await global.read([`settings`,`analysis`,`api`,`key`])) {
-				console.log(`run`);
 				await main();
 				RUN = true;
 			} else {
-				new logging(texts.localized(`AIkey_message_waiting_title`), texts.localized(`AIkey_message_waiting_body`))
-				observe(async () => {
+				new logging(texts.localized(`AIkey_message_waiting_title`), texts.localized(`AIkey_message_waiting_body`));
+				new background(async () => {
 					if ((!RUN) ? (await global.read([`settings`,`analysis`,`api`,`key`])) : false) {
 						await main();
 						RUN = true;
 					}
-				})
+				});
 			}
 		}
 

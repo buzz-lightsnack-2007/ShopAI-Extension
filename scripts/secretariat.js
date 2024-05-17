@@ -505,14 +505,52 @@ class managed {
 }
 
 /*
-Run a script when the browser storage has been changed.
-
-@param {object} reaction the function to run
+Background data execution
 */
-export function observe(reaction) {
-	chrome.storage.onChanged.addListener((changes, namespace) => {
-		reaction(changes, namespace);
-	});
+class background {
+	/*
+	Add or prepare a listener. 
+
+	@param {function} callback the function to run
+	@param {object} options the options
+	*/
+	constructor (callback, options) {
+		// Set the listener. 
+		this.callback = callback;
+
+		// Run the listener if necessary.
+		((options ? Object.hasOwn(options, `run`) : false) ? options[`run`] : true) ? this.run() : false;
+	};
+
+	/*
+	Set the listener. 
+	*/
+	run () {
+		return(chrome.storage.onChanged.addListener((changes, namespace) => {
+			this.callback({"changes": changes, "namespace": namespace});
+		}));
+	};
+
+	/*
+	Cancel the listener. 
+	*/
+	cancel () {
+		// Cancel the listener. 
+		return(chrome.storage.onChanged.removeListener((changes, namespace) => {
+			this.callback({"changes": changes, "namespace": namespace});
+		}))
+	};
 }
 
-export {global, session, template, managed};
+/*
+Run a script when the browser storage has been changed.
+
+@param {function} callback the function to run
+*/
+export function observe(callback) {
+	return(chrome.storage.onChanged.addListener((changes, namespace) => {
+		callback({"changes": changes, "namespace": namespace});
+	}));
+}
+
+export {global, session, template, managed, background};
