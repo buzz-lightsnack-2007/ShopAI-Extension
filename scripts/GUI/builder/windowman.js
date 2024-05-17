@@ -17,7 +17,7 @@ export default class windowman {
 
 	// Prepare the window with its metadata.
 	constructor(OPTIONS) {
-		const headers = (OPTIONS) => {
+		function headers (OPTIONS) {
 			let LOAD_STATE = true;
 			let UI = {
 				"CSS": ["/styles/external/fonts/materialdesignicons.min.css", "/styles/external/materialize/css/materialize.css", "/styles/ui.css"],
@@ -64,13 +64,15 @@ export default class windowman {
 				})
 				: false;
 
-			this.header = UI;
+			return (UI);
 		};
-
-		
 		
 		// Get the window.
 		this[`metadata`] = chrome.windows.getCurrent();
+		this[`options`] = OPTIONS;
+
+		// Add the headers. 
+		this[`headers`] = headers(((this[`options`] && (typeof this[`options`]).includes(`obj`)) ? this[`options`][`headers`] : false) ? this[`options`][`headers`] : null);
 		
 		headers(((OPTIONS != null && typeof OPTIONS == `object`) ? OPTIONS[`headers`] : false) ? OPTIONS[`headers`] : null);
 		this.design();
