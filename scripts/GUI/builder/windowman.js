@@ -74,8 +74,9 @@ export default class windowman {
 		// Add the headers. 
 		this[`headers`] = headers(((this[`options`] && (typeof this[`options`]).includes(`obj`)) ? this[`options`][`headers`] : false) ? this[`options`][`headers`] : null);
 		
-		headers(((OPTIONS != null && typeof OPTIONS == `object`) ? OPTIONS[`headers`] : false) ? OPTIONS[`headers`] : null);
+		if (((this[`options`] && (typeof this[`options`]).includes(`obj`)) ? Object.hasOwn(this[`options`], `automatic`) : false) ? this[`options`][`automatic`] : true) {
 		this.design();
+		};
 	}
 
 	/*
