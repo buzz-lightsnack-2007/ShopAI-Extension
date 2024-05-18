@@ -6,6 +6,7 @@ Collapsibles are also tabs.
 */
 class Tabs {
 	status = {};
+	options = {};
 
 	/*
 	Initialize the tabs. 
@@ -13,6 +14,7 @@ class Tabs {
 	@param {string} location The URL of the page.
 	*/
 	constructor(options = {}) {
+		this.options = options;
 		this.#get();
 		this.#set();
 	};
@@ -34,6 +36,12 @@ class Tabs {
 					this[NAME][`elements`][`container`] = CONTAINER;
 					this[NAME][`elements`][`tabs`] = {};
 					
+					// Set the other options.
+					(CONTAINER.getAttribute(`tabs-required`))
+						? this[`options`] = nested.dictionary.set(this[`options`], [NAME, `required`], (([`true`, `false`].includes(CONTAINER.getAttribute(`tabs-required`))) ? Boolean(CONTAINER.getAttribute(`tabs-required`)) : CONTAINER.getAttribute(`tabs-required`)))
+						: false;
+				
+
 					(CONTAINER.querySelector(`:scope > li`))
 						? CONTAINER.querySelectorAll(`:scope > li`).forEach((TAB, INDEX) => {
 							let ID = (TAB.getAttribute(`id`))
@@ -59,7 +67,9 @@ class Tabs {
 						: false;
 	
 					// Delete the attribute. 
-					CONTAINER.removeAttribute("tabs-group");
+					[`group`, `required`].forEach((ATTRIBUTE) => {
+						CONTAINER.removeAttribute(`tabs-`.concat(ATTRIBUTE));
+					});
 				}
 			}))
 			: false;
@@ -71,12 +81,16 @@ class Tabs {
 	#set() {
 		(Object.keys(this).length > 1)
 			? (Object.keys(this).forEach((NAME) => {
-				if (NAME != `status`) {
+				if (![`status`, `options`].includes(NAME)) {
 					// Add the events to each tab. 
 					(Object.keys(this[NAME][`elements`][`tabs`]).length)
 						? (Object.keys(this[NAME][`elements`][`tabs`]).forEach((ID) => {
 							this[NAME][`elements`][`tabs`][ID][`header`].addEventListener(`click`, () => {
-								this.open(NAME, ID);
+								((this[`status`][`read/write`]) >= 0)
+									? (this[NAME][`elements`][`tabs`][ID][`container`].classList.contains(`active`) || this[`options`][NAME][`required`])
+										? this.open(NAME, ID)
+										: this.close(NAME)
+									: false;
 							});
 						}))
 						: false;
@@ -85,7 +99,7 @@ class Tabs {
 					(global.read([`view`, `tabs`, NAME, `selected`])).then((SELECTED) => {
 						if (SELECTED != null) {
 							// Wait until page load is complete. 
-							this.open(NAME, SELECTED, {"don't save": true, "automatic": true});
+							this.open(NAME, SELECTED, {"don't save": true});
 						};
 					});
 				}
@@ -105,19 +119,41 @@ class Tabs {
 		if ((name && ID) && Object.keys(this).includes(name)) {
 			// Update the variable. 
 			this[name][`selected`] = ID;
+			if (!(((typeof options).includes(`obj`) && options) ? options[`don't save`] : false)) {
+				this[`status`][`read/write`] = -1;
+				this[`status`][`last`] = await global.write([`view`, `tabs`, name, `selected`], ID, 1, {"silent": true});
+				this[`status`][`read/write`] = 0;
+			};
 
-			(((typeof options).includes(`obj`) && options) ? options[`don't save`] : false)
-				? false
-				: this[`status`][`last`] = await global.write([`view`, `tabs`, name, `selected`], ID, 1, {"silent": true});
+			// Select the tab.
+			((nested.dictionary.get(this, [name, `elements`, `tabs`, ID, `header`]))
+				? ((this[name][`elements`][`tabs`][ID][`container`].classList.contains(`active`)) ? false : this[name][`elements`][`tabs`][ID][`header`].click())
+				: false);	
+		}
+	}
+	
+	/*
+	De-select any tab. 
+
+	@param {string} name The name of the tab group.
+	@param {object} options The options to be used.
+	*/
+	async close (name, options) {
+		let ID = this[name][`selected`];
+		if ((name && ID) && Object.keys(this).includes(name)) {
+			// Update the variable. 
+			this[name][`selected`] = null;
+			if (!(((typeof options).includes(`obj`) && options) ? options[`don't save`] : false)) {
+				this[`status`][`read/write`] = -1;
+				this[`status`][`last`] = await global.write([`view`, `tabs`, name, `selected`], null, 1, {"silent": true});
+				this[`status`][`read/write`] = 0;
+			};
 
 			// Select the tab. 
-			(((typeof options).includes(`obj`) && options) ? options[`automatic`] : false)
-				? ((nested.dictionary.get(this, [name, `elements`, `tabs`, ID, `header`]))
-					? this[name][`elements`][`tabs`][ID][`header`].click()
-					: false)
-				: false;		
+			((nested.dictionary.get(this, [name, `elements`, `tabs`, ID, `header`]))
+				? ((this[name][`elements`][`tabs`][ID][`container`].classList.contains(`active`)) ? this[name][`elements`][`tabs`][ID][`header`].click() : false)
+				: false);	
 		}
-
 	}
 }
 
