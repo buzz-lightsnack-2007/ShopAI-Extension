@@ -39,3 +39,7 @@ progress::-webkit-progress-value {
 label {
 	color: var(--font-color-main) !important;
 }
+
+#tip {
+	color: var(--font-color-medium) !important;
+}
