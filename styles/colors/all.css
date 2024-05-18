@@ -9,6 +9,10 @@ body {
 	background-color: var(--background-color);
 }
 
+.btn-flat {
+	color: var(--font-color-main);
+}
+
 .background {
 	background: linear-gradient(
 		25deg,
