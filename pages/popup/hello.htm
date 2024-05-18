@@ -6,17 +6,80 @@
 	</head>
 	<body>
 		<main class="container">
-			<ul class="collapsible">
+			<ul class="collapsible" tabs-group="OOBE" tabs-required="true">
 				<li id="OOBE_Hello">
 					<header class="collapsible-header waves-effect"><h1 for="hello" class="flow-text"></h1></header>
 					<section class="collapsible-body">
-						<h2 for="GUI_welcome_headline" class="flow-text"></h2>
+						<h2 class="flow-text" data-icon="hand-wave"><br/><span for="GUI_welcome_headline"></span></h2>
+						<p for="extension_description"></p>
+						<p for="extension_description_extended"></p>
+					</section>
+				</li>
+				<li id="OOBE_TOS">
+					<header class="collapsible-header waves-effect"><span for="OOBE_header_TOS"></span></header>
+					<section class="collapsible-body">
+						<side class="input-field">
+							<button href="https://policies.google.com/terms/generative-ai" for="OOBE_button_GoogleTOS"></button>
+							<button href="https://policies.google.com/terms/generative-ai/use-policy" for="OOBE_button_GoogleUsePolicy"></button>
+						</side>
+						<p for="OOBE_notice_TOS_disclaimer"></p>
+					</section>
+				</li>
+				<li id="OOBE_QuickGuide">
+					<header class="collapsible-header waves-effect"><span for="OOBE_header_QuickGuide"></span></header>
+					<section class="collapsible-body">
+						
 					</section>
 				</li>
 				<li id="OOBE_APISetup">
 					<header class="collapsible-header"><span for="OOBE_header_APISetup"></span></header>
 					<section class="collapsible-body">
-
+						<section class="input-group">
+							<label class="input-description">
+								<p for="settings_analysis_description"></p>
+								<p for="OOBE_quickstart_API_intro"></p>
+								<label id="OOBE_quickstart_API_steps">
+									<section class="card">
+										<figure class="card-image">
+											<img src="/media/screenshots/API Step 1.png">
+											<a class="btn-floating halfway-fab" href="https://console.cloud.google.com/projectcreate" target="_blank" data-icon="open-in-new"></a>
+										</figure>
+										<div class="card-content">
+											<p for="OOBE_quickstart_API_Step1"></p>
+										</div>
+									</section>
+									<section class="card">
+										<figure class="card-image">
+											<img src="/media/screenshots/API Step 2.png">
+											<a class="btn-floating halfway-fab" href="https://aistudio.google.com/app/apikey" target="_blank" data-icon="open-in-new"></a>
+										</figure>
+										<div class="card-content">
+											<p for="OOBE_quickstart_API_Step2"></p>
+										</div>
+									</section>
+									<section class="card">
+										<figure class="card-image">
+											<img src="/media/screenshots/API Step 3.png">
+										</figure>
+										<div class="card-content">
+											<p for="OOBE_quickstart_API_Step3"></p>
+										</div>
+									</section>
+									<section class="card">
+										<figure class="card-image">
+											<img src="/media/screenshots/API Step 4.png">
+										</figure>
+										<div class="card-content">
+											<p for="OOBE_quickstart_API_Step4"></p>
+										</div>
+									</section>
+								</label>
+							</label>
+							<div class="input-field">
+								<input type="password" data-store="settings,analysis,api,key" data-store-location="1" placeholder=" " class="validate" required />
+								<label for="API_Key"></label>
+							</div>
+						</section>
 						<label id="tip" for="OOBE_tip_seeAgain"></label>
 					</section>
 				</li>
