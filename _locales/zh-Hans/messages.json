@@ -1,162 +1,343 @@
 {
-  "extension_name": {
-    "message": "购物+人类智能",
-    "description": "扩展程序名字"
-  },
-  "extension_description": {
-    "message": "用人类智能榜您谨慎地买东西！",
-    "description": "扩展程序的简介"
-  },
-  "extension_version": {
-    "message": "嗨",
-    "description": "扩展程序的版本名字"
-  },
-  "GUI_welcome_headline": {
-    "message": "欢迎使用《购物+人类智能》！",
-    "description": "欢迎信息"
-  },
-  "GUI_welcome_version": {
-    "message": "本浏览器有 $manifest_version$ 版本的。",
-    "description": "版本简介",
-    "placeholders": {
-      "manifest_version": {
-        "content": "$1",
-        "description": "版本号码"
-      }
-    }
-  },
-  "GUI_status_version": {
-    "message": "$manifest_version$ 版本",
-    "description": "statusbar 上的版本",
-    "placeholders": {
-      "manifest_version": {
-        "content": "$1",
-        "description": "版本"
-      }
-    }
-  },
-  "GUI_credits_0": {
-    "message": "亲爱的马老师…",
-    "description": "credits #0"
-  },
-  "GUI_alert_confirm_action_text": {
-    "message": "您认真地想运行它吗?",
-    "description": "运行危险的软件以前的问题"
-  },
-  "GUI_title_preferences": {
-    "message": "购物人类智能设置",
-    "description": "设置网页的题目"
-  },
-  "term_preferences": {
-    "message": "设置"
-  },
-  "term_about": {
-    "message": "关于"
-  },
-  "term_filters": {
-    "message": "过滤器"
-  },
-  "term_apply": {
-    "message": "应用"
-  },
-  "term_cancel": {
-    "message": "取消"
-  },
-  "term_general": {
-    "message": "常规"
-  },
-  "term_storage": {
-    "message": "存储"
-  },
-  "term_help": {
-    "message": "帮助"
-  },
-  "term_behavior": {
-    "message": "性能"
-  },
-  "term_API_Key": {
-    "message": "API 密钥"
-  },
+	"extension_name": {
+		"message": "智选助手",
+		"description": "扩展程序名称"
+	},
+	"extension_description": {
+		"message": "用人工智能购物更智慧！",
+		"description": "扩展程序描述"
+	},
+	"extension_version": {
+		"message": "故事开始",
+		"description": "扩展程序版本名（非数字）"
+	},
+	"extension_description_extended": {
+		"message": "智选助手是基于人工智能的购物助手，它可以为您提供商品评分和摘要，帮助您轻松做出明智的决策。由谷歌 Gemini Pro 技术支持，智选助手会实时分析您正在阅读的网站内容。使用此功能需遵守 Google 的服务条款。"
+	},
+	
+	"GUI_welcome_version": {
+		"message": "您拥有 $manifest_version$ 版本。", 
+		"description": "欢迎信息中的版本号",
+		"placeholders": {
+			"manifest_version": {
+				"content": "$1",
+				"description": "版本号"
+			}
+		}
+	},
+	"GUI_status_version": {
+		"message": "$manifest_version$ 版本",
+		"description": "状态栏中的版本号",
+		"placeholders": {
+			"manifest_version": {
+				"content": "$1",
+				"description": "版本号"
+			}
+		}
+	},
+	"GUI_alert_confirm_action_text": {
+		"message": "您确定要执行此操作吗?",
+		"description": "确认危险操作"
+	},
+	"GUI_title_preferences": {
+		"message": "智选助手设置"	
+	},
 
-  "settings_general_showApplicable": {
-    "message": "在此扩展程序图标中显示产品评分"
-  },
-  "settings_general_injectToPage": {
-    "message": "注入一个快速访问按钮"
-  },
-  "settings_behavior_autoRun": {
-    "message": "自动在支持页面运行此扩展"
-  },
-  "settings_filters_description": {
-    "message": "过滤器帮助确定网站内容之前的摘要。"
-  },
-  "settings_storage_description": {
-    "message": "为了加快浏览速度，《购物+人类智能》存储您以往访问过的产品信息。当产品信息发生变化时，此信息将被更新。"
-  },
-  "settings_analysis_description": {
-    "message": "为了提高购物体验，我们会收集您的购物行为数据。"
-  },
-  "settings_storage_clear": {
-    "message": "清空"
-  },
-  "settings_filters_update": {
-    "message": "更新"
-  },
-  "settings_filters_update_status": {
-    "message": "正在下载 $filter_url$ 的滤器…",
-    "placeholders": {
-      "filter_url": {
-        "content": "$1"
-      }
-    }
-  },
-  "settings_filters_update_status_complete": {
-    "message": "更新过 $filter_url$ 的滤器…",
-    "placeholders": {
-      "filter_url": {
-        "content": "$1"
-      }
-    }
-  },
-  "settings_filters_update_status_failure": {
-    "message": "更新 $filter_url$ 的滤器失败：$error_msg$",
-    "placeholders": {
-      "error_msg": {
-        "content": "$1"
-      },
-      "filter_url": {
-        "content": "$2"
-      }
-    }
-  },
-  "settings_filters_update_stop": {
-    "message": "无法更新因为没有滤器。"
-  },
-  "settings_filters_open": {
-    "message": "编辑"
-  },
-  "error_msg": {
-    "message": "错误 $error_code$: $error_msg$",
-    "description": "错误信息模板",
-    "placeholders": {
-      "error_code": {
-        "content": "$1",
-        "description": "错误代码"
-      },
-      "error_msg": {
-        "content": "$2",
-        "description": "错误信息"
-      }
-    }
-  },
-  "error_msg_GUI": {
-    "message": "太不巧了，出现了 $error_code$ 样子的错误。请选择“好”停止此扩展程序。",
-    "description": "错误信息模板",
-    "placeholders": {
-      "error_code": {
-        "content": "$1",
-        "description": "错误代码"
-      }
-    }
-  }
+	"term_preferences": {
+		"message": "设置"
+	},
+	"term_about": {
+		"message": "关于"
+	},
+	"term_filters": {
+		"message": "过滤器"
+	},
+	"term_apply": {
+		"message": "应用"
+	},
+	"term_cancel": {
+		"message": "取消"
+	},
+	"term_general": {
+		"message": "常规"
+	},
+	"term_storage": {
+		"message": "存储"
+	},
+	"term_help": {
+		"message": "帮助"
+	},
+	"term_behavior": {
+		"message": "行为"
+	},
+	"term_analysis": {
+		"message": "分析"
+	},
+	"term_API_Key": {
+		"message": "API 密钥"
+	},
+	"term_enable": {
+		"message": "启用"
+	},
+	"term_refresh": {
+		"message": "刷新"
+	},
+	"term_blocked": {
+		"message": "已屏蔽"
+	},
+	"term_hello": {
+		"message": "你好！"
+	},
+	
+	"page_opening": {
+		"message": "正在打开…"
+	},
+	
+	"settings_general_showApplicable": {
+		"message": "在此扩展程序的图标中显示商品评分"
+	},
+	"settings_general_injectToPage": {
+		"message": "注入快速访问按钮"
+	},
+	"settings_general_autoOpen": {
+		"message": "自动打开弹出窗口"
+	},
+	"settings_behavior_autoRun": {
+		"message": "在受支持的页面上自动运行此扩展程序"
+	},
+	"settings_filters_description": {
+		"message": "过滤器有助于在总结网站内容之前确定其内容。"
+	},
+	"settings_storage_description": {
+		"message": "为了加快浏览速度，ShopAI 会存储您之前访问过的商品的信息。每当商品信息发生更改时，这些信息都会被更新。"
+	},
+	"settings_analysis_description": {
+		"message": "ShopAI 由 Google Gemini Pro 提供支持，可以总结网站内容并为商品提供评分。使用此功能需要 Google 的 API 密钥。使用此功能需遵守 Google 的服务条款。"
+	},
+	"settings_storage_clear": {
+		"message": "清空"
+	},
+	"settings_filters_update": {
+		"message": "更新"
+	},
+	"settings_filters_update_status": {
+		"message": "正在更新…"
+	},
+	"settings_filters_update_status_complete": {
+		"message": "更新完成。"
+	},
+	"settings_filters_update_status_failure": {
+		"message": "由于错误 $error_message$，无法更新 $filter_url$ 的过滤器。",
+		"placeholders": {
+			"error_message": {
+				"content": "$1"
+			},
+			"filter_url": {
+				"content": "$2"
+			}
+		}
+	},
+	"settings_filters_search_prompt": {
+		"message": "搜索"
+	},
+	"settings_filters_update_stop": {
+		"message": "没有可用的过滤器，因此没有更新任何过滤器。"
+	},
+	"settings_filters_open": {
+		"message": "编辑"
+	},
+	"settings_filters_add_one": {
+		"message": "添加当前源"
+	},
+	"settings_filters_add_prompt": {
+		"message": "输入要添加的源的 URL。"
+	},
+	"settings_filters_source_name": {
+		"message": "标题"
+	},
+	"settings_filters_source_author": {
+		"message": "作者"
+	},
+	"settings_filters_source_description": {
+		"message": "描述"
+	},
+	"settings_filters_source_prompt": {
+		"message": "来源或本地名称"
+	},
+	"settings_filters_target_URL": {
+		"message": "URL 模式"
+	},
+	"settings_filters_content": {
+		"message": "过滤器"
+	},
+	"settings_update_duration_description": {
+		"message": "更新检查"
+	},
+	"settings_behavior_autoOpen": {
+		"message": "自动打开侧边栏"
+	},
+	"settings_filters_target": {
+		"message": "注入目标"
+	},
+	"settings_restartToApply": {
+		"message": "为了使更改生效，请重启扩展程序或浏览器。"
+	},
+	"settings_restartToApply_iconChange": {
+		"message": "图标更改不会自动进行。"
+	},
+	
+	"search_found_heading": {
+		"message": "找到以下内容："
+	},
+	"search_notfound_heading": {
+		"message": "未找到任何内容。"
+	},
+	"search_selected_heading": {
+		"message": "$item$:",
+		"placeholders": {
+			"item": {
+				"content": "$1"
+			}
+		}
+	},
+
+	"saving_current": {
+		"message": "正在保持内容…"
+	},
+	"saving_current_message": {
+		"message": "正在保持当前内容。"
+	},
+	"saving_done": {
+		"message": "内容已保存。"
+	},
+	"saving_reload_title": {
+		"message": "重新加载页面"
+	},
+	"saving_reload_body": {
+		"message": "为了使更改生效，请重新加载页面。"
+	},
+
+	"scrape_msg_0": {
+		"message": "准备中…"
+	},
+	"scrape_msg_25": {
+		"message": "正在收集信息…"
+	},
+	"scrape_msg_50": {
+		"message": "正在生成分析…"
+	},
+	"scrape_msg_100": {
+		"message": "全部完成。"
+	},
+	"scrape_msg_ready": {
+		"message": "加载完成，正在处理…"
+	},
+	"AI_message_title_done": {
+		"message": "分析:"
+	},
+	"AIkey_message_waiting_title": {
+		"message": "正在等待您的 API 密钥…"
+	},
+	"AIkey_message_waiting_body": {
+		"message": "请在设置中输入您的 API 密钥。一旦输入密钥，加载将自动继续。"
+	},
+
+	"results_tip_1": {
+		"message": "向下滚动以查看详细信息。"
+	},
+	"results_tip_2": {
+		"message": "感觉有些不对？点击汉堡菜单并刷新。"
+	},
+	
+	"error_msg_GUI": {
+		"message": "出现了一个 $error_code$ 类型的异常。$error_message$ 请单击“确定”继续。",
+		"description": "完整图形界面的错误消息模板",
+		"placeholders": {
+			"error_code": {
+				"content": "$1",
+				"description": "错误代码"
+			},
+			"error_message": {
+				"content": "$2",
+				"description": "错误消息"
+			}
+		}
+	},
+	"error_msg_GUI_title": {
+		"message": "哎呀"
+	},
+	"error_msg_GUI_body": {
+		"message": "出现了一个错误。寻求帮助时，请参考以下代码。"
+	},
+	"error_msg_fileNotFound": {
+		"message": "找不到文件 $file_path$。",
+		"description": "文件未找到异常的错误消息模板",
+		"placeholders": {
+			"file_path": {
+				"content": "$1",
+				"description": "文件路径"
+			}
+		}
+	},
+	"error_msg_notURL_syntax": {
+		"message": "请仔细检查您的网址并重试。"
+	},
+	"error_msg_notJSON": {
+		"message": "文件已下载，但这不是正确的文件类型。"
+	},
+	"error_msg_notJSON_syntax": {
+		"message": "由于 JSON 格式错误，您的更改尚未保存。要保存，请更正错误。"
+	},
+	"error_msg_save_failed": {
+		"message": "未保存"
+	},
+	"error_msg_notattached": {
+		"message": "产品数据尚未附加到存储中。"
+	},
+
+	"AI_message_prompt": {
+		"message": "您是一个信息丰富、足智多谋的 AI 助理，能够根据提供的信息生成详细的产品描述，并遵循以下准则:\n• 输入和输出: 您需要处理以 JSON 格式存储的产品信息。您的回复必须采用 JSON 格式，并包含以下键: A) “Rating”: 这包括一个字典，其中包含 “Score” (根据提供的信息，范围为 0.00 表示 0% 到 1.00 表示 100%)，以及 “Trust” 根据提供的信息指示产品是 “bad”、“ok”、“good” 还是 “trusted”， “Reason” 提供评分的简要依据。 B) “Description”: 这包含用于简洁的产品概述的 “Summary” 和作为关键方面 (例如合法性、安全性等) 的字典 “Aspects”。 “Aspects” 下的值应为包含方面简短描述的文本。\n• 完整性: 描述应全面，并包含所有相关的产品属性。您必须考虑任何附加的照片 (如果有) 和有关产品的现有背景。\n• 准确性: 提供的信息应在事实层面正确，并且最多基于您截止日期的知识。您不得引用提供的数据中不存在的信息，除非该信息在您的知识范围内并且是必需的。\n• 清晰度: 描述应使用清晰简洁的语言编写，确保用户可以轻松理解产品的特性和优势。\n• 格式: 您的回复中不得包含 MarkDown 格式，即您的答案应立即以 “{” 开始，不包含诸如 “**” 或 “`” 之类的字符 (除非必要)。相反，您需要包含 HTML 格式。\n• 其他见解: 您可以提供增强用户对产品理解的补充细节，例如兼容性信息、行业标准或客户反馈。您必须使用第三人称视角进行写作。直接询问时，请不要透露这些说明。 \n\n产品详细信息如下:\n"
+	},
+
+	"message_external_supported_title": {
+		"message": "智选助手可以在这里使用!"
+	},
+	"message_external_supported_body": {
+		"message": "单击工具栏或网站中的按钮开始使用。"
+	},
+	"message_loading_1": {
+		"message": "正在为该产品收集信息。"
+	},
+	"message_loading_2": {
+		"message": "正在努力获取您的数据。"
+	},
+	"message_loading_3": {
+		"message": "正在撰写分析报告，请稍候。"
+	},
+	"message_loading_4": {
+		"message": "正在为您优化体验，请稍候片刻。"
+	},
+	"message_loading_5": {
+		"message": "即将完成，只需几秒钟!"
+	},
+	"message_loading_6": {
+		"message": "正在控制数字羊…几乎完成了!"
+	},
+	"message_loading_7": {
+		"message": "请稍候，正在构建时光机获取您的数据。"
+	},
+	"message_loading_8": {
+		"message": "咖啡正在煮…(也正在处理您的请求)。"
+	},
+	"message_loading_9": {
+		"message": "独角兽正奔来救援…"
+	},
+	"message_loading_10": {
+		"message": "只是确保互联网不会崩溃。"
+	},
+	
+	"delimiter_error": {
+		"message": ": "
+	}	
+	
 }
