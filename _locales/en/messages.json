@@ -373,5 +373,27 @@
 
 	"delimiter_error": {
 		"message": ": "
+	},
+
+	"symbol_extensionIcon_error": {
+		"message": "⚠"
+	},
+	"symbol_extensionIcon_product_bad": {
+		"message": "👎"
+	},
+	"symbol_extensionIcon_product_ok": {
+		"message": "🆗"
+	},
+	"symbol_extensionIcon_product_good": {
+		"message": "👍"
+	},
+	"symbol_extensionIcon_product_trusted": {
+		"message": "★"
+	},
+	"symbol_extensionIcon_website_unsupported": {
+		"message": "✕"
+	},
+	"symbol_extensionIcon_website_loading": {
+		"message": "…"
 	}
 }

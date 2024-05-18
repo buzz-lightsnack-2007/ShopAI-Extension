@@ -43,21 +43,7 @@ export default class texts {
 	@param {object} params the parameters
 	*/
 	static symbol(message_name, autofill = false, params = []) {
-		const CONFIG = chrome.runtime.getURL("media/config.symbols.json");
-		return (fetch(CONFIG)
-			.then((response) => response.json())
-			.then((jsonData) => {
-				let SYMBOL = (autofill) ? message_name : null;
-				
-				(jsonData[message_name])
-					? SYMBOL = jsonData[message_name][`symbol`]
-					: false;
-				
-				return (SYMBOL);
-			})
-			.catch((error) => {
-				logging.error(error.name, null, null, false);
-			}));
+		return(texts.localized(`symbol_`.concat(message_name), autofill))
 	};
 }
 
