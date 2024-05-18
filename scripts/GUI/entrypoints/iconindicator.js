@@ -35,7 +35,7 @@ class IconIndicator {
 						global.read([`sites`, LOCATION, `status`], -1).then(async (STATUS) => {
 							if (STATUS)  {
 								(STATUS[`error`]) ? BrowserIcon.set({
-										"BadgeText": await (new texts(`extensionIcon_error`)).symbol,
+										"BadgeText": (new texts(`extensionIcon_error`)).symbol,
 										"BadgeBackgroundColor": ICON_COLORS[`error`]
 									}, {"tabId": ID}) : false;
 	
@@ -43,7 +43,7 @@ class IconIndicator {
 									(STATUS[`done`] >= 1)
 										? global.read([`sites`, LOCATION, `analysis`, `Rating`, `Trust`]).then(async (RESULTS) => {
 										(RESULTS) ? BrowserIcon.set({
-												"BadgeText": await (new texts(`extensionIcon_product_`.concat(RESULTS))).symbol,
+												"BadgeText": (new texts(`extensionIcon_product_`.concat(RESULTS))).symbol,
 												"BadgeBackgroundColor": ICON_COLORS[`product_`.concat(RESULTS)]
 											}, {"tabId": ID}) : false;
 										})
@@ -58,7 +58,7 @@ class IconIndicator {
 					}
 
 					BrowserIcon.set({
-							"BadgeText": await (new texts(`extensionIcon_website_loading`)).symbol,
+							"BadgeText": (new texts(`extensionIcon_website_loading`)).symbol,
 							"BadgeBackgroundColor": ICON_COLORS[`loading`]
 						}, {"tabId": TAB.id});
 		
