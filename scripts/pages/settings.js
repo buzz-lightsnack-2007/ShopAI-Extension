@@ -28,7 +28,9 @@ class Page_Settings extends Page {
 			// Instantiate the filters module, since it's needed for some of the actions below. 
 			this.data.filters = (this.data.filters) ? this.data.filters : new filters();
 
-			
+			// Bypass the OOBE page since the user opened the settings page. 
+			global.write([`init`], true, 1, {"silent": true});
+
 			// Set the actions. 
 			let ACTIONS = {};
 			ACTIONS[`filters,update`] = async () => {this.data.filters.update(`*`);};
