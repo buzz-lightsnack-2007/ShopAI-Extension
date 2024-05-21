@@ -2,8 +2,8 @@
 Shop wisely with AI!
 */
 
-import fc from './fc.js';
-import BackgroundCheck from "./background.check.js";
+import BackgroundImporter from './importer.js';
+import BackgroundCheck from "./check.js";
 
-fc.run();
-BackgroundCheck.init();
+let IMPORTER = new BackgroundImporter();
+let CHECK = new BackgroundCheck();
