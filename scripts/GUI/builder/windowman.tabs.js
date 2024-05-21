@@ -86,10 +86,10 @@ class Tabs {
 					(Object.keys(this[NAME][`elements`][`tabs`]).length)
 						? (Object.keys(this[NAME][`elements`][`tabs`]).forEach((ID) => {
 							this[NAME][`elements`][`tabs`][ID][`header`].addEventListener(`click`, () => {
-								((this[`status`][`read/write`]) >= 0)
-									? (this[NAME][`elements`][`tabs`][ID][`container`].classList.contains(`active`) || this[`options`][NAME][`required`])
-										? this.open(NAME, ID)
-										: this.close(NAME)
+								(!this[`status`][`opening`])
+									? (this[NAME][`elements`][`tabs`][ID][`container`].classList.contains(`active`))
+										? this.close(NAME, {"automatic": true})
+										: this.open(NAME, ID, {"automatic": true})
 									: false;
 							});
 						}))
@@ -117,18 +117,23 @@ class Tabs {
 	*/
 	async open (name, ID, options) {
 		if ((name && ID) && Object.keys(this).includes(name)) {
+			// Add the lock. 
+			this[`status`][`opening`] = true;
+
 			// Update the variable. 
 			this[name][`selected`] = ID;
+
 			if (!(((typeof options).includes(`obj`) && options) ? options[`don't save`] : false)) {
-				this[`status`][`read/write`] = -1;
 				this[`status`][`last`] = await global.write([`view`, `tabs`, name, `selected`], ID, 1, {"silent": true});
-				this[`status`][`read/write`] = 0;
 			};
 
 			// Select the tab.
-			((nested.dictionary.get(this, [name, `elements`, `tabs`, ID, `header`]))
+			((nested.dictionary.get(this, [name, `elements`, `tabs`, ID, `header`]) && ((nested.dictionary.get(options, [`automatic`]) != null) ? !options[`automatic`] : true))
 				? ((this[name][`elements`][`tabs`][ID][`container`].classList.contains(`active`)) ? false : this[name][`elements`][`tabs`][ID][`header`].click())
 				: false);	
+			
+			// Remove the lock.
+			this[`status`][`opening`] = false;
 		}
 	}
 	
@@ -140,19 +145,27 @@ class Tabs {
 	*/
 	async close (name, options) {
 		let ID = this[name][`selected`];
-		if ((name && ID) && Object.keys(this).includes(name)) {
+
+		if (((name && ID) && Object.keys(this).includes(name)) ? !(nested.dictionary.get(this[`options`], [name, `required`])) : false) {
+			// Add the lock. 
+			this[`status`][`opening`] = true;
+
 			// Update the variable. 
 			this[name][`selected`] = null;
 			if (!(((typeof options).includes(`obj`) && options) ? options[`don't save`] : false)) {
-				this[`status`][`read/write`] = -1;
 				this[`status`][`last`] = await global.write([`view`, `tabs`, name, `selected`], null, 1, {"silent": true});
-				this[`status`][`read/write`] = 0;
 			};
 
 			// Select the tab. 
-			((nested.dictionary.get(this, [name, `elements`, `tabs`, ID, `header`]))
+			((nested.dictionary.get(this, [name, `elements`, `tabs`, ID, `header`]) && ((nested.dictionary.get(options, [`automatic`]) != null) ? !options[`automatic`] : true))
 				? ((this[name][`elements`][`tabs`][ID][`container`].classList.contains(`active`)) ? this[name][`elements`][`tabs`][ID][`header`].click() : false)
 				: false);	
+			
+			// Remove the lock.
+			this[`status`][`opening`] = false;
+		} else if (((name && ID) && Object.keys(this).includes(name)) ? (nested.dictionary.get(this[`options`], [name, `required`]) == true) : false) {
+			// Intercept a closing tab to re-open it.
+			this.open(name, ID);
 		}
 	}
 }
