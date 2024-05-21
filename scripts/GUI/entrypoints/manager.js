@@ -8,9 +8,6 @@ import pointer from "/scripts/data/pointer.js";
 
 export default class EntryManager {
 	constructor () {
-		// Initialize the entries. 
-		this.instances = {};
-
 		// Add the action listeners.
 		this.#listen();
 	}
