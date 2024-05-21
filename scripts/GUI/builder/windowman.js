@@ -258,17 +258,6 @@ export default class windowman {
 							TARGET[`source`] = button.getAttribute(`href`);
 							TARGET[`dimensions`] = {};
 
-							// Get the dimensions of the window.
-							[`height`, `width`].forEach((DIMENSION) => {
-								TARGET[`dimensions`][DIMENSION] = (button.getAttribute(`tab-`.concat(DIMENSION)))
-									? parseInt(button.getAttribute(`tab-`.concat(DIMENSION)))
-									: null;
-
-								(button.getAttribute(`tab-`.concat(DIMENSION)))
-									? button.removeAttribute(`tab-`.concat(DIMENSION))
-									: false;
-							})
-
 							// Get the path of the target.
 							TARGET[`path`] = (
 								!URLs.test(TARGET[`source`])
@@ -276,12 +265,9 @@ export default class windowman {
 									: ``
 							).concat(TARGET[`source`]);
 							
-							// Set the event itself. 
-							const event = () => {
-								// Open the window as a popup. 
-								Tabs.create(TARGET[`path`]);
-							};
-							button.addEventListener(`click`, event);
+							// When clicked, open the tab. 
+							button.event = async () => {Tabs.create(TARGET[`path`]);};
+							button.addEventListener(`click`, button.event);
 						}
 					})
 					: false;
