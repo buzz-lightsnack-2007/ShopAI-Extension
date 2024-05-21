@@ -1,5 +1,7 @@
 .DS_Store
 /bin
-/styles/external/
-/config/config.json
-test.js
+/src/styles/external/
+/src/config/config.json
+*.log
+*.crx
+*.pem
