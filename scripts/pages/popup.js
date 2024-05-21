@@ -38,7 +38,7 @@ class Page_Popup extends Page {
 		// Get all the data to be used here. 
 		let DATA = {
 			"status": await global.read([`sites`, this[`ref`], `status`], -1)
-		}
+		};
 
 		// Update all other data. 
 		this[`status`] = (DATA[`status`] != null)
@@ -62,8 +62,9 @@ class Page_Popup extends Page {
 			let PAGES = {
 				"results": "results.htm",
 				"loading": "load.htm",
+				"OOBE": "hello.htm",
 				"error": "error.htm"
-			}
+			};
 	
 			// Prepare all the necessary data. 
 			this.update().then(() => {
@@ -96,8 +97,8 @@ class Page_Popup extends Page {
 		if (this.elements[`frame`]) {
 			this.switch();
 
-			// Call for scraping of data if global data does not indicate automatic scraping or if data doesn't exist. 
-			if (!await global.read([`settings`, `behavior`, `autoRun`]) && DATA[`status`] == null) {
+			// Call for scraping of data if global data does not indicate automatic scraping or if data doesn't exist.
+			if (!await global.read([`settings`, `behavior`, `autoRun`]) && this[`status`] == null) {
 				this.send({"refresh": "automatic"});
 			}
 		} else {
@@ -124,8 +125,7 @@ class Page_Popup extends Page {
 
 	events() {
 		let ACTIONS = {};
-		ACTIONS[`open,settings`] = () => {chrome.runtime.openOptionsPage();}
-		ACTIONS[`open,help`] = () => {new Window(`help.htm`);}
+		ACTIONS[`open,settings`] = () => {chrome.runtime.openOptionsPage();};
 		ACTIONS[`analysis,reload`] = () => {this.send({"refresh": "manual"});}
 
 		// Add the event listeners. 
