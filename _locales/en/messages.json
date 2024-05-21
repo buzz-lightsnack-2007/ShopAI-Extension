@@ -11,6 +11,9 @@
 		"message": "The Story Begins",
 		"description": "Extension version name (not number)"
 	},
+	"extension_description_extended": {
+		"message": "ShopAI is an AI-powered shopping assistant that provides you with product ratings and summaries to help you make informed decisions at ease. Powered by Google Gemini Pro, ShopAI uses machine learning to analyze the contents of an e-commerce right as you read it, without needing your account or storing your browsing details elsewhere than your browser."
+	},
 
 	"GUI_welcome_version": {
 		"message": "You’ve got version $manifest_version$.",
@@ -32,10 +35,6 @@
 			}
 		}
 	},
-	"GUI_credits_0": {
-		"message": "Made with love.",
-		"description": "credits #0"
-	},
 	"GUI_alert_confirm_action_text": {
 		"message": "Are you sure you would want to do this?",
 		"description": "confirm user's dangerous action"
@@ -44,6 +43,7 @@
 		"message": "ShopAI Settings",
 		"description": "Welcome message"
 	},
+
 	"term_preferences": {
 		"message": "Settings"
 	},
@@ -122,20 +122,10 @@
 		"message": "Update"
 	},
 	"settings_filters_update_status": {
-		"message": "Updating…",
-		"placeholders": {
-			"filter_url": {
-				"content": "$1"
-			}
-		}
+		"message": "Updating…"
 	},
 	"settings_filters_update_status_complete": {
-		"message": "Update complete.",
-		"placeholders": {
-			"filter_url": {
-				"content": "$1"
-			}
-		}
+		"message": "Update complete."
 	},
 	"settings_filters_update_status_failure": {
 		"message": "Can not update the filter at $filter_url$ due to error $error_message$.",
@@ -253,6 +243,18 @@
 		"message": "Please enter your API key in the settings. Loading will automatically continue once the key is entered."
 	},
 
+	"OOBE_header_TOS": {
+		"message": "Terms of Service and Privacy Policies"	
+	},
+	"OOBE_header_QuickGuide": {
+		"message": "Quick Guide"	
+	},
+	"OOBE_button_GoogleTOS": {
+		"message": "Google Terms and Services"
+	},
+	"OOBE_button_GoogleUsePolicy": {
+		"message": "Google Use Policy"
+	},
 	"OOBE_welcome_headline_1": {
 		"message": "Welcome to ShopAI!",
 		"description": "Welcome message"
@@ -264,8 +266,44 @@
 	"OOBE_header_APISetup": {
 		"message": "Setup"
 	},
+	"OOBE_notice_TOS_disclaimer": {
+		"message": "Usage of this extension is subject to Google's Terms and Conditions and Privacy Policy."
+	},
+	"OOBE_notice_names_disclaimer": {
+		"message": "Google Gemini is a trademark of Google LLC, but the extension is not affiliated with Google."
+	},
 	"OOBE_tip_seeAgain": {
 		"message": "Seeing this page repeatedly? Perhaps you might not have yet set up your API keys, that's all."
+	},
+	"OOBE_tip_next": {
+		"message": "To continue, click on the tab below, or press Ctrl+Alt+n or Alt+n."
+	},
+	"OOBE_quickstart_tip_Step1": {
+		"message": "On a product page in an e-commerce platform, click on the ShopAI icon on the browser extension bar to view the product's rating. If you see a cross mark, refresh the page, or try another platform. It's also recommended to pin the extension to your browser toolbar for easy access."
+	},
+	"OOBE_quickstart_tip_Step2": {
+		"message": "Our interface is divided into two sections: the top shows a brief summary of the product, while the bottom provides a detailed analysis."
+	},
+	"OOBE_quickstart_tip_Step3": {
+		"message": "Don't feel satisfied with the results? Press the refresh button on its navigation menu to create a new one!"
+	},
+	"OOBE_quickstart_API_intro": {
+		"message": "To get your API key, kindly follow these steps:"
+	},
+	"OOBE_quickstart_API_Step1": {
+		"message": "Go to the Google Cloud Console and create a new project. Feel free to customize the details to your liking, but take note of the final name selected. Once successful, proceed to the next step."
+	},
+	"OOBE_quickstart_API_Step2": {
+		"message": "Open the Google AI Studio and select the API key creation button."
+	},
+	"OOBE_quickstart_API_Step3": {
+		"message": "On the popup, search for your project and select it."
+	},
+	"OOBE_quickstart_API_Step4": {
+		"message": "On the final pop-up, copy the API key. Return to the window, and paste it in the text box below."
+	},
+	"OOBE_quickstart_API_warning": {
+		"message": "Treat your API key as a password. There is no need to write it down, as your browser will securely synchronize this key. Moreover, do not share it with anyone, and no one --- not even Google, Meta, OpenAI, or other companies --- would ask for it."
 	},
 	
 	"results_tip_1": {
@@ -356,16 +394,16 @@
 		"message": "Almost there! Just a few more seconds."
 	},
 	"message_loading_6": {
-		"message": "Wrangling digital sheep... almost done!"
+		"message": "Wrangling digital sheep…almost done!"
 	},
 	"message_loading_7": {
 		"message": "Hang tight, building a time machine to fetch your data."
 	},
 	"message_loading_8": {
-		"message": "Coffee brewing... (also working on your request)."
+		"message": "Coffee brewing… (also working on your request)."
 	},
 	"message_loading_9": {
-		"message": "Unicorns are galloping to your rescue..."
+		"message": "Unicorns are galloping to your rescue…"
 	},
 	"message_loading_10": {
 		"message": "Just making sure the internet doesn't break."
