@@ -47,6 +47,7 @@ class Page_Popup extends Page {
 			: ((this[`status`])
 				? this[`status`]
 				: {});
+		this[`status`][`init`] = DATA[`init`];
 
 		// Confirm completion by returning the status.
 		return (this[`status`]);
