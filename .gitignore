@@ -1,6 +1,6 @@
 .DS_Store
 /bin
-/src/styles/external/
+/src/s*s/external/
 /src/config/config.json
 *.log
 *.crx
