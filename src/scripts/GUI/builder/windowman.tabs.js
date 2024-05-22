@@ -131,6 +131,12 @@ class Tabs {
 			((nested.dictionary.get(this, [name, `elements`, `tabs`, ID, `header`]) && ((nested.dictionary.get(options, [`automatic`]) != null) ? !options[`automatic`] : true))
 				? ((this[name][`elements`][`tabs`][ID][`container`].classList.contains(`active`)) ? false : this[name][`elements`][`tabs`][ID][`header`].click())
 				: false);	
+
+			// Scroll to the tab. 
+			if (nested.dictionary.get(this, [name, `elements`, `tabs`, ID, `header`])) {
+				// Scroll to the tab.
+				this[name][`elements`][`tabs`][ID][`header`].scrollIntoView({"behavior": "smooth", "block": "start"});
+			};
 			
 			// Remove the lock.
 			this[`status`][`opening`] = false;
