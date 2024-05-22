@@ -71,7 +71,14 @@ class Page_Popup extends Page {
 			this.update().then(() => {
 				// Make sure that the website has been selected!
 				if (this[`ref`]) {
-					let PAGE = chrome.runtime.getURL(`pages/popup/`.concat(PAGES[(this[`status`][`done`] <= -1 || this[`status`][`error`]) ? `error` : ((this[`status`][`done`] >= 1) ? `results` : `loading`)]));
+					let SELECTION = this[`status`][`init`]
+						? (this[`status`][`done`] <= -1 || this[`status`][`error`])
+							? `error`
+							: ((this[`status`][`done`] >= 1)
+								? `results`
+								: `loading`)
+						: `OOBE`;
+					let PAGE = chrome.runtime.getURL(`pages/popup/`.concat(PAGES[SELECTION]));
 					
 					// Replace the iframe src with the new page.
 					(this.elements[`frame`].src != PAGE) ? this.elements[`frame`].src = PAGE : false;
