@@ -6,6 +6,7 @@ import Tabs from "/scripts/GUI/tabs.js";
 import {global, background} from "/scripts/secretariat.js";
 import {URLs} from "/scripts/utils/URLs.js";
 import wait from "/scripts/utils/wait.js";
+import logging from "/scripts/logging.js";
 import UI from "/scripts/GUI/builder/windowman.extras.js";
 
 export default class windowman {
@@ -20,8 +21,8 @@ export default class windowman {
 		function headers (OPTIONS) {
 			let LOAD_STATE = true;
 			let UI = {
-				"CSS": ["/styles/external/fonts/materialdesignicons.min.css", "/styles/external/materialize/css/materialize.css", "/styles/ui.css"],
-				"scripts": ["/styles/external/materialize/js/materialize.js"]
+				"CSS": ["https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css", "https://cdn.jsdelivr.net/npm/@materializecss/materialize@2.0.3-alpha/dist/css/materialize.min.css", "/styles/ui.css"],
+				"scripts": ["/scripts/external/materialize.min.js"]
 			};
 
 			// Add additional sources. 
@@ -61,6 +62,15 @@ export default class windowman {
 						ELEMENT.setAttribute(key, METADATA[key]);
 					});
 					document.querySelector(`head`).appendChild(ELEMENT);
+
+					if (source.includes(`materialize`) && source.includes(`js`)) {
+						ELEMENT.onload = () => {
+							M.AutoInit();
+						};
+						ELEMENT.onerror = (err) => {
+							logging.error(err);
+						};
+					};
 				})
 				: false;
 

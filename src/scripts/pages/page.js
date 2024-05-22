@@ -14,10 +14,6 @@ export default class Page {
 			this.window.manager.sync();
 
 			Object.assign(this.window, this.window[`manager`]);
-		}
-
-		document.addEventListener("DOMContentLoaded", function () {
-			M.AutoInit();
-		});
-	}
+		};
+	};
 };
