@@ -15,13 +15,13 @@
 	"content_scripts": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
-			"js": ["scripts/external/background.js"]
+			"js": ["scripts/platform/background.js"]
 		}
 	],
 	"web_accessible_resources": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
-			"resources": ["scripts/*.js", "scripts/external/*.js"]
+			"resources": ["scripts/*.js", "scripts/platform/*.js"]
 		}
 	],
 

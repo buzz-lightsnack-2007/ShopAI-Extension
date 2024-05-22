@@ -3,7 +3,7 @@
 import Tabs from "/scripts/GUI/tabs.js";
 import Window from "/scripts/GUI/window.js";
 import IconIndicator from "./iconindicator.js";
-import check from "/scripts/external/check.js";
+import check from "/scripts/platform/check.js";
 import pointer from "/scripts/data/pointer.js";
 
 export default class EntryManager {

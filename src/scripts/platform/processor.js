@@ -2,7 +2,7 @@
 Process the information on the website and display it on screen. 
 */
 
-import scraper from "/scripts/external/scraper.js";
+import scraper from "/scripts/platform/scraper.js";
 import product from "/scripts/data/product.js";
 import {global, background} from "/scripts/secretariat.js";
 import logging from "/scripts/logging.js";

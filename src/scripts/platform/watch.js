@@ -2,8 +2,8 @@
 Be sensitive to changes and update the state.
 */
 
-import check from "/scripts/external/check.js";
-import processor from "/scripts/external/processor.js";
+import check from "/scripts/platform/check.js";
+import processor from "/scripts/platform/processor.js";
 import logging from "/scripts/logging.js";
 import texts from "/scripts/mapping/read.js";
 import {global} from "/scripts/secretariat.js";
