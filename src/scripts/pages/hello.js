@@ -21,10 +21,19 @@ class Page_MiniConfig extends Page {
 	Set the default options. 
 	*/
 	#set() {
-		(!this.window.tabs.OOBE.selected) ? this.window.tabs.open(`OOBE`, `OOBE_Hello`) : false;
+		global.read([`init`]).then((STATE) => {
+			if (!STATE) {
+				this.window.tabs.open(`OOBE`, `OOBE_Hello`);
+				
+				// Update the storage to mark that the OOBE page has been viewed. 
+				global.write([`init`], true, 1, {"silent": true});
+			} else {
+				global.read([`settings`,`analysis`,`api`,`key`]).then((STATE) => {
+					(!STATE) ? this.window.tabs.open(`OOBE`, `OOBE_APISetup`) : false;
+				});
+			};
+		});
 
-		// Update the storage to mark that the OOBE page has been viewed. 
-		global.write([`init`], true, 1, {"silent": true});
 	}
 
 	/*
@@ -89,8 +98,6 @@ class Page_MiniConfig extends Page {
 						Object.keys(ELEMENTS[STEP_NUMBER][`container`]).forEach((PART) => {
 							ELEMENTS[STEP_NUMBER][`container`][PART].classList.add(`card`.concat(([`container`].includes(PART)) ? `` : `-`.concat(PART)));
 						});
-
-						ELEMENTS[STEP_NUMBER][`container`][`container`].classList.add(`container`);
 					}
 
 					const set_contents = () => {
