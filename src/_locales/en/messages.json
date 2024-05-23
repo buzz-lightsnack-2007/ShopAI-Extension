@@ -89,6 +89,9 @@
 	"term_hello": {
 		"message": "Hello!"
 	},
+	"term_popout": {
+		"message": "Pop-Out"
+	},
 
 	"page_opening": {
 		"message": "Opening…"
