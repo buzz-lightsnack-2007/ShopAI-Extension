@@ -7,7 +7,7 @@ import {global, background} from "/scripts/secretariat.js";
 import {URLs} from "/scripts/utils/URLs.js";
 import wait from "/scripts/utils/wait.js";
 import logging from "/scripts/logging.js";
-import UI from "/scripts/GUI/builder/windowman.extras.js";
+import UI from "/scripts/GUI/builder/extras.js";
 
 export default class windowman {
 	elements = {};
