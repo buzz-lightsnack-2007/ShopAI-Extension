@@ -46,6 +46,7 @@ nested.dictionary = class dictionary {
      */
      static set(data, path, value, options = {}) {
           let DATA = data, PATH = path, VALUE = value;
+          (DATA == null) ? DATA = {} : false;
 
           // Convert path into an array if not yet set.
           PATH = (Array.isArray(PATH)) ? PATH : (PATH && (typeof PATH).includes(`str`)) ? PATH.trim().split(`,`) : [];
