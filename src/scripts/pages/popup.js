@@ -65,6 +65,13 @@ class Page_Popup extends Page {
 				"OOBE": "hello.htm",
 				"error": "error.htm"
 			};
+			// Set the width and the height. 
+			const PAGES_DIMENSIONS = {
+				"loading": {"width": "200pt", "height": "100pt"},
+				"error": {"width": "250pt", "height": "300pt"},
+				"results": {"width": "250pt", "height": "225pt"},
+				"OOBE": {"width": "350pt", "height": "300pt"},
+			};
 	
 			// Prepare all the necessary data. 
 			this.update().then(() => {
@@ -86,8 +93,15 @@ class Page_Popup extends Page {
 					this.elements[`container`].classList[([`results`, `OOBE`].includes(SELECTION)) ? `remove` : `add`](`container`);
 
 					// Set the title bar content. 
-					this[`window`][`navigation bar`][([`OOBE`].includes(SELECTION)) ? `hide` : `show`](`header`, `results`);
-					this[`window`][`navigation bar`][([`OOBE`].includes(SELECTION)) ? `show` : `hide`](`header`, `OOBE`);
+					this[`window`][`navigation bar`][([`OOBE`, `loading`].includes(SELECTION)) ? `hide` : `show`](`header`, `result`);
+					[`loading`, `OOBE`].forEach((NAME) => {
+						this[`window`][`navigation bar`][(NAME == SELECTION) ? `show` : `hide`](`header`, NAME);	
+					});
+
+					// Set the dimensions of the body. 
+					Object.keys(PAGES_DIMENSIONS[SELECTION]).forEach((DIMENSION) => {
+						document.body.style[DIMENSION] = PAGES_DIMENSIONS[SELECTION][DIMENSION];
+					});
 				};
 			});
 		}

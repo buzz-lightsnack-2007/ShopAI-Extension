@@ -13,6 +13,7 @@ import gemini from "/scripts/AI/gemini.js";
 export default class processor {
 	#filter; 
 	#analyzer;
+	status = {};
 	
 	async scrape (fields, options) {
 		this.product.details = new scraper (((fields) ? fields : this.targets), options); 
@@ -96,12 +97,19 @@ export default class processor {
 				RUN = true;
 			} else {
 				new logging(texts.localized(`AIkey_message_waiting_title`), texts.localized(`AIkey_message_waiting_body`));
-				new background(async () => {
-					if ((!RUN) ? (await global.read([`settings`,`analysis`,`api`,`key`])) : false) {
-						await main();
-						RUN = true;
-					}
-				});
+				if (!this.status.wait) {
+					this.status.background = new background(async () => {
+						this.status.wait = true; // lock the process
+						if ((!RUN) ? (await global.read([`settings`,`analysis`,`api`,`key`])) : false) {
+							await main();
+							RUN = true;
+
+							// Cancel the background process.
+							this.status.background.cancel();
+							this.status.wait = false; // unlock the process
+						}
+					});
+				}
 			}
 		}
 
@@ -155,8 +163,6 @@ export default class processor {
 
 		this.product = new product();
 		this.targets = this.#filter[`data`];
-
-		this.status = {};
 		
 		((((typeof options).includes(`obj`)) ? Object.hasOwn(options, `automatic`) : false) ? options[`automatic`] : true) ? this.run() : false;
 	}
