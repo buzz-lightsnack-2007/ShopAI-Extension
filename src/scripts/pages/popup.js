@@ -4,7 +4,6 @@
 
 // Import modules.
 import {global, background} from "/scripts/secretariat.js";
-import Window from "/scripts/GUI/window.js";
 import Page from "/scripts/pages/page.js";
 import Loader from "/scripts/GUI/loader.js";
 import Tabs from "/scripts/GUI/tabs.js";
@@ -36,9 +35,9 @@ class Page_Popup extends Page {
 		if (override || !this[`ref`]) {this[`ref`] = await global.read([`last`])};
 
 		// Get all the data to be used here. 
-		let DATA = {
-			"status": await global.read([`sites`, this[`ref`], `status`], -1)
-		};
+		let DATA = {};
+		DATA[`status`] = await global.read([`sites`, this[`ref`], `status`], -1);
+		DATA[`init`] = (await global.read([`init`])) && (await global.read([`settings`,`analysis`,`api`,`key`]));
 
 		// Update all other data. 
 		this[`status`] = (DATA[`status`] != null)
@@ -83,8 +82,12 @@ class Page_Popup extends Page {
 					// Replace the iframe src with the new page.
 					(this.elements[`frame`].src != PAGE) ? this.elements[`frame`].src = PAGE : false;
 		
-					// The results page has its own container. 
-					this.elements[`container`].classList[(PAGE.includes(`results`)) ? `remove` : `add`](`container`);
+					// The results and OOBE pages has its own container. 
+					this.elements[`container`].classList[([`results`, `OOBE`].includes(SELECTION)) ? `remove` : `add`](`container`);
+
+					// Set the title bar content. 
+					this[`window`][`navigation bar`][([`OOBE`].includes(SELECTION)) ? `hide` : `show`](`header`, `results`);
+					this[`window`][`navigation bar`][([`OOBE`].includes(SELECTION)) ? `show` : `hide`](`header`, `OOBE`);
 				};
 			});
 		}
