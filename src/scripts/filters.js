@@ -10,13 +10,13 @@ import {Queue} from "/scripts/utils/common.js";
 import logging from "/scripts/logging.js"
 // const logging = (await import(chrome.runtime.getURL("/scripts/logging.js"))).default;
 
-export default class filters {
+export default class FilterManager {
 	constructor() {
 		this.refresh();
-	}
+	};
 
-	/* 
-	Get all filters. 
+	/*
+	Get all filters.
 	*/
 	async refresh() {
 		this.all = await global.read(`filters`);
@@ -34,8 +34,8 @@ export default class filters {
 		};
 
 		if (URL) {
-			let SELECTED = await global.search(`filters`, URL, `URL`, 0.5, {"cloud": -1});
-			
+			let SELECTED = await global.search(`filters`, URL, [`URL`], {"strictness": 0.5, "cloud": -1});
+
 			if ((SELECTED && SELECTED != null && (typeof SELECTED).includes(`obj`)) ? (Object.keys(SELECTED)).length : false) {
 				this.one = (Object.entries(SELECTED))[0][1];
 				return (this.one);
@@ -54,12 +54,12 @@ export default class filters {
 
 		if (location && location != `*`) {
 			let LOCATIONS = [];
-			(Array.isArray(location)) 
+			(Array.isArray(location))
 				? location.forEach((LOCATION) => {
 					URLs.test(LOCATION) ? LOCATIONS.push(LOCATION) : false;
 				})
 				: (URLs.test(location)) ? LOCATIONS.push(location) : false;
-			
+
 			(LOCATIONS.length)
 				? LOCATIONS.forEach((LOCATION) => {
 					filters.enqueue(LOCATION);
@@ -93,13 +93,13 @@ export default class filters {
 						if (result) {
 							// Write the filter to storage.
 							await global.write(["filters", filter_URL], result, -1, {"silent": true});
-							
+
 							// Add the filter to the sync list.
 							if ((await global.read(["settings", `filters`])) ? !((Object.keys(await global.read(["settings", `filters`]))).includes(filter_URL)) : true) {
 								global.write(["settings", `filters`, filter_URL], true, 1, {"silent": true});
 							};
 
-							// Notify that the update is completed. 
+							// Notify that the update is completed.
 							new logging(texts.localized(`settings_filters_update_status_complete`),filter_URL);
 						}
 					})
@@ -131,6 +131,5 @@ export default class filters {
 			logging.warn(texts.localized(`settings_filters_removal_stop`));
 			return false;
 		}
-		
 	}
 }
