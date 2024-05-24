@@ -6,7 +6,7 @@
 import {global} from "/scripts/secretariat.js";
 import Page from "/scripts/pages/page.js";
 import texts from "/scripts/mapping/read.js";
-import filters from "/scripts/filters.js";
+import FilterManager from "/scripts/filters.js";
 import logging from "/scripts/logging.js";
 import {URLs} from "/scripts/utils/URLs.js";
 
@@ -25,13 +25,13 @@ class Page_Settings extends Page {
 	*/
 	events() {
 		if ((Object.keys(this.window.elements[`interactive`][`action`])).length) {
-			// Instantiate the filters module, since it's needed for some of the actions below. 
-			this.data.filters = (this.data.filters) ? this.data.filters : new filters();
+			// Instantiate the filters module, since it's needed for some of the actions below.
+			this.data.filters = (this.data.filters) ? this.data.filters : new FilterManager();
 
-			// Bypass the OOBE page since the user opened the settings page. 
+			// Bypass the OOBE page since the user opened the settings page.
 			global.write([`init`], true, 1, {"silent": true});
 
-			// Set the actions. 
+			// Set the actions.
 			let ACTIONS = {};
 			ACTIONS[`filters,update`] = async () => {this.data.filters.update(`*`);};
 			ACTIONS[`filters,add,one`] = () => {
@@ -44,7 +44,7 @@ class Page_Settings extends Page {
 					if (SOURCE ? SOURCE.trim() : false) {
 						SOURCE = SOURCE.trim().split(`, `);
 
-						// Verify user inputs are valid. 
+						// Verify user inputs are valid.
 						let VALID = true;
 
 						// Check if the URL is valid.
@@ -66,18 +66,18 @@ class Page_Settings extends Page {
 				}
 			};
 			ACTIONS[`filters,update,one`] = () => {
-				// Update the selected filter. 
+				// Update the selected filter.
 				return((this.window.search.filters.selected) ? this.data.filters.update(this.window.search.filters.selected) : false)
 			};
 			ACTIONS[`filters,delete,one`] = () => {
-				// Remove the selected filter. 
+				// Remove the selected filter.
 				return((this.window.search.filters.selected) ? this.data.filters.remove(this.window.search.filters.selected) : false)
 			}
 			ACTIONS[`storage,clear`] = () => {
 				return(global.forget(`sites`));
 			}
-			
-			// Add the event listeners. 
+
+			// Add the event listeners.
 			(Object.keys(ACTIONS)).forEach((NAME) => {
 				(this.window.elements[`interactive`][`action`][NAME] ? this.window.elements[`interactive`][`action`][NAME].length : false)
 					? this.window.elements[`interactive`][`action`][NAME].forEach((ELEMENT) => {
@@ -91,7 +91,7 @@ class Page_Settings extends Page {
 			(this.window.elements[`linked`][`show`][`settings,general,showApplicable`] ? this.window.elements[`linked`][`show`][`settings,general,showApplicable`].length : false)
 				? (this.window.elements[`linked`][`show`][`settings,general,showApplicable`]).forEach((ELEMENT) => {
 					ELEMENT.addEventListener(`change`, () => {
-						// The extension icon cache doesn't clear by itself. 
+						// The extension icon cache doesn't clear by itself.
 						ELEMENT.addEventListener(`change`, () => {
 							!(ELEMENT.checked)
 								? new logging(texts.localized(`settings_restartToApply`), texts.localized(`settings_restartToApply_iconChange`), true)
