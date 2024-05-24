@@ -2,10 +2,10 @@
 // Import the file module.
 // import file from `./net.js`;
 
-const texts = (await import(chrome.runtime.getURL("scripts/mapping/read.js"))).default;
+import texts from "/scripts/mapping/read.js";
 
 // Don't forget to set the class as export default.
-export default class gemini {
+class gemini {
     #key;
     #request;
 
@@ -65,7 +65,7 @@ export default class gemini {
             REQUEST[`contents`] = [];
 
             /*
-            Add the blob to a generative part. 
+            Add the blob to a generative part.
 
             Function below by Google (https://ai.google.dev/tutorials/get_started_web)
             @param {Blob} image the image to add
@@ -80,7 +80,7 @@ export default class gemini {
                     reader.onloadend = () => resolve(reader.result.split(',')[1]);
                     reader.readAsDataURL(image[`blob`]);
                 });
-                    
+
                 return {inlineData: { data: image[`base64`], mimeType: image[`type`] }};
             };
 
@@ -98,7 +98,7 @@ export default class gemini {
                     ? PROMPT[REQUEST[`contents`].length][`images`] = [PROMPT[REQUEST[`contents`].length][`images`]]
                     : false;
 
-                // Add the photos, which are already in the blob format. 
+                // Add the photos, which are already in the blob format.
                 while ((PROMPT[REQUEST[`contents`].length][`images`]) ? (MESSAGE[`parts`].length < PROMPT[REQUEST[`contents`].length][`images`].length) : false) {
                     let MESSAGE_IMAGE = await fileToGenerativePart(PROMPT[REQUEST[`contents`].length][`images`][MESSAGE[`parts`].length]);
                     if (MESSAGE_IMAGE) {
@@ -151,7 +151,7 @@ export default class gemini {
         let analyze = (RESPONSE_RAW) => {
             let RESPONSES = [];
 
-            // Delete previous block state, if any. 
+            // Delete previous block state, if any.
             delete this.blocked;
 
             while (RESPONSES.length < RESPONSE_RAW[`candidates`].length && !this.blocked) {
@@ -188,3 +188,5 @@ export default class gemini {
         return(analyze(this.response));
     }
 };
+
+export {gemini as default};
