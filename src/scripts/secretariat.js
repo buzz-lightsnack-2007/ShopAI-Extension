@@ -12,7 +12,7 @@ Global data storage, which refers to local and synchronized storage
 */
 class global {
 	/* Read all stored data in the browser cache.
-	
+
 	@param {array} name the data name
 	@param {int} cloud determines cloud reading, which is otherwise set to automatic (0)
 	@return {object} the data
@@ -31,23 +31,23 @@ class global {
 		let DATA, DATA_RETURNED;
 
 		// Convert the entered prefname to an array if it is not one.
-		let NAME = (!Array.isArray(name) && name != null) 
+		let NAME = (!Array.isArray(name) && name != null)
 			? String(name).trim().split(`,`)
 			: name;
-		
-		
+
+
 		switch (cloud) {
 			case 0:
 				DATA = {}; DATA_RETURNED = {};
 
 				DATA[`sync`] = await global.read((NAME) ? [...NAME] : null, 1);
 				DATA[`local`] = await global.read((NAME) ? [...NAME] : null, -1);
-	
+
 				// Now return the data.
 				DATA_RETURNED[`source`] = (DATA[`sync`] != null && !(typeof DATA[`sync`]).includes(`undef`)) ? `sync` : `local`;
 				DATA_RETURNED[`value`] = DATA[DATA_RETURNED[`source`]];
-	
-				// Override the data with managed data if available. 
+
+				// Override the data with managed data if available.
 				if ((NAME != null) ? NAME.length : false) {
 					DATA[`managed`] = await managed.read((NAME) ? [...NAME] : null);
 					DATA_RETURNED[`value`] = (DATA[`managed`] != null) ? DATA[`managed`] : DATA_RETURNED[`value`];
@@ -59,7 +59,7 @@ class global {
 				cloud = (cloud > 0) ? 1 : -1;
 				DATA = await pull(cloud);
 				DATA_RETURNED = (NAME) ? nested.dictionary.get(DATA, NAME) : DATA;
-	
+
 				return(DATA_RETURNED);
 				break;
 		};
@@ -73,79 +73,13 @@ class global {
 	@param {object} OPTIONS the options
 	@return {object} the results
 	*/
-	static async search(SOURCE, TERM, ADDITIONAL_PLACES, STRICT = 0, OPTIONS = {}) {
+	static async search(SOURCE, TERM, ADDITIONAL_PLACES, OPTIONS) {
+		// Set the default options.
+		OPTIONS = Object.assign({}, {"strictness": 0, "criteria": ADDITIONAL_PLACES}, OPTIONS);
+
+		// Initialize the data.
 		let DATA = await global.read(SOURCE, (OPTIONS[`cloud`] != null) ? OPTIONS[`cloud`] : 0);
-		let RESULTS;
-
-		if (DATA) {
-			RESULTS = {};
-
-			if (TERM && (!(typeof ADDITIONAL_PLACES).includes(`str`) || !ADDITIONAL_PLACES)) {
-				// Sequentially search through the data, first by key.
-				(Object.keys(DATA)).forEach((DATA_NAME) => {
-					if (STRICT ? DATA_NAME == TERM : (DATA_NAME.includes(TERM) || TERM.includes(DATA_NAME))) {
-						RESULTS[DATA_NAME] = DATA[DATA_NAME];
-					}
-				});
-
-				// Then, get the additional places.
-				if ((ADDITIONAL_PLACES != null ? Array.isArray(ADDITIONAL_PLACES) : false) ? ADDITIONAL_PLACES.length > 0 : false) {
-					ADDITIONAL_PLACES.forEach((ADDITIONAL_PLACE) => {
-						// Recursively search
-						RESULTS = Object.assign({}, RESULTS, global.search(SOURCE, TERM, ADDITIONAL_PLACE, STRICT));
-					})
-				}
-			} else if (((typeof ADDITIONAL_PLACES).includes(`str`) && (ADDITIONAL_PLACES)) ? ADDITIONAL_PLACES.trim() : false) {
-				// Perform a sequential search on the data.
-				if ((typeof DATA).includes(`obj`) && !Array.isArray(DATA) && SOURCE != null) {
-					let VALUE = {};
-
-					for (let DICTIONARY_INDEX = 0; DICTIONARY_INDEX < (Object.keys(DATA)).length; DICTIONARY_INDEX++) {
-						VALUE[`parent`] = DATA[(Object.keys(DATA))[DICTIONARY_INDEX]];
-
-						/* Test for a valid RegEx.
-
-						@param {string} item the item to test
-						*/
-						function isRegEx(item) {
-							let RESULT = {};
-							RESULT[`state`] = false;
-							try {
-								RESULT[`expression`] = new RegExp(item);
-								RESULT[`state`] = true;
-							} catch(err) {};
-
-							return (RESULT[`state`]);
-						};
-
-						if (((typeof VALUE[`parent`]).includes(`obj`) && !Array.isArray(VALUE[`parent`]) && VALUE[`parent`] != null) ? (Object.keys(VALUE[`parent`])).length > 0 : false) {
-							VALUE[`current`] = VALUE[`parent`][ADDITIONAL_PLACES];
-						}
-
-						if (VALUE[`current`] ? ((STRICT >= 1) ? VALUE[`current`] == TERM : (((STRICT < 0.5) ? (VALUE[`current`].includes(TERM)) : false) || TERM.includes(VALUE[`current`]) || (isRegEx(VALUE[`current`]) ? (new RegExp(VALUE[`current`])).test(TERM) : false))) : false) {
-							// Add the data.
-							RESULTS[(Object.keys(DATA))[DICTIONARY_INDEX]] = (Object.entries(DATA))[DICTIONARY_INDEX][1];
-						};
-					};
-				} else {
-					for (let ELEMENT_INDEX = 0; ELEMENT_INDEX < DATA.length; ELEMENT_INDEX++) {
-						if (
-							((STRICT || (typeof DATA[ELEMENT_INDEX]).includes(`num`)) && DATA[ELEMENT_INDEX] == TERM) ||
-							((!STRICT && !((typeof DATA[ELEMENT_INDEX]).includes(`num`)))
-								? (TERM.includes(DATA[ELEMENT_INDEX]) || DATA[ELEMENT_INDEX].includes(TERM) ||
-									(typeof(DATA[ELEMENT_INDEX])).includes(`str`)
-										? new RegExp(DATA[ELEMENT_INDEX]).test(TERM)
-										: false
-								) : false
-							)
-						) {
-							RESULTS[SOURCE] = DATA;
-							break;
-						}
-					}
-				}
-			}
-		}
+		let RESULTS = nested.dictionary.search(DATA, TERM, OPTIONS);;
 
 		return RESULTS;
 	};
@@ -167,48 +101,48 @@ class global {
 			DATA_CHECK[`state`] = await compare([...NAME], DATA);
 
 			(!DATA_CHECK[`state`])
-				? logging.error((new texts(`error_msg_save_failed`)).localized, NAME.join(` → `), JSON.stringify(DATA))
+				? GUI_INFO[`log`] = logging.error((new texts(`error_msg_save_failed`)).localized, NAME.join(` → `), JSON.stringify(DATA))
 				: ((((typeof OPTIONS).includes(`obj`) && OPTIONS != null) ? (!(!!OPTIONS[`silent`])) : true)
-					? new logging (new texts(`saving_done`).localized)
+					? GUI_INFO[`log`] = new logging (new texts(`saving_done`).localized)
 					: false);
-			
+
 			return (DATA_CHECK[`state`]);
 		}
 
-		let DATA_ALL;
+		let DATA_ALL, GUI_INFO = {};
 
 		// Inform the user that saving is in progress.
 		if (((typeof OPTIONS).includes(`obj`) && OPTIONS != null) ? (!(!!OPTIONS[`silent`])) : true) {
-			let LOG = new logging ((new texts(`saving_current`)).localized, (new texts(`saving_current_message`)).localized, false)
+			GUI_INFO[`log`] = new logging ((new texts(`saving_current`)).localized, (new texts(`saving_current_message`)).localized, false)
 		};
 
-		// Get all data and set a blank value if it doesn't exist yet. 
+		// Get all data and set a blank value if it doesn't exist yet.
 		DATA_ALL = await global.read(null, CLOUD);
-		DATA_ALL = ((DATA_ALL != null && DATA_ALL != undefined && (typeof DATA_ALL).includes(`obj`)) ? Object.keys(DATA_ALL).length <= 0 : true) 
+		DATA_ALL = ((DATA_ALL != null && DATA_ALL != undefined && (typeof DATA_ALL).includes(`obj`)) ? Object.keys(DATA_ALL).length <= 0 : true)
 			? {}
 			: DATA_ALL;
 
-		// Set the data name. 
+		// Set the data name.
 		let DATA_NAME = (!(Array.isArray(path)) && path && path != undefined)
 			? String(path).trim().split(",")
-			: ((path != null) ? path : []) // Ensure that path isn't empty. 
+			: ((path != null) ? path : []) // Ensure that path isn't empty.
 
 		// Merge!
 		DATA_INJECTED = nested.dictionary.set(DATA_ALL, (DATA_NAME != null) ? [...DATA_NAME] : DATA_NAME, data, OPTIONS);
 
-		// If cloud is not selected, get where the data is already existent. 
+		// If cloud is not selected, get where the data is already existent.
 		(CLOUD == 0 || CLOUD == null)
 			? (CLOUD = (DATA_ALL[`local`] != null) ? -1 : 1)
 			: false;
 
 		// Write!
 		chrome.storage[(CLOUD > 0) ? `sync` : `local`].set(DATA_INJECTED);
-		(typeof LOG).includes(`undef`) ? false : LOG.clear();
+		GUI_INFO[`log`] ? GUI_INFO[`log`].clear() : false;
 		return ((OPTIONS[`verify`] != null ? (OPTIONS[`verify`]) : true) ? verify(DATA_NAME, data) : true);
 	}
 
 	/*
-	Removes a particular data. 
+	Removes a particular data.
 
 	@param {string} preference the preference name to delete
 	@param {string} subpreference the subpreference name to delete
@@ -222,7 +156,7 @@ class global {
 		if (CONFIRMATION) {
 			if (preference) {
 				/*
-				Erase applicable storage from a provider. 
+				Erase applicable storage from a provider.
 
 				@param {string} name the name of the data
 				@param {int} cloud the usage of cloud storage
@@ -235,28 +169,28 @@ class global {
 					@param {int} cloud the usage of cloud storage
 					*/
 					function secure(name, cloud) {
-						let PATH = name; 
-						// Check if the value already exists. 
+						let PATH = name;
+						// Check if the value already exists.
 						return(global.read([...PATH], cloud).then(async (DATA) => {
 							return((DATA != null)
-								// Then erase the data. 
+								// Then erase the data.
 								? await global.write(PATH, null, cloud, {"strict": true, "verify": false})
 								: true);
 						}));
 					};
-					
+
 					/*
-					Remove the key from existence. 
+					Remove the key from existence.
 
 					@param {string} name the name of the data
 					@param {int} cloud the usage of cloud storage
 					*/
 					async function eliminate(name, cloud) {
-						// Store the variable seperately to avoid overwriting. 
+						// Store the variable seperately to avoid overwriting.
 						let PATH = name;
 
-						// There are two methods to erase the data. 
-						// The first only occurs when the root is selected and the path is just a direct descendant. 
+						// There are two methods to erase the data.
+						// The first only occurs when the root is selected and the path is just a direct descendant.
 						if (PATH.length == 1) {
 							chrome.storage[(cloud > 0) ? `sync` : `local`].remove(PATH[0]);
 						} else {
@@ -266,7 +200,7 @@ class global {
 
 								if ((((typeof (DATA[`all`])).includes(`obj`) && !Array.isArray(DATA[`all`]) && DATA[`all`] != null) ? Object.keys(DATA[`all`]) : false) ? Object.hasOwn(DATA[`all`], PATH[PATH.length - 1]) : false) {
 									DATA[`modified`] = DATA[`all`];
-							
+
 									delete DATA[`modified`][PATH[PATH.length - 1]];
 
 									return(global.write(((PATH && Array.isArray(PATH)) ? (PATH.slice(0,-1)) : null), DATA[`modified`], cloud, {"strict": true}));
@@ -274,13 +208,13 @@ class global {
 							});
 						}
 
-						
+
 					};
 
-					// Set the data path. 
+					// Set the data path.
 					let DATA_NAME = (!(Array.isArray(path)) && path && path != undefined)
 						? String(path).trim().split(",")
-						: ((path != null) ? path : []) // Ensure that path isn't empty. 
+						: ((path != null) ? path : []) // Ensure that path isn't empty.
 
 					await secure([...DATA_NAME], cloud);
 					eliminate([...DATA_NAME], cloud);
@@ -297,66 +231,7 @@ class global {
 
 		return CONFIRMATION;
 	}
-}
-
-class session {
-	/*
-	Recall session storage data. 
-	
-	@param {string} path the path to the data
-	@return {object} the data
-	*/
-	static async read(path) {
-		// Change PATH to array if it isn't. 
-		let PATH = (!(Array.isArray(path)) && path && path != undefined)
-			? String(path).trim().split(",")
-			: ((path != null) ? path : []);
-
-		// Prepare data. 
-		let DATA = {};
-		DATA[`all`] = await chrome.storage.session.get(null);
-		(DATA[`all`]) ? DATA[`selected`] = nested.dictionary.get(DATA[`all`], [...PATH]) : false;
-		
-		return (DATA[`selected`]);
-	}
-
-	/*
-	Write the data to a specified path. 
-
-	@param {string} PATH the path to the data
-	@param {object} DATA the data to be written
-	*/
-	static async write(PATH, DATA) {
-		async function verify (NAME, DATA) {
-			let DATA_CHECK = {};
-
-			// Verify the presence of the data.
-			DATA_CHECK[`state`] = await compare(null, [await session.read([...NAME]), DATA]);
-
-			// Only notify when writing failed. 
-			(!DATA_CHECK[`state`])
-				? logging.error((new texts(`error_msg_save_failed`)).localized, NAME.join(` → `), JSON.stringify(DATA))
-				: true;
-
-			return (DATA_CHECK[`state`]);
-		}
-
-		DATA = {"write": DATA};
-		DATA[`all`] = await session.read(null);
-		((DATA[`all`] != null && (typeof DATA[`all`]).includes(`obj`)) ? Object.keys(DATA[`all`]).length <= 0 : true)
-			? DATA[`all`] = {}
-			: false;
-
-		let TARGET = (!(typeof PATH).includes(`obj`)) ? String(PATH).trim().split(",") : PATH;
-
-		// Merge!
-		DATA[`inject`] = nested.dictionary.set(DATA[`all`], [...TARGET], DATA[`write`]);
-
-		// Write!
-		chrome.storage.session.set(DATA[`inject`]);
-		return(await verify(TARGET, DATA[`write`]));
-	}
-}
+};
 
 /*
 Compare a data against the stored data. Useful when comparing dictionaries.
@@ -394,7 +269,7 @@ export async function compare(PATH, DATA) {
 
 class template {
 	/* Initialize the storage.
-	
+
 	@param {dictionary} data this build's managed data
 	*/
 	static set(data) {
@@ -403,16 +278,16 @@ class template {
 
 		((typeof data).includes(`obj`) && data != null) ? PREFERENCES[`all`][`build`] = data : false;
 
-		// Read all data. 
+		// Read all data.
 		[`managed`, `local`, `sync`].forEach((SOURCE) => {
 			chrome.storage[SOURCE].get(null, (DATA) => {
 				PREFERENCES[`all`][SOURCE] = DATA;
 			})
 		});
 
-		// Merge the data. 
+		// Merge the data.
 		// Managed > Synchronized > Imported > Local
-		// Set managed preferences. 
+		// Set managed preferences.
 		managed.reinforce();
 
 		// Import build data
@@ -453,7 +328,7 @@ managed data functions
 */
 class managed {
 	/*
-	Reinforce managed data. 
+	Reinforce managed data.
 	*/
 	static reinforce() {
 		chrome.storage.managed.get(null, (DATA_MANAGED) => {
@@ -465,7 +340,7 @@ class managed {
 	}
 
 	/*
-	Read for any applicable managed data. 
+	Read for any applicable managed data.
 
 	@param {string} name the name of the data
 	@return {boolean} the result
@@ -499,7 +374,7 @@ class managed {
 		DATA[`selected`] = ((DATA[`all`] && (typeof DATA[`all`]).includes(`obj`) && !Array.isArray(DATA[`all`])) ? Object.keys(DATA[`all`]).length : false)
 			? find(DATA[`all`], name)
 			: null;
-		
+
 		return (DATA[`selected`]);
 	}
 }
@@ -509,13 +384,13 @@ Background data execution
 */
 class background {
 	/*
-	Add or prepare a listener. 
+	Add or prepare a listener.
 
 	@param {function} callback the function to run
 	@param {object} options the options
 	*/
 	constructor (callback, options) {
-		// Set the listener. 
+		// Set the listener.
 		this.callback = callback;
 
 		// Run the listener if necessary.
@@ -523,7 +398,7 @@ class background {
 	};
 
 	/*
-	Set the listener. 
+	Set the listener.
 	*/
 	run () {
 		return(chrome.storage.onChanged.addListener((changes, namespace) => {
@@ -532,10 +407,10 @@ class background {
 	};
 
 	/*
-	Cancel the listener. 
+	Cancel the listener.
 	*/
 	cancel () {
-		// Cancel the listener. 
+		// Cancel the listener.
 		return(chrome.storage.onChanged.removeListener((changes, namespace) => {
 			this.callback({"changes": changes, "namespace": namespace});
 		}))
@@ -553,4 +428,4 @@ export function observe(callback) {
 	}));
 }
 
-export {global, session, template, managed, background};
+export {global, template, managed, background};
