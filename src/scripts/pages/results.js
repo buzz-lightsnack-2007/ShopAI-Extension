@@ -17,8 +17,9 @@ class Page_Results extends Page {
 	};
 
      async background() {
-		// Wait until a change in the storage.
-		new background((changes) => {
+		this[`scripts`] = {};
+     	// Wait until a change in the storage.
+		this[`scripts`][`background`] = new background((changes) => {
                this.update();
 			this.content();
 			// First, update site data but retain the URL.
