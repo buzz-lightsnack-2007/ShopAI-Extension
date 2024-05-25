@@ -1,7 +1,7 @@
 # ShopAI
 **_Shop wisely with AI!_**
 
-This project is very early in development and does not have a release. Please use at your own risk.
+[▶︎ Shop wisely now.](https://codeberg.org/buzzcode2007/ShopAI-Extension/releases)
 
 ## Background
 The onset of the pandemic gave rise to the popularity of online shopping. In a survey cited by Balinbin (2021) focusing on changes in consumer behavior, around 90% of Filipinos would find online shopping convenient and price-friendly. Other factors mentioned in the study included the success of online live selling and the ability to communicate with sellers through these platforms. Since most teenagers and working adults have access to mobile devices and internet, many e-commerce platforms primarily cater to this demographic through their tie-ins with social media or at least its trends.  
@@ -23,10 +23,10 @@ What if we could enhance the current system through a web extension that seamles
 The extension is available via this repository's releases, and it is compatible wherever you find an extensions market. We hope to make this available on the Chrome Web Store or the Microsoft Add-Ons Store.
 
 You may click the link directly if you're on Firefox or Waterfox; otherwise, you'll have to right click and save the file from the menu. In that case, you'll first need to enable developer mode for extensions to install this extension.
-1. Go to `about:extensions` on your Chromium-based web browser.
+1. Go to [`about:extensions`](about:extensions) on your Chromium-based web browser.
 2. Toggle the developer options.
 3. Drag and drop the extension to the window.
 4. Accept the permissions to install.
 
 ## Contributions
-Tripped on a bug, or did a lightbulb lit? Feel free to let us know! If there are not yet opened bug reports, please create one!
+Tripped on a bug, or did a lightbulb lit? Feel free to let us know! If there are not yet opened bug reports, please [create one](https://codeberg.org/buzzcode2007/ShopAI-Extension/issues/new)!
