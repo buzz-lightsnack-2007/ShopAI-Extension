@@ -138,7 +138,7 @@ class Page_Results extends Page {
                     : false;
 
                // Set the color.
-               (nested.dictionary.get(this[`data`][`analysis`], [`Rating`, `Trust`]) && document.querySelector(`summary`)) ? document.querySelector(`summary`).setAttribute(`result`, (nested.dictionary.get(this[`data`][`analysis`], [`Rating`, `Trust`]))) : false;
+               (nested.dictionary.get(this[`data`][`analysis`], [`Rating`, `Trust`]) && document.querySelector(`summary`)) ? document.querySelector(`summary`).setAttribute(`result`, (nested.dictionary.get(this[`data`][`analysis`], [`Rating`, `Trust`])).toLowerCase()) : false;
           }
      };
 }
