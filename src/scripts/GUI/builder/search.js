@@ -358,7 +358,7 @@ class Search {
 			Display the search results in the log.
 			*/
 			function log (data, title) {
-				if (Object.keys(data).length) {
+				if (data ? (Object.keys(data).length) : false) {
 					let RESULT_STRING = ``;
 					(Object.keys(data)).forEach((RESULT_KEY) => {
 						RESULT_STRING += RESULT_KEY.concat(((title) ? data[RESULT_KEY][title] : false) ? `: `.concat(data[RESULT_KEY][title]) : ``, `\n`);
