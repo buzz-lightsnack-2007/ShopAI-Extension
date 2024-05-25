@@ -116,7 +116,6 @@ nested.dictionary = class dictionary {
 								if (VALUE[`parent`] ? (typeof (VALUE[`parent`])).includes(`obj`) : false) {
 									VALUE[`current`] = nested.dictionary.get(VALUE[`parent`], ADDITIONAL_PLACE);
 
-									console.log(RegExManager.test(VALUE[`current`]) ? (new RegExp(VALUE[`current`])).test(TERM) : `not`);
 
 									if (VALUE[`current`]
 										? ((OPTIONS[`strictness`] >= 1)
