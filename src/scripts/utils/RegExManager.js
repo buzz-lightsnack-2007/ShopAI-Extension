@@ -14,7 +14,6 @@ class RegExManager {
 		let RESULT = {};
 		RESULT[`state`] = false;
 		try {
-			console.log(expression);
 			RESULT[`expression`] = new RegExp(expression);
 			RESULT[`state`] = true;
 		} catch(err) {};
