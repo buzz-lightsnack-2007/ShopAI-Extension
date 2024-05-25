@@ -9,7 +9,7 @@ import {URLs} from "/scripts/utils/URLs.js";
 // Don't forget to set the class as export default.
 export default class product {
 	// Create private variables for explicit use for the storage.
-	#options;
+	#options = {};
 
 	/* Initialize a new product with its details.
 
@@ -51,14 +51,22 @@ export default class product {
 		};
 	}
 
-	async save() {
-		// There is only a need to save the data if an update is needed.
-		if (Object.hasOwn(this.status, `update`) ? this.status[`update`] : true) {
-			// Save the snip data.
-			(this.snip) ? await global.write([`sites`, this.URL, `snip`], this.snip, 1) : false;
+	async save(options = {}) {
+		// Set the default options.
+		options = Object.assign({}, this.#options, options);
 
-			// Write the analysis data to the storage.
-			return((this[`analysis`]) ? global.write([`sites`, this.URL, `analysis`], this.analysis, 1) : false);
-		}
+		// There is only a need to save the data if an update is needed.
+		if ((Object.hasOwn(this.status, `update`) ? this.status[`update`] : true) || options[`override`]) {
+			let STATUS = true;
+
+			// Save the data.
+			Object.keys(this).forEach(async (KEY) => {
+				if ((!([`#options`, `status`, `details`].includes(KEY))) && STATUS) {
+					STATUS = await global.write([`sites`, this.URL, KEY], this[KEY], 1, {"override": true});
+				};
+			});
+
+			return (STATUS);
+		};
 	};
 };
