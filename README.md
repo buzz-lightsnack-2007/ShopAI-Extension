@@ -11,12 +11,12 @@ Unfrotunately, it seems that the purchasing-centered interface has led to domina
 What if we could enhance the current system through a web extension that seamlessly integrates with the shopping websites? Introducing ShopAI, a severless solution where artificial intelligence meets online shopping platforms! 
 
 ## Features
-- [ ] Get the data of a selected product from the e-commerce page through filters.
-- [ ] Generate information of the product through Google Gemini’s API.
-- [ ] Display the generated information within the e-commerce page.
-- [ ] Download and update filters automatically and manually.
+- [X] Get the data of a selected product from the e-commerce page through filters.
+- [X] Generate information of the product through Google Gemini’s API.
+- [X] Display the generated information within the e-commerce page.
+- [X] Download and update filters automatically and manually.
 - [X] Synchronize extension preferences across the browser synchronization instance.
-- [ ] Store the product information and the analysis.
+- [X] Store the product information and the analysis.
 - [X] Provide help features to instruct users on extension usage.
 
 ## Installation
