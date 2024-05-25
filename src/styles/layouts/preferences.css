@@ -1,13 +1,13 @@
 /* nav [data-result-content="*"] {
-     
+
 }*/
 
 article[data-result-linked="filters"] > h2 {
      display: none;
 }
 
-a[data-result-linked="filters"] > * {
-     display: none;
+nav a[data-result-linked="filters"] {
+     display: none !important;
 }
 
 @media only screen and (max-width: 992px) {
@@ -16,7 +16,7 @@ a[data-result-linked="filters"] > * {
 
 
 @media only screen and (min-width: 992px) {
-	a[data-result-linked="filters"] > * {
-		display: block;
+	nav a[data-result-linked="filters"] {
+		display: block !important;
 	}
 }
