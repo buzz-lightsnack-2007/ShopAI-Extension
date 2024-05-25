@@ -22,3 +22,7 @@ nav#header {
 nav .input-field input[type="search"], textarea {
 	color: var(--font-color-main) !important;
 }
+
+nav .brand-logo {
+	color: var(--font-color-main) !important;
+}
