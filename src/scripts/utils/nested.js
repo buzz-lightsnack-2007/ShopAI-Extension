@@ -1,7 +1,8 @@
-class nested {}
+import { RegExManager } from "./RegExManager.js";
 
+class nested {}
 nested.dictionary = class dictionary {
-     /* 
+     /*
      Get the data from the dictionary.
 
      @param {object} data the data to be used
@@ -11,7 +12,7 @@ nested.dictionary = class dictionary {
      static get(data, path) {
           let DATA = data;
 
-          // Set the path. 
+          // Set the path.
           let PATH = {};
           PATH[`all`] = (Array.isArray(path))
                ? path
@@ -70,6 +71,79 @@ nested.dictionary = class dictionary {
           // Return the value.
           return (DATA);
      }
-}
+
+    	/* More enhanced searching.
+
+	@param {object} data the data
+	@param {string} value the value to search
+	@param {object} options the options
+	@return {object} the results
+	*/
+	static search(data, value, options) {
+		// Set the default options.
+		let OPTIONS = Object.assign({}, {"strictness": 0}, options);
+		let DATA = data;
+		let TERM = value;
+		let RESULTS;
+
+		if (data && ((typeof data).includes(`obj`) && !Array.isArray(data))) {
+			if (!TERM || ((typeof TERM).includes(`str`) ? !TERM.trim() : false)) {
+				RESULTS = data;
+			} else {
+				RESULTS = {};
+
+				// Sequentially search through the data, first by key.
+				if (OPTIONS[`mode`] != `criteria`) {
+					(Object.keys(DATA)).forEach((DATA_NAME) => {
+						if (OPTIONS[`strictness`] > 1 ? DATA_NAME == TERM : (DATA_NAME.includes(TERM) || TERM.includes(DATA_NAME))) {
+							RESULTS[DATA_NAME] = DATA[DATA_NAME];
+						}
+					});
+				};
+
+				// Get the additional criteria.
+				if ((OPTIONS[`mode`] != `root`) && OPTIONS[`criteria`]) {
+					let ADDITIONAL_PLACES = (!Array.isArray(OPTIONS[`criteria`])) ? OPTIONS[`criteria`].split(`,`) : OPTIONS[`criteria`];
+
+					// Search through the data.
+					if (ADDITIONAL_PLACES) {
+						// Perform a sequential search on the additional criteria.
+						ADDITIONAL_PLACES.forEach((ADDITIONAL_PLACE) => {
+							Object.keys(DATA).forEach((DATA_NAME) => {
+								let VALUE = {};
+								VALUE[`parent`] = DATA[DATA_NAME];
+
+								if (VALUE[`parent`] ? (typeof (VALUE[`parent`])).includes(`obj`) : false) {
+									VALUE[`current`] = nested.dictionary.get(VALUE[`parent`], ADDITIONAL_PLACE);
+
+									console.log(RegExManager.test(VALUE[`current`]) ? (new RegExp(VALUE[`current`])).test(TERM) : `not`);
+
+									if (VALUE[`current`]
+										? ((OPTIONS[`strictness`] >= 1)
+											? VALUE[`current`] == TERM
+											: (
+												((OPTIONS[`strictness`] < 0.5)
+													? (VALUE[`current`].includes(TERM))
+													: false)
+												|| TERM.includes(VALUE[`current`])
+												|| (RegExManager.test(VALUE[`current`])
+													? (new RegExp(VALUE[`current`])).test(TERM)
+													: false)))
+										: false) {
+										RESULTS[DATA_NAME] = DATA[DATA_NAME];
+									};
+								};
+							})
+						})
+					};
+				};
+			};
+
+		};
+
+		// Return the results.
+		return RESULTS;
+	};
+};
 
 export {nested as default};
