@@ -2,7 +2,7 @@
 Ask product information to Google Gemini. */
 
 // Import the storage management module.
-import {global, session, compare} from "/scripts/secretariat.js";
+import {global, compare} from "/scripts/secretariat.js";
 import hash from "/scripts/utils/hash.js";
 import {URLs} from "/scripts/utils/URLs.js";
 
@@ -29,18 +29,18 @@ export default class product {
 		// Set private variables.
 		this.#options = options;
 
-		// Set the status. 
+		// Set the status.
 		this.status = {};
 	};
 
 	/*
-	Check the data with data from the storage. 
+	Check the data with data from the storage.
 	*/
 	async read() {
 		if (this.details) {
 			// Add the data digest.
 			this.snip = (await hash.digest(this.details, {"output": "Array"}));
-	
+
 			// Add the status about this data.
 			this.status[`update`] = !(await (compare([`sites`, this.URL, `snip`], this.snip)));
 		};
@@ -52,9 +52,9 @@ export default class product {
 	}
 
 	async save() {
-		// There is only a need to save the data if an update is needed. 
-		if (Object.hasOwn(this.status, `update`) ? this.status[`update`] : true) {	
-			// Save the snip data. 
+		// There is only a need to save the data if an update is needed.
+		if (Object.hasOwn(this.status, `update`) ? this.status[`update`] : true) {
+			// Save the snip data.
 			(this.snip) ? await global.write([`sites`, this.URL, `snip`], this.snip, 1) : false;
 
 			// Write the analysis data to the storage.
