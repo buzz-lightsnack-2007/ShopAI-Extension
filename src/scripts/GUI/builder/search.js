@@ -15,57 +15,57 @@ class Search {
 	};
 
 	/*
-	Include all relevant DOM elements into this object. 
+	Include all relevant DOM elements into this object.
 	*/
 	#get() {
 		document.querySelectorAll(`[data-result]`).forEach((ELEMENT) => {
 			let SOURCE = ELEMENT.getAttribute(`data-result`);
-			
+
 			if (SOURCE != `state`) {
 				this[SOURCE] = (!this[SOURCE])
 					? {}
 					: this[SOURCE];
-	
+
 				const elements = () => {
 					this[SOURCE][`elements`] = (this[SOURCE][`elements`]) ? this[SOURCE][`elements`] : {};
-					
-					// First, add the search box. 
+
+					// First, add the search box.
 					this[SOURCE][`elements`][`search box`] = (this[SOURCE][`elements`][`search box`])
 						? this[SOURCE][`elements`][`search box`].push(ELEMENT)
-						: [ELEMENT]; 
-	
+						: [ELEMENT];
+
 					let SOURCES = {
 						"results list": `[data-results-list="${SOURCE}"]`,
 						"container": `[data-result-linked="${SOURCE}"]`,
 						"enable": `[data-result-enable]`
 					};
-	
+
 					const linked = () => {
 						let LINKED_SOURCES = {
 							"content": "data-result-content",
 							"fields": "data-result-store"
 						};
-	
+
 						(Object.keys(LINKED_SOURCES)).forEach((COMPONENT) => {
 							(document.querySelector(SOURCES[`container`].concat(` [`, LINKED_SOURCES[COMPONENT], `]`)))
 								? (document.querySelectorAll(SOURCES[`container`].concat(` [`, LINKED_SOURCES[COMPONENT], `]`))).forEach((ELEMENT) => {
 									this[SOURCE][`elements`][COMPONENT] = (this[SOURCE][`elements`][COMPONENT] && !(Array.isArray(this[SOURCE][`elements`][COMPONENT])) && (typeof this[SOURCE][`elements`][COMPONENT]).includes(`obj`)) ? this[SOURCE][`elements`][COMPONENT] : {};
-	
-									// Get the name of the element. 
+
+									// Get the name of the element.
 									let NAME = ELEMENT.getAttribute(LINKED_SOURCES[COMPONENT]);
 									(ELEMENT.getAttribute(`data-store-location`))
 										? ELEMENT[`data store location`] = ELEMENT.getAttribute(`data-store-location`)
 										: false;
 
-									// Set the element. 
+									// Set the element.
 									this[SOURCE][`elements`][COMPONENT][NAME] = (this[SOURCE][`elements`][COMPONENT][NAME] ? this[SOURCE][`elements`][COMPONENT][NAME].length : false)
 										? (this[SOURCE][`elements`][COMPONENT][NAME].includes(ELEMENT)
 											? false
 											: [...this[SOURCE][`elements`][COMPONENT][NAME], ELEMENT])
 										: [ELEMENT];
-									
-	
-									// Remove the attribute. 
+
+
+									// Remove the attribute.
 									[LINKED_SOURCES[COMPONENT], `data-store-location`].forEach((ATTRIBUTE) => {
 										ELEMENT.removeAttribute(ATTRIBUTE);
 									})
@@ -73,7 +73,7 @@ class Search {
 								: false;
 						})
 					}
-	
+
 					if (SOURCES ? Object.keys(SOURCES) : false) {
 						(Object.keys(SOURCES)).forEach((COMPONENT) => {
 							(document.querySelector(SOURCES[COMPONENT]))
@@ -83,23 +83,23 @@ class Search {
 						linked();
 					}
 				}
-	
-				// Get relevant data. 	
+
+				// Get relevant data.
 				const attributes = () => {
-					// Accumulate all search criteria where possible. 
+					// Accumulate all search criteria where possible.
 					(ELEMENT.hasAttribute(`data-results-filters`))
 						? this[SOURCE][`additional criteria`] = (this[SOURCE][`additional criteria`]) ? [...this[SOURCE][`additional criteria`], ...ELEMENT.getAttribute(`data-results-filters`).split(`,`)] : ELEMENT.getAttribute(`data-results-filters`).split(`,`)
 						: false;
 					(ELEMENT.hasAttribute(`data-show`))
 						? this[SOURCE][`preview`] = ELEMENT.getAttribute(`data-show`)
 						: false;
-		
-					// Remove attributes only used during construction, simultaneously protecting against edited HTML from the debugger. 
+
+					// Remove attributes only used during construction, simultaneously protecting against edited HTML from the debugger.
 					[`data-result`, `data-results-filters`, `data-show`].forEach((ATTRIBUTE) => {
 						ELEMENT.removeAttribute(ATTRIBUTE);
 					});
 				}
-	
+
 				elements();
 				attributes();
 			}
@@ -108,7 +108,7 @@ class Search {
 	};
 
 	/*
-	Set the functions of the relevant elements. 
+	Set the functions of the relevant elements.
 	*/
 	#set() {
 		(Object.keys(this)).forEach((SOURCE) => {
@@ -117,9 +117,9 @@ class Search {
 					ELEMENT.addEventListener(`change`, () => {this.run({"name": SOURCE, "element": ELEMENT}, null, {"auto sync": true});});
 				});
 
-				// Set the state. 
+				// Set the state.
 				this[SOURCE][`scripts`] = {"background": {}};
-	
+
 				// Find the data.
 				this.run({"name": SOURCE}, `*`, {"auto sync": true});
 				this.pick(SOURCE, null);
@@ -128,7 +128,7 @@ class Search {
 	};
 
 	/*
-	Run a search. 
+	Run a search.
 
 	@param {object} source the source data
 	@param {object} data the data to find for
@@ -148,13 +148,15 @@ class Search {
 		show().then(() => {
 			if (((typeof options).includes(`obj`) && options) ? options[`auto sync`] : false) {
 				// Set the refresh function.
-				let item  = this[source[`name`]][`selected`];
+				let EXISTING_DATA = {};
+				EXISTING_DATA[`item`] = this[source[`name`]][`selected`];
+				EXISTING_DATA[`criteria`] = this[source[`name`]][`criteria`];
 
 				this[source[`name`]][`scripts`][`refresh`] = () => {
 					wait((this[`state`][`read/write`] ? this[`state`][`read/write`] >= 0 : true)).then(
 						() => {
-							if (this[source][`selected`] == item) {
-								show()
+							if (this[source[`name`]][`selected`] == EXISTING_DATA[`item`] || EXISTING_DATA[`criteria`] == this[source[`name`]][`criteria`]) {
+								show();
 							} else if (this[source[`name`]][`scripts`][`background`][`refresh`]) {
 								this[source[`name`]][`scripts`][`background`][`refresh`].cancel();
 							};
@@ -162,7 +164,7 @@ class Search {
 					);
 				};
 
-				this[source[`name`]][`scripts`][`background`][`refresh`] = new background(() => {this[source[`name`]][`scripts`][`refresh`]});
+				this[source[`name`]][`scripts`][`background`][`refresh`] = new background(() => {this[source[`name`]][`scripts`][`refresh`]()});
 			};
 		}).catch((err) => {
 			logging.error(err);
@@ -170,7 +172,7 @@ class Search {
 	};
 
 	/*
-	Find the data. 
+	Find the data.
 
 	@param {object} source the source data
 	@param {string} data the data to find for
@@ -181,15 +183,15 @@ class Search {
 			? source = {"name": source}
 			: false;
 
-		// Set the primary search criteria. 
+		// Set the primary search criteria.
 		if (data && data != `*`) {
-			// Having data filled means an override. 
+			// Having data filled means an override.
 			this[source[`name`]][`criteria`] = ((typeof data).includes(`str`)) ? data.trim() : data;
 		} else if ((source[`element`]) ? source[`element`].value.trim() : false) {
-			// There is an element to use. 
+			// There is an element to use.
 			this[source[`name`]][`criteria`] = source[`element`].value.trim();
 		} else if (this[source[`name`]][`elements`][`search box`] ? this[source[`name`]][`elements`][`search box`].length : false) {
-			// No element defined, look for every box. 
+			// No element defined, look for every box.
 			(this[source[`name`]][`elements`][`search box`]).forEach((ELEMENT) => {
 				this[source[`name`]][`criteria`] = (ELEMENT.type.includes(`num`) || ELEMENT.type.includes(`range`))
 					? ((parseFloat(ELEMENT.value.trim()) != parseInt(ELEMENT.value.trim()))
@@ -203,19 +205,19 @@ class Search {
 			this[source[`name`]][`criteria`] = null;
 		};
 
-		// Find. 
+		// Find.
 		this[source[`name`]][`results`] = await ((this[source[`name`]][`criteria`] != null)
 			? ((this[source[`name`]][`additional criteria`] ? this[source[`name`]][`additional criteria`].length : false)
 				? global.search(source[`name`], this[source[`name`]][`criteria`], this[source[`name`]][`additional criteria`])
 				: global.search(source[`name`], this[source[`name`]][`criteria`]))
 			: global.read(source[`name`]));
 
-		// Return the data. 
+		// Return the data.
 		return (this[source[`name`]][`results`]);
 	}
 
 	/*
-	Display the search results. 
+	Display the search results.
 
 	@param {string} source the source data
 	@param {object} data the data to display
@@ -225,43 +227,43 @@ class Search {
 		if (source ? (Array.isArray(source) ? source.length : String(source)) : false) {
 			source = (Array.isArray(source)) ? source.join(`,`) : String(source);
 
-			// Get the data. 
+			// Get the data.
 			data = (data && ((typeof data).includes(`obj`))) ? data : this[source][`results`];
 
 			const gui_output = () => {
-				// Prepare the elements we will need. 
+				// Prepare the elements we will need.
 				if (this[source][`elements`][`results list`] ? this[source][`elements`][`results list`].length : false) {
-					const design = () => {
-						// Prepare the access keys. 
-						let ACCESS_KEYS = {"top": ["1", "2", "3", "4", "5", "6", "7", "8", "9"], "nav": ["<", ">"]};
-						
-						/*
-						Add the selected state. 
-						*/
-						const select = (element) => {
-							if (element) {
-								// Remove all active classes.
-								(element.parentElement).parentElement.querySelectorAll(`li`).forEach((ELEMENT) => {
-									ELEMENT.classList.remove(`active`);
-								});
-		
-								// Add the active. 
-								element.parentElement.classList.add(`active`);
-	
-								return (element);
-							};							
+					/*
+					Add the selected state.
+					*/
+					const select = (element) => {
+						if (element) {
+							// Remove all active classes.
+							(element).parentElement.querySelectorAll(`li:has(a)`).forEach((ELEMENT) => {
+								ELEMENT.classList.remove(`active`);
+							});
+
+							// Add the active.
+							element.classList.add(`active`);
+
+							return (element);
 						};
-	
+					};
+
+					const design = () => {
+						// Prepare the access keys.
+						let ACCESS_KEYS = {"top": ["1", "2", "3", "4", "5", "6", "7", "8", "9"], "nav": ["<", ">"]};
+
 						/*
-						Add the access keys (shortcut). 
-	
+						Add the access keys (shortcut).
+
 						@param {string} name the name of the element
 						@param {object} ELEMENT the element to add the access key to
 						@param {object} state the current state of the element
 						*/
 						const shortcut = (name, element, state) => {
 							let RESULT_INDEX = (Object.keys(data)).indexOf(name);
-	
+
 							if (RESULT_INDEX >= 0) {
 								if (state.includes(`config`)) {
 									((RESULT_INDEX < ACCESS_KEYS[`top`].length) && (RESULT_INDEX >= 0))
@@ -272,54 +274,57 @@ class Search {
 								} else if (state.includes(`execute`)) {
 									let ELEMENT = {"selected": element};
 									ELEMENT[`neighbors`] = (ELEMENT[`selected`].parentElement.parentElement).querySelectorAll(`a`);
-		
-									// Remove elements with accesskeys in nav. 
+
+									// Remove elements with accesskeys in nav.
 									(ELEMENT[`neighbors`]).forEach((OTHER) => {
 										(OTHER.getAttribute(`accesskey`) ? (ACCESS_KEYS[`nav`].includes(OTHER.getAttribute(`accesskey`))) : false)
 											? OTHER.removeAttribute(`accesskey`)
 											: false;
 									})
-		
+
 									if ((RESULT_INDEX + 1 >= ACCESS_KEYS[`top`].length) && (RESULT_INDEX + 1 < ELEMENT[`neighbors`].length)) {
 										ELEMENT[`neighbors`][RESULT_INDEX + 1].setAttribute(`accesskey`, ACCESS_KEYS[`nav`][1])
 									}
-		
+
 									(RESULT_INDEX > ACCESS_KEYS[`top`].length)
 										? (ELEMENT[`neighbors`])[RESULT_INDEX - 1].setAttribute(`accesskey`, ACCESS_KEYS[`nav`][0])
 										: false;
-		
+
 									(RESULT_INDEX >= ACCESS_KEYS[`top`].length)
 										? ELEMENT[`selected`].setAttribute(`accesskey`, `0`)
 										: false;
-		
+
 									return (ELEMENT);
 								}
 							}
 						}
-	
+
 						let ELEMENTS = [];
-	
+
 						(data ? Object.keys(data).length : false)
 							? (Object.keys(data)).forEach((RESULT) => {
 								let ELEMENTS_RESULT = {}
 								ELEMENTS_RESULT[`container`] = document.createElement(`li`);
 								ELEMENTS_RESULT[`title`] = document.createElement(`a`);
-	
-								// Add the classes. 
+
+								// Add the classes.
 								ELEMENTS_RESULT[`title`].classList.add(`waves-effect`);
 								ELEMENTS_RESULT[`title`].textContent = String((title && data[RESULT][title]) ? data[RESULT][title] : RESULT);
-	
-								// Add the action. 
+
+								// Add the action.
 								ELEMENTS_RESULT[`title`].addEventListener(`click`, () => {
-									// Set the visual state. 
-									select(ELEMENTS_RESULT[`title`]);
+									// Set the visual state.
+									select(ELEMENTS_RESULT[`container`]);
 									shortcut(RESULT, ELEMENTS_RESULT[`title`], `execute`);
-									
+
 									// Pick the data.
 									this.pick(source, RESULT, data[RESULT]);
 								});
-	
-								// Add the shortcut. 
+
+								// Add the real linked data name temporarily.
+								ELEMENTS_RESULT[`container`][`linked`] = RESULT;
+
+								// Add the shortcut.
 								ELEMENTS_RESULT[`title`] = shortcut(RESULT, ELEMENTS_RESULT[`title`], `config`);
 
 								// Add the elements to the container.
@@ -327,10 +332,10 @@ class Search {
 								ELEMENTS.push(ELEMENTS_RESULT[`container`]);
 							})
 						: false;
-						
+
 						return (ELEMENTS);
 					}
-	
+
 					let TEMPLATE = design();
 					(this[source][`elements`][`results list`]).forEach((ELEMENT_TARGET) => {
 						// Clear the target element.
@@ -338,6 +343,11 @@ class Search {
 						(TEMPLATE.length)
 							? TEMPLATE.forEach((ELEMENT) => {
 								ELEMENT_TARGET.appendChild(ELEMENT);
+
+								// Preselect the item.
+								if (ELEMENT[`linked`] == nested.dictionary.get(this, [source, `selected`])) {
+									select(ELEMENT);
+								};
 							})
 							: this.pick(source, null);
 					})
@@ -345,7 +355,7 @@ class Search {
 			}
 
 			/*
-			Display the search results in the log. 
+			Display the search results in the log.
 			*/
 			function log (data, title) {
 				if (Object.keys(data).length) {
@@ -373,7 +383,7 @@ class Search {
 	@param {string} details the details of the selected item
 	*/
 	pick(source, item, details) {
-		// Fill in the details if it's missing when the item and source isn't. 
+		// Fill in the details if it's missing when the item and source isn't.
 		if (!details && (source && item)) {
 			(Object.hasOwn(this[source][`results`], item))
 			? details = this[source][`results`][item]
@@ -382,7 +392,7 @@ class Search {
 
 		const set = () => {
 			this[source][`selected`] = item;
-			
+
 			// Set the background state.
 			nested.dictionary.get(this, [source, `scripts`, `background`, `selected`])
 				? this[source][`scripts`][`background`][`selected`].cancel()
@@ -391,8 +401,8 @@ class Search {
 				this[source][`scripts`][`reader`] = wait((this[`state`][`read/write`] ? this[`state`][`read/write`] >= 0 : true)).then(
 					() => {(this[source][`selected`] == item) ? gui_display() : false;}
 				);
-	
-				// Reset the background. 
+
+				// Reset the background.
 				this[source][`scripts`][`background`][`selected`] = new background(() => {this[source][`scripts`][`reader`]});
 			}
 		}
@@ -433,10 +443,10 @@ class Search {
 											case `radio`:
 												ELEMENT.checked = false;
 												break;
-											default: 
+											default:
 												ELEMENT.value = ``;
 										};
-		
+
 										if ((ELEMENT.nodeName.toLowerCase()).includes(`input`) || (ELEMENT.nodeName.toLowerCase()).includes(`textarea`)) {
 											// Check if the element has an event listener and remove it.
 											(ELEMENT.func)
@@ -464,46 +474,46 @@ class Search {
 									: ((typeof item).includes(`str`)
 										? item.trim()
 										: item);
-								
+
 								this[source][`elements`][ELEMENTS][SOURCE].forEach((ELEMENT) => {
 									if ((ELEMENT.nodeName.toLowerCase()).includes(`input`) || (ELEMENT.nodeName.toLowerCase()).includes(`textarea`) || (ELEMENT.nodeName.toLowerCase()).includes(`progress`)) {
-		
+
 										switch (ELEMENT.type) {
 											case `checkbox`:
 											case `radio`:
 												ELEMENT.checked = (DATA[`value`]);
 												break;
-											default: 
+											default:
 												ELEMENT.value = DATA[`value`];
 										};
-		
+
 										if ((DATA[`source`] != `*`) && (ELEMENT.nodeName.toLowerCase()).includes(`input`) || (ELEMENT.nodeName.toLowerCase()).includes(`textarea`)) {
-											// Remove the existing function. 
+											// Remove the existing function.
 											(ELEMENT.func)
 												? [`change`, `blur`].forEach((EVENT) => {
 													ELEMENT.removeEventListener(EVENT, ELEMENT.func)
 												})
 												: false;
-											
-											// Add the new function. 
+
+											// Add the new function.
 											ELEMENT.func = () => {};
 											switch (ELEMENT.type) {
 												case `checkbox`:
 												case `radio`:
 													ELEMENT.func = () => {
-														this[`state`][`read/write`] = -1; 
+														this[`state`][`read/write`] = -1;
 														this[`state`][`last result`] = global.write(DATA[`target`], ELEMENT.checked, (ELEMENT[`data store location`] ? ELEMENT[`data store location`] : -1));
 
-														this[`state`][`read/write`] = 0; 
-														return(this[`state`][`last result`]);	
+														this[`state`][`read/write`] = 0;
+														return(this[`state`][`last result`]);
 													};
-		
+
 													ELEMENT.checked = (DATA[`value`]);
 													break;
-												default: 
+												default:
 													if ((typeof DATA[`value`]).includes(`obj`) && !Array.isArray(DATA[`value`])) {
 														ELEMENT.value = JSON.stringify(DATA[`value`]);
-														
+
 														ELEMENT.func = () => {
 															this[`state`][`read/write`] = -1;
 															this[`state`][`last result`] = false;
@@ -520,7 +530,7 @@ class Search {
 														}
 													} else {
 														ELEMENT.value = DATA[`value`];
-													
+
 														ELEMENT.func = () => {
 															this[`state`][`read/write`] = -1;
 
@@ -530,20 +540,20 @@ class Search {
 																	: parseInt(ELEMENT.value.trim())
 																)
 																: ELEMENT.value.trim());
-		
+
 															this[`state`][`last result`] = global.write(DATA[`target`], ELEMENT.val, (ELEMENT[`data store location`] ? ELEMENT[`data store location`] : -1));
 															this[`state`][`read/write`] = 0;
-															
+
 															delete ELEMENT.val;
 															return (this[`state`][`last result`]);
 														}
 													};
 											};
-		
+
 											(ELEMENT.nodeName.toLowerCase().includes(`textarea`))
 												? ELEMENT.addEventListener(`blur`, ELEMENT.func)
 												: false;
-		
+
 											ELEMENT.addEventListener(`change`, ELEMENT.func);
 										}
 									} else {
@@ -551,7 +561,7 @@ class Search {
 									};
 								})
 							}
-							
+
 						}
 					})
 					: false;
@@ -559,7 +569,7 @@ class Search {
 			}
 
 			enable();
-			fill();			
+			fill();
 		}
 
 
