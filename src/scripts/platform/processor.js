@@ -1,5 +1,5 @@
-/* processor.js 
-Process the information on the website and display it on screen. 
+/* processor.js
+Process the information on the website and display it on screen.
 */
 
 import scraper from "/scripts/platform/scraper.js";
@@ -11,29 +11,29 @@ import {URLs} from "/scripts/utils/URLs.js";
 import gemini from "/scripts/AI/gemini.js";
 
 export default class processor {
-	#filter; 
+	#filter;
 	#analyzer;
 	status = {};
-	
-	async scrape (fields, options) {
-		this.product.details = new scraper (((fields) ? fields : this.targets), options); 
 
-		// Read product data and gather the SHA512 hash. 
+	async scrape (fields, options) {
+		this.product.details = new scraper (((fields) ? fields : this.targets), options);
+
+		// Read product data and gather the SHA512 hash.
 		await this.product.read();
-		
-		// Save the details already. 
-		return(await this.product.save());
+
+		// Save the details already.
+		return(await this.product.save(options));
 	}
-	
+
 	async analyze(options = {}) {
 		const main = async() => {
 			// Set up the analyzer.
 			this.#analyzer = (this.#analyzer) ? this.#analyzer : new gemini (await global.read([`settings`,`analysis`,`api`,`key`]), `gemini-1.5-pro-latest`);
-	
-			// Set up current data of the site, but forget about its previous errored state. 
+
+			// Set up current data of the site, but forget about its previous errored state.
 			delete this.status[`error`];
-	
-			// Set the completion state to anything else but not 1. 
+
+			// Set the completion state to anything else but not 1.
 			(this.status[`done`] >= 1) ? this.#notify(0) : false;
 
 			const perform = async() => {
@@ -44,47 +44,47 @@ export default class processor {
 					// Add the prompt.
 					let PROMPT = [];
 					PROMPT.push({"text": ((new texts(`AI_message_prompt`)).localized).concat(JSON.stringify(this.product.details.texts))});
-					
+
 					// Run the analysis.
 					await this.#analyzer.generate(PROMPT);
-	
-					// Raise an error if the product analysis is blocked. 
+
+					// Raise an error if the product analysis is blocked.
 					this.status[`blocked`] = this.#analyzer.blocked;
 					if (this.status[`blocked`]) {
 						this.status.error = {"name": (new texts(`blocked`)).localized, "message": (new texts(`error_msg_blocked`)).localized, "stack": analyzer.response};
 						throw Error();
 					};
-	
+
 					if (this.#analyzer.candidate) {
 						// Remove all markdown formatting.
 						this.product.analysis = JSON.parse(this.#analyzer.candidate.replace(/(```json|```|`)/g, ''));
-						
-						// Save the data. 
-						await this.product.save();
+
+						// Save the data.
+						await this.product.save(options);
 					};
 				}
-			}
-	
+			};
+
 			// Try analysis of the data.
 			try {
 				await perform();
-				
-				// Indicate that the process is done. 
+
+				// Indicate that the process is done.
 				this.#notify(1);
-				// Display the results. 
+				// Display the results.
 				new logging(texts.localized(`AI_message_title_done`), JSON.stringify(this.product.analysis));
 
-				// Save the data. 
+				// Save the data.
 				this.product.save();
 			} catch(err) {
-				// Use the existing error, if any exists. 
+				// Use the existing error, if any exists.
 				if (!this.status.error) {
 					this.status.error = {};
 					[`name`, `message`, `stack`].forEach((KEY) => {
 						this.status.error[KEY] = err[KEY];
 					});
 				}
-				
+
 				// Display the error.
 				this.#notify(-1);
 			};
@@ -117,16 +117,16 @@ export default class processor {
 	};
 
 	/*
-	Run in the chronological order. Useful when needed to be redone manually. 
+	Run in the chronological order. Useful when needed to be redone manually.
 	*/
 	async run (options = {}) {
 		this.#notify((this.targets) ? .25 : 0);
 
-		// Scrape the data. 
+		// Scrape the data.
 		await this.scrape(null, ((typeof options).includes(`obj`) && options) ? options[`scrape`] : null);
-		
+
 		if ((this.product.details) ? Object.keys(this.product.details).length : false) {
-			// Update the status. 
+			// Update the status.
 			await this.#notify(.5);
 
 			// Analyze the data.
@@ -135,8 +135,8 @@ export default class processor {
 	}
 
 	/*
-	Update the percentage of the progress. 
-	
+	Update the percentage of the progress.
+
 	@param {number} status the status of the progress
 	*/
 	async #notify (status) {
@@ -144,14 +144,14 @@ export default class processor {
 
 		// Set the status of the site.
 		if ((await global.write([`sites`, this.URL, `status`], this.status, -1)) && (this.status[`done`] >= 0)) {
-			// Set the status to its whole number counterpart. 
+			// Set the status to its whole number counterpart.
 			let STATUS = Math.round(status * 100);
-			
-			// Get the corresponding status message. 
+
+			// Get the corresponding status message.
 			new logging(texts.localized(`scrape_msg_`.concat(String(STATUS))), (String(STATUS)).concat("%"));
 			return true;
 		} else if (this.status[`done`] < 0) {
-			logging.error(this.status.error);	
+			logging.error(this.status.error);
 		} else {
 			return false;
 		}
@@ -163,7 +163,7 @@ export default class processor {
 
 		this.product = new product();
 		this.targets = this.#filter[`data`];
-		
+
 		((((typeof options).includes(`obj`)) ? Object.hasOwn(options, `automatic`) : false) ? options[`automatic`] : true) ? this.run() : false;
 	}
 }
