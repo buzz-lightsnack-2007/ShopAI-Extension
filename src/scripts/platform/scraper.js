@@ -1,5 +1,5 @@
 /* reader.js
-Read the contents of the page.  
+Read the contents of the page.
 */
 
 import net from "/scripts/utils/net.js";
@@ -8,7 +8,7 @@ export default class scraper {
 	#options;
 
 	/*
-	Scrape fields. 
+	Scrape fields.
 
 	@param {Object} scraper_fields the fields to scrape
 	@param {Object} options the options
@@ -19,8 +19,8 @@ export default class scraper {
 			: false;
 		this.#options = Object.assign({}, {"scroll": true, "duration": 125, "automatic": true, "background": true}, options);
 
-		if (this.#options.automatic) { 
-			// Quickly scroll down then to where the user already was to get automatically hidden content. 
+		if (this.#options.automatic) {
+			// Quickly scroll down then to where the user already was to get automatically hidden content.
 			async function autoscroll(options) {
 				let SCROLL = {"x": parseInt(window.scrollX), "y": parseInt(window.scrollY)};
 				let DURATION = Math.abs(options[`duration`]);
@@ -35,7 +35,7 @@ export default class scraper {
 					});
 				}
 
-				// Scroll two times to check for updated data. 
+				// Scroll two times to check for updated data.
 				for (let SCROLLS = 1; SCROLLS <= 2; SCROLLS++) {
 					for (const POSITION of [{"top": document.body.scrollHeight, "left": document.body.scrollWidth}, {"top": 0, "left": 0}]) {
 						await go(POSITION, DURATION);
@@ -73,7 +73,7 @@ export default class scraper {
 						this.getTexts(this.fields, this.#options);
 						this.getImages(this.fields, this.#options);
 					});
-	
+
 					// Observe the document.
 					OBSERVER.observe(document.body, {"childList": true, "subtree": true});
 				}
@@ -94,19 +94,19 @@ export default class scraper {
 		/* Read for the particular fields. */
 		function read(fields) {
 			let DATA = {}; // Store here the resulting data
-			
+
 			(Object.keys(fields)).forEach((NAME) => {
-				// Remove trailing spaces within the name. 
+				// Remove trailing spaces within the name.
 				NAME = (typeof NAME).includes(`str`) ? NAME.trim() : NAME;
-				
+
 				// Set the referring value.
 				let VALUE = fields[NAME];
 				VALUE = (typeof VALUE).includes(`str`) ? VALUE.trim() : VALUE;
-				
+
 				if (VALUE && NAME) {
 					// Check if array.
 					if ((Array.isArray(VALUE)) ? VALUE.length : false) {
-						// Temporarily create an empty list. 
+						// Temporarily create an empty list.
 						DATA[NAME] = [];
 
 						VALUE.forEach((PARTICULAR) => {
@@ -114,7 +114,7 @@ export default class scraper {
 								DATA[NAME].push(read(PARTICULAR));
 							} else {
 								let ELEMENTS = [...(document.querySelectorAll(PARTICULAR))];
-								
+
 								(ELEMENTS && ELEMENTS.length)
 									? (ELEMENTS).forEach((ELEMENT) => {
 										DATA[NAME].push(ELEMENT.textContent.trim());
@@ -135,18 +135,18 @@ export default class scraper {
 			return DATA;
 		};
 
-		// Determine and set the appropriate field source. 
+		// Determine and set the appropriate field source.
 		let FIELDS = (((typeof fields).includes(`obj`) && fields) ? Object.keys(fields).length : false) ? fields : this.fields;
 		((((typeof options).includes(`obj`) && options) ? Object.hasOwn(`update`) : false) ? options[`update`] : true)
 			? this.fields = FIELDS
 			: null;
 
-		// Read the fields. 
+		// Read the fields.
 		(FIELDS)
 			? CONTENT = read(FIELDS)
 			: false;
 
-		// Set the data if the options doesn't indicate otherwise. 
+		// Set the data if the options doesn't indicate otherwise.
 		(((((typeof options).includes(`obj`) && options) ? Object.hasOwn(`update`) : false) ? options[`update`] : true) && CONTENT)
 			? this.texts = CONTENT
 			: false;
@@ -154,135 +154,140 @@ export default class scraper {
 	};
 
 	/*
-	Scrape the images from a page. 
+	Scrape the images from a page.
+	It's temporarily disabled due to consequent flagging of the IP address. Also it's output is not yet implemented. This is a future point of expansion (Crit E).
 
 	@param {Object} fields the fields to scrape
 	@param {Object} options the options
 	@return {Object} the blob of the images
 	*/
 	async getImages(fields, options) {
-		let CONTENT; 
+		let DISABLE = true // This is how to disable it
 
-		/*
-		Get the blob of the image in an element. 
-
-		@param {Element} element the element to get the blob from
-		@return {Blob} the blob of the image
-		*/
-		async function blobbify(element) {
-			/*
-			Get the URL of the image. 
-
-			@param {Element} element the element to get the URL from
-			@return {String} the URL of the image
-			*/
-			function reference(element) {
-				let LOCATION;
-
-				// Get using standard attributes. 
-				LOCATION = element.getAttribute(`src`);
-
-				if (!LOCATION) {
-					// Use the CSS background image.
-					(window.getComputedStyle(element).backgroundImage)
-						? LOCATION = window.getComputedStyle(element).backgroundImage.slice(4, -1).replace(/"/g, "")
-						: false;
-				}
-
-				// Return the location. 
-				return LOCATION;
-			}
+		if (!DISABLE) {
+			let CONTENT;
 
 			/*
-			Get the blob from the URL. 
+			Get the blob of the image in an element.
 
-			@param {String} URL the URL to get the blob from
+			@param {Element} element the element to get the blob from
 			@return {Blob} the blob of the image
 			*/
-			function getBlob(URL) {
-				return(net.download(URL, `blob`));
-			}
+			async function blobbify(element) {
+				/*
+				Get the URL of the image.
 
-			let LOCATION = reference(element);
-			let BLOB = await getBlob(LOCATION);
+				@param {Element} element the element to get the URL from
+				@return {String} the URL of the image
+				*/
+				function reference(element) {
+					let LOCATION;
 
-			return ((BLOB.type.includes(`image`)) ? BLOB : null);
-		}
+					// Get using standard attributes.
+					LOCATION = element.getAttribute(`src`);
 
-		/* Read for the particular fields. */
-		async function read(fields) {
-			/*
-			Select all images from an element and get their blobs. 
-
-			@param {Element} element the element to get the images from
-			@return {Array} the blobs of the images
-			*/
-			async function select(element) {
-				let IMAGES = [...element.querySelectorAll(`*`)];
-				let BLOBS = [];
-
-				if (IMAGES && IMAGES.length) {
-					for (let IMAGE of IMAGES) {
-						let BLOB = await blobbify(IMAGE);
-						(BLOB) ? BLOBS.push(BLOB) : false;
+					if (!LOCATION) {
+						// Use the CSS background image.
+						(window.getComputedStyle(element).backgroundImage)
+							? LOCATION = window.getComputedStyle(element).backgroundImage.slice(4, -1).replace(/"/g, "")
+							: false;
 					}
+
+					// Return the location.
+					return LOCATION;
 				}
 
-				return BLOBS;
+				/*
+				Get the blob from the URL.
+
+				@param {String} URL the URL to get the blob from
+				@return {Blob} the blob of the image
+				*/
+				function getBlob(URL) {
+					return(net.download(URL, `blob`));
+				}
+
+				let LOCATION = reference(element);
+				let BLOB = await getBlob(LOCATION);
+
+				return ((BLOB.type.includes(`image`)) ? BLOB : null);
 			}
 
-			let DATA = []; // Store here the resulting data
+			/* Read for the particular fields. */
+			async function read(fields) {
+				/*
+				Select all images from an element and get their blobs.
 
-			for (let NAME of Object.keys(fields)) {
-				// Remove trailing spaces within the name. 
-				NAME = (typeof NAME).includes(`str`) ? NAME.trim() : NAME;
-				let VALUE = fields[NAME];
+				@param {Element} element the element to get the images from
+				@return {Array} the blobs of the images
+				*/
+				async function select(element) {
+					let IMAGES = [...element.querySelectorAll(`*`)];
+					let BLOBS = [];
 
-				if (VALUE && NAME) {
-					// Check if array.
-					if (Array.isArray(VALUE)) {
-						// Temporarily create an empty list. 
-						for (let PARTICULAR of VALUE) {
-							if ((typeof PARTICULAR).includes(`obj`) && PARTICULAR && !Array.isArray(PARTICULAR)) {
-								DATA = [...DATA, ...(await read(PARTICULAR))];
-							} else {
-								let ELEMENTS = [...(document.querySelectorAll(PARTICULAR))];
+					if (IMAGES && IMAGES.length) {
+						for (let IMAGE of IMAGES) {
+							let BLOB = await blobbify(IMAGE);
+							(BLOB) ? BLOBS.push(BLOB) : false;
+						}
+					}
 
-								if (ELEMENTS && ELEMENTS.length) {
-									for (let ELEMENT of ELEMENTS) {
-										let BLOBS = await select(ELEMENT);
-										if (BLOBS && BLOBS.length) DATA = [...DATA, ...BLOBS];
+					return BLOBS;
+				}
+
+				let DATA = []; // Store here the resulting data
+
+				for (let NAME of Object.keys(fields)) {
+					// Remove trailing spaces within the name.
+					NAME = (typeof NAME).includes(`str`) ? NAME.trim() : NAME;
+					let VALUE = fields[NAME];
+
+					if (VALUE && NAME) {
+						// Check if array.
+						if (Array.isArray(VALUE)) {
+							// Temporarily create an empty list.
+							for (let PARTICULAR of VALUE) {
+								if ((typeof PARTICULAR).includes(`obj`) && PARTICULAR && !Array.isArray(PARTICULAR)) {
+									DATA = [...DATA, ...(await read(PARTICULAR))];
+								} else {
+									let ELEMENTS = [...(document.querySelectorAll(PARTICULAR))];
+
+									if (ELEMENTS && ELEMENTS.length) {
+										for (let ELEMENT of ELEMENTS) {
+											let BLOBS = await select(ELEMENT);
+											if (BLOBS && BLOBS.length) DATA = [...DATA, ...BLOBS];
+										}
 									}
 								}
 							}
-						}
-					} else if ((typeof VALUE).includes(`obj`) && VALUE) {
-						DATA = [...DATA, ...(await read(VALUE))];
-					} else if (document.querySelector(VALUE)) {
-						let ELEMENTS = [...(document.querySelectorAll(VALUE))];
+						} else if ((typeof VALUE).includes(`obj`) && VALUE) {
+							DATA = [...DATA, ...(await read(VALUE))];
+						} else if (document.querySelector(VALUE)) {
+							let ELEMENTS = [...(document.querySelectorAll(VALUE))];
 
-						if (ELEMENTS && ELEMENTS.length) {
-							for (let ELEMENT of ELEMENTS) {
-								let BLOBS = await select(ELEMENT);
-								if (BLOBS && BLOBS.length) DATA = [...DATA, ...BLOBS];
+							if (ELEMENTS && ELEMENTS.length) {
+								for (let ELEMENT of ELEMENTS) {
+									let BLOBS = await select(ELEMENT);
+									if (BLOBS && BLOBS.length) DATA = [...DATA, ...BLOBS];
+								}
 							}
 						}
 					}
 				}
-			}
 
-			return (DATA);
-		};
+				return (DATA);
+			};
 
-		// Read the fields. 
-		(((typeof fields).includes(`obj`) && fields) ? Object.keys(fields).length : false)
-			? CONTENT = await read(fields)
-			: false;
+			// Read the fields.
+			(((typeof fields).includes(`obj`) && fields) ? Object.keys(fields).length : false)
+				? CONTENT = await read(fields)
+				: false;
 
-		// Set the data if the options doesn't indicate otherwise. 
-		(((((typeof options).includes(`obj`) && options) ? Object.hasOwn(`update`) : false) ? options[`update`] : true) && CONTENT)
-			? this.images = CONTENT
-			: false;
-		return (CONTENT);
+			// Set the data if the options doesn't indicate otherwise.
+			(((((typeof options).includes(`obj`) && options) ? Object.hasOwn(`update`) : false) ? options[`update`] : true) && CONTENT)
+				? this.images = CONTENT
+				: false;
+			return (CONTENT);
+		}
 	}
 }
