@@ -136,9 +136,9 @@ class global {
 			: false;
 
 		// Write!
-		chrome.storage[(CLOUD > 0) ? `sync` : `local`].set(DATA_INJECTED);
+		await chrome.storage[(CLOUD > 0) ? `sync` : `local`].set(DATA_INJECTED);
 		GUI_INFO[`log`] ? GUI_INFO[`log`].clear() : false;
-		return ((OPTIONS[`verify`] != null ? (OPTIONS[`verify`]) : true) ? verify(DATA_NAME, data) : true);
+		return ((OPTIONS[`verify`] != null ? (OPTIONS[`verify`]) : true) ? await verify(DATA_NAME, data) : true);
 	}
 
 	/*
