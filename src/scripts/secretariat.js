@@ -285,8 +285,7 @@ class template {
 			})
 		});
 
-		// Merge the data.
-		// Managed > Synchronized > Imported > Local
+		// Merge the data, such that Managed > Synchronized > Imported > Local. 
 		// Set managed preferences.
 		managed.reinforce();
 
