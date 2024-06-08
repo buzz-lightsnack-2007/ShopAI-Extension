@@ -94,7 +94,7 @@ class global {
 	static async write(path, data, CLOUD = -1, OPTIONS = {}) {
 		let DATA_INJECTED = {};
 
-		async function verify (NAME, DATA) {
+		async function verify (NAME, DATA, OPTIONS) {
 			let DATA_CHECK = {};
 
 			// Verify the presence of the data.
