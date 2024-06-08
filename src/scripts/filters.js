@@ -94,16 +94,20 @@ export default class FilterManager {
 						// Only work when the filter is valid.
 						if (result) {
 							// Write the filter to storage.
-							await global.write(["filters", filter_URL], result, -1, {"silent": true});
+							if (!(await global.write(["filters", filter_URL], result, -1, {"silent": true}))) {
+								throw ReferenceError;
+							};
 
 							// Add the filter to the sync list.
 							if ((await global.read(["settings", `filters`])) ? !((Object.keys(await global.read(["settings", `filters`]))).includes(filter_URL)) : true) {
-								global.write(["settings", `filters`, filter_URL], true, 1, {"silent": true});
+								if (!(global.write(["settings", `filters`, filter_URL], true, 1, {"silent": true}))) {
+									throw ReferenceError;
+								};
 							};
 
 							// Notify that the update is completed.
 							new logging(texts.localized(`settings_filters_update_status_complete`),filter_URL);
-						}
+						};
 					})
 					.catch((error) => {
 						// Inform the user of the download failure.
