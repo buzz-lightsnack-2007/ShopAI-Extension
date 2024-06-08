@@ -61,8 +61,8 @@ export default class logging {
 	static warn(message, critical = false) {
 		// Depackage the shortcut method of sending the error message, if it is. 
 		((typeof message).includes(`obj`))
-			? console.error(`%c%s: %c%s`, `font-weight: bold; font-family: system-ui;`, message.name, `font-family: system-ui`, message.message)
-			: console.error(`%c%s`, `font-family: system-ui;`, message);
+			? console.warn(`%c%s: %c%s`, `font-weight: bold; font-family: system-ui;`, message.name, `font-family: system-ui`, message.message)
+			: console.warn(`%c%s`, `font-family: system-ui;`, message);
 		
 		try {
 			(critical) ? alert(message) : M.toast({ text: message });
