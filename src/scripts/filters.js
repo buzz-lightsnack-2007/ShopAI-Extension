@@ -81,11 +81,11 @@ export default class FilterManager {
 		};
 
 		if (!filters.isEmpty()) {
+			// Inform the user of download state.
+			new logging (texts.localized(`settings_filters_update_status`));
+			
 			while (!filters.isEmpty()) {
 				let filter_URL = filters.dequeue();
-
-				// Inform the user of download state.
-				new logging (texts.localized(`settings_filters_update_status`), filter_URL);
 
 				try {
 					let DOWNLOAD = await net.download(filter_URL, `JSON`, false, true);
@@ -103,15 +103,15 @@ export default class FilterManager {
 							: false) {
 								throw ReferenceError;
 						};
-
-						// Notify that the update is completed.
-						new logging(texts.localized(`settings_filters_update_status_complete`),filter_URL);
 					};
 				} catch (error) {
 					// Inform the user of the download failure.
 					logging.error(error.name, texts.localized(`settings_filters_update_status_failure`, null, [error.name, filter_URL]), error.stack);
 				};
-			}
+			};
+			
+			// Notify that the update is completed.
+			new logging(texts.localized(`settings_filters_update_status_complete`));
 		} else {
 			// Inform the user of the download being unnecessary.
 			logging.warn(texts.localized(`settings_filters_update_stop`));
