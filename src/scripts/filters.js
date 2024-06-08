@@ -94,7 +94,7 @@ export default class FilterManager {
 						// Only work when the filter is valid.
 						if (result) {
 							// Write the filter to storage.
-							if (!(await global.write(["filters", filter_URL], result, -1, {"silent": true}))) {
+							if (!(await global.write(["filters", filter_URL], result, -1, {"silent": true, "strict": true}))) {
 								throw ReferenceError;
 							};
 
