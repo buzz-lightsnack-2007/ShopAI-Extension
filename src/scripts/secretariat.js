@@ -117,11 +117,24 @@ class global {
 		};
 
 		// Get all data and set a blank value if it doesn't exist yet.
-		DATA_ALL = await global.read(null, CLOUD);
-		DATA_ALL = ((DATA_ALL != null && DATA_ALL != undefined && (typeof DATA_ALL).includes(`obj`)) ? Object.keys(DATA_ALL).length <= 0 : true)
+		if (CLOUD == 0  || CLOUD == null) {
+			const ORIGINS = {};
+			ORIGINS[-1] = `local`;
+			ORIGINS[1] = `global`;
+			
+			for (let SOURCE = -1; SOURCE != 0 && SOURCE < 2; SOURCE = SOURCE + 2) {
+				DATA_ALL[ORIGINS[SOURCE]] = await global.read(null, CLOUD);
+			};
+			
+			CLOUD = (DATA_ALL[`local`] != null) ? -1 : 1; 
+		} else {
+			DATA_ALL = await global.read(null, CLOUD);
+		};
+		
+		DATA_ALL = ((!(typeof DATA_ALL).includes(`undef`)) ? ((DATA_ALL != null && (typeof DATA_ALL).includes(`obj`)) ? Object.keys(DATA_ALL).length <= 0 : true) : false)
 			? {}
 			: DATA_ALL;
-
+		
 		// Set the data name.
 		let DATA_NAME = (!(Array.isArray(path)) && path && path != undefined)
 			? String(path).trim().split(",")
@@ -130,15 +143,14 @@ class global {
 		// Merge!
 		DATA_INJECTED = nested.dictionary.set(DATA_ALL, (DATA_NAME != null) ? [...DATA_NAME] : DATA_NAME, data, OPTIONS);
 
-		// If cloud is not selected, get where the data is already existent.
-		(CLOUD == 0 || CLOUD == null)
-			? (CLOUD = (DATA_ALL[`local`] != null) ? -1 : 1)
-			: false;
-
 		// Write!
-		await chrome.storage[(CLOUD > 0) ? `sync` : `local`].set(DATA_INJECTED);
-		GUI_INFO[`log`] ? GUI_INFO[`log`].clear() : false;
-		return ((OPTIONS[`verify`] != null ? (OPTIONS[`verify`]) : true) ? await verify(DATA_NAME, data) : true);
+		return(chrome.storage[(CLOUD > 0) ? `sync` : `local`].set(DATA_INJECTED).then(async () => {
+			GUI_INFO[`log`] ? GUI_INFO[`log`].clear() : false;
+			return (((OPTIONS[`verify`] != null ? (OPTIONS[`verify`]) : true) ? await verify(DATA_NAME, data, OPTIONS) : true));
+		}).catch((err) => {
+			logging.error((new texts(`error_msg_save_failed`)).localized, DATA_NAME.join(` → `), JSON.stringify(data))
+			return (false);
+		}));
 	}
 
 	/*
@@ -256,7 +268,6 @@ export async function compare(PATH, DATA) {
 
 		return (RESULT);
 	}
-
 
 	let COMPARISON = {};
 	COMPARISON[`test`] = (PATH) ? DATA : DATA[1];
