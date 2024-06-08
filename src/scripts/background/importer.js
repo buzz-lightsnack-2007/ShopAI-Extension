@@ -81,6 +81,7 @@ export default class BackgroundImporter {
 					
 					// Set the template. 
 					template.set(configuration);
+					await global.write([`ready`], true, -1);
 				};
 			})
 			.catch((error) => {
