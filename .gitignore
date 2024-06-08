@@ -1,7 +1,8 @@
 .DS_Store
 /bin
 /src/s*s/external/
-/src/config/config.json
+/src/config/*
+/build
 *.log
 *.crx
 *.pem
