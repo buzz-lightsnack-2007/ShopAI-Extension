@@ -48,29 +48,36 @@ export default class BackgroundImporter {
 					delete configuration[`OOBE`];
 				
 					// Replace local URLs of filters to corresponding chrome extension pages.
-					if (((typeof configuration[`settings`][`filters`]).includes(`obj`) && configuration[`settings`][`filters`]) ? Object.keys(configuration[`settings`][`filters`]).length : false) {
-						for (let FILTER_NUMBER = 0; FILTER_NUMBER < Object.keys(configuration[`settings`][`filters`]).length; FILTER_NUMBER++) {
-							let SOURCE = (Object.keys(configuration[`settings`][`filters`]))[FILTER_NUMBER];
+					const checkURL = async () => {
+						if (((typeof configuration[`settings`][`filters`]).includes(`obj`) && configuration[`settings`][`filters`]) ? Object.keys(configuration[`settings`][`filters`]).length : false) {
+							let FILTERS = {};
+							FILTERS[`current`] = configuration[`settings`][`filters`];
+							FILTERS[`updated`] = {};
 							
-							// Check if the URL is invalid. 
-							
-							if (!(URLs.test(SOURCE))) {
-								// Set the URL. 
-								let ORIGIN = {"raw": SOURCE};
+							for (let FILTER_NUMBER = 0; FILTER_NUMBER < Object.keys(FILTERS[`current`]).length; FILTER_NUMBER++) {
+								let SOURCE = Object.keys(FILTERS[`current`])[FILTER_NUMBER];
 								
-								// If it is, it's most likely located within the extension. 
-								ORIGIN[`local`] = chrome.runtime.getURL(`config/filters/`.concat(ORIGIN[`raw`]));
+								// Check if the URL is invalid. 
+								if (!(URLs.test(SOURCE))) {
+									// Set the URL. 
+									let ORIGIN = {"raw": SOURCE};
 								
-								// Attempt to verify the existence of the file. 
-								if (await net.download(ORIGIN[`local`], `json`, true)) {
-									configuration[`settings`][`filters`][ORIGIN[`local`]] = configuration[`settings`][`filters`][ORIGIN[`raw`]];
+									// If it is, it's most likely located within the extension. 
+									ORIGIN[`local`] = chrome.runtime.getURL(`config/filters/`.concat(ORIGIN[`raw`]));
+								
+									// Attempt to verify the existence of the file. 
+									if (await net.download(ORIGIN[`local`], `json`, true)) {
+										FILTERS[`updated`][ORIGIN[`local`]] = FILTERS[`current`][ORIGIN[`raw`]];
+									};	
+								} else {
+									FILTERS[`updated`][SOURCE] = FILTERS[`current`][SOURCE];
 								};
-								
-								// Delete the illegal URLs. 
-								delete configuration[`settings`][`filters`][ORIGIN[`raw`]];
 							};
+							configuration[`settings`][`filters`] = FILTERS[`updated`];
+							return(FILTERS[`updated`]);
 						};
 					};
+					await checkURL();
 					
 					// Set the template. 
 					template.set(configuration);
