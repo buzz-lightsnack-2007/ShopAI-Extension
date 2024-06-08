@@ -46,7 +46,9 @@ class Page_Results extends Page {
 
                // Set the data.
                this[`data`] = (DATA[`data`] && (typeof DATA[`data`]).includes(`obj`)) ? DATA[`data`] : (this[`data`] ? this[`data`] : {});
-          }
+          };
+		  
+		  console.log(await global.read(null, -1), await global.read(null, 1));
      }
 
      async content() {
@@ -70,13 +72,6 @@ class Page_Results extends Page {
 
           await this.update();
           this.fill();
-     }
-
-     /*
-     Resize the window to fit the content.
-     */
-     async resize() {
-
      }
 
      /*
