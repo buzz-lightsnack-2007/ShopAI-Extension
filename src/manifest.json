@@ -21,7 +21,7 @@
 	"web_accessible_resources": [
 		{
 			"matches": ["http://*/*", "https://*/*"],
-			"resources": ["scripts/*.js", "scripts/platform/*.js"]
+			"resources": ["scripts/*.js", "scripts/platform/*.js", "config/filters/*.filter"]
 		}
 	],
 
