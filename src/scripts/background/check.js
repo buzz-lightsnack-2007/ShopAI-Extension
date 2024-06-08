@@ -54,8 +54,8 @@ export default class BackgroundCheck {
 					const updater_run = async () => {
 						filter.update();
 
-						// Update the last time.
-						return(await global.write([`settings`,`sync`,`last`], Date.now(), -1));
+						// Update the last update time.
+						return(await global.write([`settings`,`sync`,`last`], Date.now(), -1, {"verify": false}));
 					};
 
 					// Set the interval.
@@ -87,7 +87,7 @@ export default class BackgroundCheck {
 							if ((await global.read([`settings`, `sync`, `duration`])) ? (await global.read([`settings`, `sync`, `duration`] * (60 ** 2) * 1000 != DURATION_PREFERENCES[`duration`])) : false) {
 								if (await global.global.read([`settings`, `sync`, `duration`])) {
 									// Get the new time.
-									DURATION_PREFERENCES[`duration`] = await global.global.read([`settings`, `sync`, `duration`]) * (60 ** 2) * 1000;
+									DURATION_PREFERENCES[`duration`] = await global.read([`settings`, `sync`, `duration`]) * (60 ** 2) * 1000;
 
 									// Reset the updater.
 									updater_reset();
