@@ -78,7 +78,7 @@ export default class FilterManager {
 					}
 				}
 			}
-		}
+		};
 
 		if (!filters.isEmpty()) {
 			while (!filters.isEmpty()) {
@@ -87,32 +87,30 @@ export default class FilterManager {
 				// Inform the user of download state.
 				new logging (texts.localized(`settings_filters_update_status`), filter_URL);
 
-				// Create promise of downloading.
-				let filter_download = net.download(filter_URL, `JSON`, false, true);
-				filter_download
-					.then(async function (result) {
-						// Only work when the filter is valid.
-						if (result) {
-							// Write the filter to storage.
-							if (!(await global.write(["filters", filter_URL], result, -1, {"silent": true, "strict": true}))) {
-								throw ReferenceError;
-							};
-
-							// Add the filter to the sync list.
-							if ((await global.read(["settings", `filters`])) ? !((Object.keys(await global.read(["settings", `filters`]))).includes(filter_URL)) : true) {
-								if (!(global.write(["settings", `filters`, filter_URL], true, 1, {"silent": true}))) {
-									throw ReferenceError;
-								};
-							};
-
-							// Notify that the update is completed.
-							new logging(texts.localized(`settings_filters_update_status_complete`),filter_URL);
+				try {
+					let DOWNLOAD = await net.download(filter_URL, `JSON`, false, true);
+					
+					// Only work when the filter is valid.
+					if (DOWNLOAD) {
+						// Write the filter to storage.
+						if (!(await global.write(["filters", filter_URL], DOWNLOAD, -1, {"silent": true, "strict": true}))) {
+							throw ReferenceError;
 						};
-					})
-					.catch((error) => {
-						// Inform the user of the download failure.
-						logging.error(error.name, texts.localized(`settings_filters_update_status_failure`, null, [error.name, filter_URL]), error.stack);
-					});
+
+						// Add the filter to the sync list.
+						if (((await global.read(["settings", `filters`])) ? !((Object.keys(await global.read(["settings", `filters`]))).includes(filter_URL)) : true)
+							? (!(await global.write(["settings", `filters`, filter_URL], true, 1, {"silent": true})))
+							: false) {
+								throw ReferenceError;
+						};
+
+						// Notify that the update is completed.
+						new logging(texts.localized(`settings_filters_update_status_complete`),filter_URL);
+					};
+				} catch (error) {
+					// Inform the user of the download failure.
+					logging.error(error.name, texts.localized(`settings_filters_update_status_failure`, null, [error.name, filter_URL]), error.stack);
+				};
 			}
 		} else {
 			// Inform the user of the download being unnecessary.
