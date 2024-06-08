@@ -309,16 +309,15 @@ class template {
 					? global.write(PREFERENCE[`name`], PREFERENCES[`all`][`build`][PREFERENCE[`name`]], -1)
 					: false;
 			});
-		}
+		};
+		
 	};
 
 	/*
 	Use our preferences when handling the data.
 	*/
 	static configure() {
-		chrome.storage.session.setAccessLevel(
-			{accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS'}
-		);
+		chrome.storage.session.setAccessLevel({accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS'});
 	}
 }
 
