@@ -6,6 +6,8 @@ This script provides installation run scripts.
 // File importation
 import {template, global} from "../secretariat.js";
 import pointer from "../data/pointer.js";
+import {URLs} from "../utils/URLs.js";
+import net from "../utils/net.js";
 
 // The URL for the configuration file
 const config = chrome.runtime.getURL("config/config.json");
@@ -41,21 +43,50 @@ export default class BackgroundImporter {
 			.then(async (jsonData) => {
 				let configuration = jsonData;
 				
-				// Run the storage initialization.
-				delete configuration[`OOBE`];
-				template.set(configuration);
+				if ((configuration) ? Object.keys(configuration).length : false) {
+					// Run the storage initialization.
+					delete configuration[`OOBE`];
+				
+					// Replace local URLs of filters to corresponding chrome extension pages.
+					if (((typeof configuration[`settings`][`filters`]).includes(`obj`) && configuration[`settings`][`filters`]) ? Object.keys(configuration[`settings`][`filters`]).length : false) {
+						for (let FILTER_NUMBER = 0; FILTER_NUMBER < Object.keys(configuration[`settings`][`filters`]).length; FILTER_NUMBER++) {
+							let SOURCE = (Object.keys(configuration[`settings`][`filters`]))[FILTER_NUMBER];
+							
+							// Check if the URL is invalid. 
+							
+							if (!(URLs.test(SOURCE))) {
+								// Set the URL. 
+								let ORIGIN = {"raw": SOURCE};
+								
+								// If it is, it's most likely located within the extension. 
+								ORIGIN[`local`] = chrome.runtime.getURL(`config/filters/`.concat(ORIGIN[`raw`]));
+								
+								// Attempt to verify the existence of the file. 
+								if (await net.download(ORIGIN[`local`], `json`, true)) {
+									configuration[`settings`][`filters`][ORIGIN[`local`]] = configuration[`settings`][`filters`][ORIGIN[`raw`]];
+								};
+								
+								// Delete the illegal URLs. 
+								delete configuration[`settings`][`filters`][ORIGIN[`raw`]];
+							};
+						};
+					};
+					
+					// Set the template. 
+					template.set(configuration);
+				};
 			})
 			.catch((error) => {
 				console.error(error);
 			});
-	}
-
+	};
+	
 	trigger() {
 		chrome.runtime.onInstalled.addListener((details) => {
 			(details.reason == chrome.runtime.OnInstalledReason.INSTALL) ? this.hello() : null;
 			this.setup();
 		});
-	}
+	};
 
 	// main function 
 	constructor () {
