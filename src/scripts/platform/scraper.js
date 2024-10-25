@@ -47,7 +47,7 @@ export default class scraper {
 			};
 
 			// Check every 1 second to check until autosccroll is done.
-			function wait(OPTIONS) {
+			/*function wait(OPTIONS) {
 				return new Promise((resolve, reject) => {
 					// Check if autoscroll is done.
 					if (!((typeof window).includes(`undef`))) {
@@ -61,23 +61,21 @@ export default class scraper {
 						reject();
 					}
 				});
+			}*/
+
+			this.getTexts(this.fields, this.#options);
+			this.getImages(this.fields, this.#options);
+
+			if (this.#options.background) {
+				// Event listener when elements are added or removed.
+				const OBSERVER = new MutationObserver((mutations) => {
+					this.getTexts(this.fields, this.#options);
+					this.getImages(this.fields, this.#options);
+				});
+
+				// Observe the document.
+				OBSERVER.observe(document.body, {"childList": true, "subtree": true});
 			}
-
-			wait(this.#options).then(() => {
-				this.getTexts(this.fields, this.#options);
-				this.getImages(this.fields, this.#options);
-
-				if (this.#options.background) {
-					// Event listener when elements are added or removed.
-					const OBSERVER = new MutationObserver((mutations) => {
-						this.getTexts(this.fields, this.#options);
-						this.getImages(this.fields, this.#options);
-					});
-
-					// Observe the document.
-					OBSERVER.observe(document.body, {"childList": true, "subtree": true});
-				}
-			});
 		}
 	}
 
@@ -125,9 +123,7 @@ export default class scraper {
 					} else if ((typeof VALUE).includes(`obj`) && VALUE && !Array.isArray(VALUE)) {
 						DATA[NAME] = read(VALUE);
 					} else if (document.querySelector(VALUE)) {
-						(document.querySelector(VALUE))
-							? DATA[NAME] = document.querySelector(VALUE).textContent.trim()
-							: false;
+						DATA[NAME] = document.querySelector(VALUE).textContent.trim()
 					};
 				};
 			});
