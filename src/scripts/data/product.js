@@ -51,6 +51,12 @@ export default class product {
 		};
 	}
 
+	/*
+	Save the product data to the storage.
+
+	@options {object} the options
+	@return {boolean} the status of the save
+	*/
 	async save(options = {}) {
 		// Set the default options.
 		options = Object.assign({}, this.#options, options);
