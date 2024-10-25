@@ -7,7 +7,7 @@
 	"permissions": ["tabs", "storage", "unlimitedStorage"],
 
 	"background": {
-		"service_worker": "scripts/background/shopAI.js", "type": "module"
+		"scripts": ["scripts/background/shopAI.js"]
 	},
 	"action": {
 		"default_popup": "pages/popup.htm"
@@ -30,7 +30,9 @@
 		"512": "media/icons/logo_tiny.png"
 	},
 
-	"options_page": "pages/settings.htm",
+	"options_ui": {
+    	"page": "pages/settings.htm"
+  	},
 
 	"default_locale": "en"
 }
