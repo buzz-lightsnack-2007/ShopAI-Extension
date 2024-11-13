@@ -17,7 +17,6 @@ export default class watch {
 		if (FILTER_RESULT && Object.keys(FILTER_RESULT).length > 0) {
 			// Let user know that the website is supported, if ever they have opened the console. 
 			new logging((new texts(`message_external_supported_title`)).localized, (new texts(`message_external_supported_body`)).localized);
-
 			watch.process(FILTER_RESULT);
 		}
 	}

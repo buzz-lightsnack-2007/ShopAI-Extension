@@ -79,16 +79,14 @@ nested.dictionary = class dictionary {
 	@param {object} options the options
 	@return {object} the results
 	*/
-	static search(data, value, options) {
+	static search(DATA, TERM, OPTIONS) {
 		// Set the default options.
-		let OPTIONS = Object.assign({}, {"strictness": 0}, options);
-		let DATA = data;
-		let TERM = value;
+		OPTIONS = Object.assign({}, {"strictness": 0}, OPTIONS);
 		let RESULTS;
 
-		if (data && ((typeof data).includes(`obj`) && !Array.isArray(data))) {
+		if (DATA && ((typeof DATA).includes(`obj`) && !Array.isArray(DATA))) {
 			if (!TERM || ((typeof TERM).includes(`str`) ? !TERM.trim() : false)) {
-				RESULTS = data;
+				RESULTS = DATA;
 			} else {
 				RESULTS = {};
 
@@ -124,7 +122,6 @@ nested.dictionary = class dictionary {
 												((OPTIONS[`strictness`] < 0.5)
 													? (VALUE[`current`].includes(TERM))
 													: false)
-												|| TERM.includes(VALUE[`current`])
 												|| (RegExManager.test(VALUE[`current`])
 													? (new RegExp(VALUE[`current`])).test(TERM)
 													: false)))

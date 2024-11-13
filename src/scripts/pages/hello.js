@@ -7,7 +7,6 @@
 import {global} from "/scripts/secretariat.js";
 import Page from "/scripts/pages/page.js";
 import texts from "/scripts/mapping/read.js";
-import nested from "/scripts/utils/nested.js";
 
 class Page_MiniConfig extends Page {
 	constructor () {
@@ -97,6 +96,7 @@ class Page_MiniConfig extends Page {
 					const set_classes = () => {
 						Object.keys(ELEMENTS[STEP_NUMBER][`container`]).forEach((PART) => {
 							ELEMENTS[STEP_NUMBER][`container`][PART].classList.add(`card`.concat(([`container`].includes(PART)) ? `` : `-`.concat(PART)));
+							[`container`].includes(PART) ? ELEMENTS[STEP_NUMBER][`container`][PART].classList.add(`horizontal`) : null;
 						});
 					}
 
